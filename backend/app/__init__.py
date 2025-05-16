@@ -4,14 +4,14 @@
 from flask import Flask, render_template, send_from_directory
 import os
 from .configs import Config
-from .extensions import db, migrate, jwt, mail
+from .extensions import db, migrate, jwt, mail, cors
 
 
 def create_app():
     app = Flask(
         __name__,
-        static_folder="../../frontend/dist",
-        template_folder="../../frontend/dist",
+        static_folder="../../frontend/dist/",
+        template_folder="../../frontend/dist/",
     )
 
     ####### configs ########
@@ -22,6 +22,7 @@ def create_app():
     migrate.init_app(app=app, db=db)
     jwt.init_app(app)
     mail.init_app(app)
+    cors.init_app(app)
 
     ####### models init #######
     with app.app_context():
@@ -29,6 +30,11 @@ def create_app():
 
         create_models()
         populate()
+
+    ####### blueprints ########
+    from .api_v1 import api_vi
+
+    app.register_blueprint(api_vi)
 
     ####### Basic routes #######
     @app.route("/")

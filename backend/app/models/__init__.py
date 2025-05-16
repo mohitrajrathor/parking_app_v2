@@ -1,5 +1,6 @@
 # models functionalities
 
+# imports
 from ..extensions import db
 
 
