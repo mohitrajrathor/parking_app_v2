@@ -29,3 +29,47 @@ def test_email():
 @jwt_required()
 def jwt_test():
     return "jwt not working if you get this message!"
+
+
+@test_bp.route("/start-task")
+def start_task():
+    from ..tasks import test
+
+    result = test.delay()
+    return {"task_id": result.id}
+
+
+@test_bp.route("/result/<task_id>")
+def get_result(task_id):
+    from ..tasks import test
+
+    result = test.AsyncResult(task_id)
+    if result.ready():
+        return {
+            "status": "DONE" if result.ready() else "PENDING",
+            "result": result.result,
+        }
+    else:
+        return {"status": "PENDING"}
+
+
+@test_bp.route("/demo-task")
+def start_demo():
+    from ..tasks.demo_tasks import demo
+
+    result = demo.delay()
+    return {"task_id": result.id}
+
+
+@test_bp.route("/result/demo/<task_id>")
+def get_demo_result(task_id):
+    from ..tasks.demo_tasks import demo
+
+    result = demo.AsyncResult(task_id)
+    if result.ready():
+        return {
+            "status": "DONE" if result.ready() else "PENDING",
+            "result": result.result,
+        }
+    else:
+        return {"status": "PENDING"}

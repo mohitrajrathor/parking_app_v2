@@ -4,7 +4,7 @@
 from flask import Flask, render_template, send_from_directory
 import os
 from .configs import Config
-from .extensions import db, migrate, jwt, mail, cors
+from .extensions import db, migrate, jwt, mail, cors, celery_init_app
 
 
 def create_app():
@@ -23,6 +23,7 @@ def create_app():
     jwt.init_app(app)
     mail.init_app(app)
     cors.init_app(app)
+    celery_init_app(app)
 
     ####### models init #######
     with app.app_context():

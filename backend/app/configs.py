@@ -26,3 +26,8 @@ class Config:
     MAIL_USE_SSL = False
     MAIL_USERNAME = None  # os.environ["mail_username"] to be uncommented on live server
     MAIL_PASSWORD = None  # os.environ["mail_password"] to be uncommented on live server
+
+    CELERY = {
+        "broker_url": "redis://localhost:6379",
+        "result_backend": "redis://localhost:6379",
+    }
