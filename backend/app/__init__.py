@@ -4,7 +4,7 @@
 from flask import Flask, render_template, send_from_directory
 import os
 from .configs import Config
-from .extensions import db, migrate, jwt, mail, cors, celery_init_app
+from .extensions import db, migrate, jwt, mail, cors, celery_init_app, api
 
 
 def create_app():
@@ -18,6 +18,7 @@ def create_app():
     app.config.from_object(Config)
 
     ####### extension init #######
+    api.init_app(app)
     db.init_app(app)
     migrate.init_app(app=app, db=db)
     jwt.init_app(app)
@@ -35,7 +36,7 @@ def create_app():
     ####### blueprints ########
     from .api_v1 import api_vi
 
-    app.register_blueprint(api_vi)
+    api.register_blueprint(api_vi)
 
     ####### Basic routes #######
     @app.route("/")

@@ -6,6 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_mail import Mail
 from flask_cors import CORS
+from flask_smorest import Api
 from celery import Celery, Task
 from flask import Flask
 import os
@@ -17,6 +18,7 @@ jwt = JWTManager()
 migrate = Migrate()
 mail = Mail()
 cors = CORS()
+api = Api()
 
 
 # celery setup

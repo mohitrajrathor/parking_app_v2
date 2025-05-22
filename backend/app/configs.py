@@ -11,6 +11,14 @@ class Config:
     SECRET_KEY = os.environ["secret_key"]
     SQLALCHEMY_DATABASE_URI = "sqlite:///parking.db"
 
+    #### smorest setup
+    API_TITLE = "Parly api documentation"
+    API_VERSION = "v1"
+    OPENAPI_VERSION = "3.0.3"
+    OPENAPI_URL_PREFIX = "/docs"
+    OPENAPI_SWAGGER_UI_PATH = "/swagger"
+    OPENAPI_SWAGGER_UI_URL = "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"
+
     #### CORS
     ORIGIN = "*"
 

@@ -2,23 +2,23 @@
 
 # imports
 from ..extensions import db
+from .admin import Admin
+from .user import User
+
+
+# expose them to use directly from models modules
+__all__ = ["Admin", "User"]
 
 
 def create_models():
     from .admin import Admin
+    from .user import User
 
     db.create_all()
 
 
-def add_Admin():
-    from .admin import Admin
-
-    if not Admin.query.filter_by(username="admin").first():
-        admin = Admin(username="admin")
-        admin.set_password("Admin@1234")
-        db.session.add(admin)
-        db.session.commit()
-
-
 def populate():
+    from .populate import add_Admin, add_test_user
+
     add_Admin()
+    add_test_user()

@@ -3,7 +3,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 
 class Admin(db.Model):
-    username = db.Column(db.String, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    username = db.Column(db.String, unique=True, nullable=True)
     password = db.Column(db.String, nullable=False)
 
     def set_password(self, password: str) -> None:

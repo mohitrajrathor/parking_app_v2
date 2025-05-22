@@ -1,7 +1,7 @@
 # api version 1 module
 
 # imports
-from flask import Blueprint
+from flask_smorest import Blueprint
 
 
 api_vi = Blueprint("api_v1", __name__, url_prefix="/api_v1")

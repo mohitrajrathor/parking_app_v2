@@ -1,7 +1,7 @@
 # testing routes logic
 
 # import
-from flask import Blueprint
+from flask_smorest import Blueprint
 from flask_mail import Message
 from flask_jwt_extended import jwt_required
 from ..extensions import mail
