@@ -2,7 +2,7 @@
     <div id="home">
         <NavBar />
 
-        <div class=" container-xxl">
+        <div class=" container-xxl ">
             <!-- layout -->
             <div class="row p-2 rounded-4 m-1">
                 <div class=" col-lg-9 p-0">
@@ -14,7 +14,7 @@
                                 <div class="p-2 light-gray rounded-3">
                                     <small class=" text-muted fw-bold kaushan"><span class="text-primary"><i
                                                 class="bi bi-check-circle"></i></span> park easily</small>
-                                    <h1 class="brand-font fw-bold ms-5">Parkly</h1>
+                                    <h1 class="brand-font fw-bold text-center">Parkly</h1>
                                 </div>
 
                                 <div class="row p-2">
@@ -44,8 +44,8 @@
                                     </div>
                                 </div>
 
-                                <div class="p-2">
-                                    <h1>
+                                <div class="p-1">
+                                    <h1 class="brand-font">
                                         Urban parking made easy
                                     </h1>
                                 </div>
@@ -56,8 +56,11 @@
 
                             </div>
 
+                            <!-- map section -->
                             <div class=" col-lg-8">
-
+                                <div class="p-2" style="width: 100%; height: 100%;">
+                                    <LeafletMap />
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -77,6 +80,7 @@
 </template>
 <script>
 import Feedback from '../components/Feedback.vue';
+import LeafletMap from '../components/LeafletMap.vue';
 import NavBar from '../components/NavBar.vue';
 import Perks from '../components/Perks.vue';
 
@@ -85,7 +89,8 @@ export default {
     components: {
         NavBar,
         Feedback,
-        Perks
+        Perks,
+        LeafletMap
     }
 }
 </script>

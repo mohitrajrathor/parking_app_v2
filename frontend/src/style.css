@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Permanent+Marker&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
 
 
 :root {
@@ -31,6 +31,12 @@ h6 {
 
 .kaushan {
   font-family: "Kaushan Script", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.marker-font {
+  font-family: "Permanent Marker", cursive;
   font-weight: 400;
   font-style: normal;
 }

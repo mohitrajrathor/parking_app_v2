@@ -1,6 +1,6 @@
 <template>
     <div id="navbar">
-        <div class="mx-5">
+        <div class="mx-md-5">
             <div class="p-3 d-flex justify-content-between align-items-center">
                 <!-- brand -->
                 <div>
