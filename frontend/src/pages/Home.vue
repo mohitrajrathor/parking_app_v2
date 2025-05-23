@@ -69,13 +69,13 @@
                     <Perks />
                 </div>
 
-                <div class=" col-lg-3 p-0">
-                    <div class=" p-5 w-100 bg-success">
-                        right col
-                    </div>
+                <div class=" col-lg-3 p-2">
+                    <SideParkView />
                 </div>
             </div>
         </div>
+
+        <Footer></Footer>
     </div>
 </template>
 <script>
@@ -83,6 +83,8 @@ import Feedback from '../components/Feedback.vue';
 import LeafletMap from '../components/LeafletMap.vue';
 import NavBar from '../components/NavBar.vue';
 import Perks from '../components/Perks.vue';
+import SideParkView from '../components/SideParkView.vue';
+import Footer from '../components/Footer.vue';
 
 export default {
     name: "Home",
@@ -90,7 +92,9 @@ export default {
         NavBar,
         Feedback,
         Perks,
-        LeafletMap
+        LeafletMap,
+        SideParkView,
+        Footer
     }
 }
 </script>
