@@ -86,7 +86,7 @@
                                 <h5>Admin Section</h5>
                                 <router-link
                                     class="text-decoration-none text-light"
-                                    to="/auth/admin-login"
+                                    to="/admin"
                                     ><i class="bi bi-shield-check"></i> Admin
                                     Panel</router-link
                                 >

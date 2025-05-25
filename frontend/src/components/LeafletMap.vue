@@ -1,7 +1,7 @@
 <template>
   <div id="leafletMap">
     <h3>Explore parkings</h3>
-    <div id="map" class=" rounded-4" style="height: 500px;"></div>
+    <div id="map" class=" rounded-4 shadow-lg" style="height: 500px;"></div>
   </div>
 
 </template>

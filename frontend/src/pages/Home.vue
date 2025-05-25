@@ -11,9 +11,9 @@
                         <!-- upper div -->
                         <div class="row">
                             <div class=" col-lg-4">
+                                <p class="m-0 text-center fs-5 text-muted fw-bold kaushan"><span class="text-primary"><i
+                                            class="bi bi-check-circle-fill"></i></span> Quick, Relieble & Hassele free</p>
                                 <div class="p-2 light-gray rounded-3">
-                                    <small class=" text-muted fw-bold kaushan"><span class="text-primary"><i
-                                                class="bi bi-check-circle"></i></span> park easily</small>
                                     <h1 class="brand-font fw-bold text-center">Parkly</h1>
                                 </div>
 
@@ -58,9 +58,7 @@
 
                             <!-- map section -->
                             <div class=" col-lg-8">
-                                <div class="p-2" style="width: 100%; height: 100%;">
-                                    <LeafletMap />
-                                </div>
+                                <LeafletMap />
                             </div>
                         </div>
                     </div>

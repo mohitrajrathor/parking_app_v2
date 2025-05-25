@@ -120,8 +120,7 @@
                                             class="btn btn-outline-primary rounded-pill">
                                             <i class="bi bi-arrow-left"></i> Back
                                         </button>
-                                        <button @click="goToSecurityTab"
-                                            class="btn btn-outline-primary rounded-pill">
+                                        <button @click="goToSecurityTab" class="btn btn-outline-primary rounded-pill">
                                             Next <i class="bi bi-arrow-right"></i>
                                         </button>
 
@@ -149,6 +148,15 @@
                                         <label for="confirmPassword">Confirm Password</label>
                                         <small class="text-center w-100 d-block mt-2" v-html="passHelp"></small>
                                     </div>
+
+                                    <div class=" d-flex justify-content-center my-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="" id="T&C" required />
+                                            <label class="form-check-label" for="T&C"> Agree to Terms & Conditions
+                                            </label>
+                                        </div>
+                                    </div>
+
 
                                     <div v-html="securityTabError" class=" text-center">
                                     </div>

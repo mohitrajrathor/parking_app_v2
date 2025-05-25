@@ -19,6 +19,6 @@ export default {
 </script>
 <style scoped>
 .bg-custom {
-    background-image: linear-gradient(to right, #00167e, #005bcc, #0092d5, #00c296, #00eb15);
+    background-image: linear-gradient(to right, #0064ff, #00a0ff, #00c9ff, #00e8c2, #8dff8c);
 }
 </style>

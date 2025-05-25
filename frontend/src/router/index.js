@@ -4,6 +4,11 @@ import Auth from "../pages/Auth.vue";
 import Login from "../components/Login.vue";
 import Signup from "../components/Signup.vue"
 import AdminLogin from "../components/AdminLogin.vue"
+import Admin from "../pages/Admin.vue";
+import ParkingManager from "../components/ParkingManager.vue"
+import UserManager from "../components/UserManager.vue";
+import AdminDashboard from "../components/AdminDashboard.vue"
+import NotFound from "../components/NotFound.vue";
 
 
 const routes = [
@@ -15,7 +20,7 @@ const routes = [
     {
         path: '/auth',
         name: "Auth",
-        redirect: "Login",
+        redirect: "/auth/login",
         component: Auth,
         children: [
             {
@@ -34,6 +39,33 @@ const routes = [
                 component: AdminLogin,
             },
         ]
+    },
+    {
+        path: '/admin',
+        name: "Admin",
+        component: Admin,
+        redirect: "/admin/dashboard",
+        children: [
+            {
+                path: 'dashboard',
+                name: "AdminDashboard",
+                component: AdminDashboard,
+            },
+            {
+                path: 'user',
+                name: "User",
+                component: UserManager,
+            },{
+                path: 'parkings',
+                name: "Parkings",
+                component: ParkingManager,
+            },
+        ]
+    },
+    {
+        path: '/:pathMatch(.*)*',
+        name: "Notfound",
+        component: NotFound,
     }
 ]
 

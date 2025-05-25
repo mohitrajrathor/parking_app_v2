@@ -4,7 +4,7 @@
             <div class="p-3 d-flex justify-content-between align-items-center">
                 <!-- brand -->
                 <div>
-                    <h2 class="fw-bold brand-font">Parkly</h2>
+                    <h2 class="fw-bold brand-font"><router-link to="/" class=" text-decoration-none text-black" >Parkly</router-link></h2>
                 </div>
 
                 <!-- auth links -->
