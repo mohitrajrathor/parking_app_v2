@@ -1,5 +1,5 @@
 <template>
-    <div id="adminDashboard" class=" light-gray">
+    <div id="adminDashboard" class=" bg-secondary-subtle">
         <div class="container-fluid">
             <div class="row">
                 <!-- Sidebar (visible on lg and up) -->
@@ -30,7 +30,7 @@
                 </nav>
 
                 <!-- Main content -->
-                <main class="col-lg-10 p-4 overflow-auto vh-100">
+                <main class="col-lg-10 overflow-auto vh-100">
                     <NavBar />
                     <div class="container">
                         <router-view></router-view>

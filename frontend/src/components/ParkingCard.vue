@@ -1,5 +1,5 @@
 <template>
-    <div id="ParkingCard" class="mt-3 border-bottom border-2 p-2 pb-2"> 
+    <div id="ParkingCard" class="bg-light rounded-4 text-dark border-bottom border-2 p-2 pb-2"> 
         <div class="mx-1 d-flex justify-content-end align-items-center">
             <div class=" rounded-pill badge bg-success text-light">
                 Available
