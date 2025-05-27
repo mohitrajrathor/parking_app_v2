@@ -9,6 +9,12 @@ import ParkingManager from "../components/ParkingManager.vue"
 import UserManager from "../components/UserManager.vue";
 import AdminDashboard from "../components/AdminDashboard.vue"
 import NotFound from "../components/NotFound.vue";
+import User from "../pages/User.vue";
+import UserDashboard from "../components/UserDashboard.vue";
+import UserProfile from "../components/UserProfile.vue";
+import UserComplaints from "../components/UserComplaints.vue";
+
+
 
 
 const routes = [
@@ -52,13 +58,36 @@ const routes = [
                 component: AdminDashboard,
             },
             {
-                path: 'user',
-                name: "User",
+                path: 'user-manager',
+                name: "UserManager",
                 component: UserManager,
             },{
                 path: 'parkings',
                 name: "Parkings",
                 component: ParkingManager,
+            },
+        ]
+    },
+    {
+        path: "/user",
+        name: "User",
+        component: User,
+        redirect: "/user/dashboard",
+        children: [
+            {
+                path: 'dashboard',
+                name: "UserDashboard",
+                component: UserDashboard,
+            },
+            {
+                path: 'profile',
+                name: "Profile",
+                component: UserProfile,
+            },
+            {
+                path: 'complaints',
+                name: "UserComplaints",
+                component: UserComplaints,
             },
         ]
     },
