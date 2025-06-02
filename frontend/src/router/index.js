@@ -12,8 +12,7 @@ import NotFound from "../components/NotFound.vue";
 import User from "../pages/User.vue";
 import UserDashboard from "../components/UserDashboard.vue";
 import UserProfile from "../components/UserProfile.vue";
-import UserComplaints from "../components/UserComplaints.vue";
-
+import UserSupport from "../components/UserSupport.vue";
 
 
 
@@ -85,9 +84,9 @@ const routes = [
                 component: UserProfile,
             },
             {
-                path: 'complaints',
-                name: "UserComplaints",
-                component: UserComplaints,
+                path: 'support',
+                name: "UserSupport",
+                component: UserSupport,
             },
         ]
     },

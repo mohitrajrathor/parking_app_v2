@@ -20,7 +20,7 @@
                                 </router-link>
                             </li>
                             <li class="nav-item">
-                                <router-link to="/user/complaints" class="nav-link text-light fw-bold fs-6" href="#">
+                                <router-link to="/user/support" class="nav-link text-light fw-bold fs-6" href="#">
                                     <span class="nav-icon"><i class="bi bi-headset"></i></span>
                                     Support
                                 </router-link>
@@ -50,7 +50,7 @@
                     <div class="nav-icon"><i class="bi bi-person-fill"></i></div>
                     <small>Profile</small>
                 </router-link>
-                <router-link to="/user/complaints" class="nav-link">
+                <router-link to="/user/support" class="nav-link">
                     <div class="nav-icon"><i class="bi bi-headset"></i></div>
                     <small>Support</small>
                 </router-link>

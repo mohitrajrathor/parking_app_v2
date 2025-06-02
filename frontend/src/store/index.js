@@ -1,37 +1,43 @@
 import { createStore } from "vuex";
 
 const store = createStore({
-    state: {
-        token: localStorage.getItem("token") || null,
-        refreshToken: localStorage.getItem("refreshToken") || null,
+  state: {
+    token: localStorage.getItem("accessToken") || null,
+    refreshToken: localStorage.getItem("refreshToken") || null,
+  },
+  mutations: {
+    setAccessToken(state, token) {
+      state.token = token;
+      localStorage.setItem("accessToken", token);
     },
-    mutations: {
-        setAccessToken(state, token) {
-            state.token = localStorage.setItem("accessToken", token);
-        },
-        setRefreshToken(state, token) {
-            state.refreshToken = localStorage.setItem("refreshToken", token);
-        },
-        clearAuthData(state) {
-            state.accessToken = null;
-            state.refreshToken = null;
-
-            // removing localstorage
-            localStorage.clear();
-        },
+    setRefreshToken(state, token) {
+      state.refreshToken = token;
+      localStorage.setItem("refreshToken", token);
     },
-    actions: {
-        login({ commit }, { token, refreshToken }) {
-            commit("setToken", token);
-            commit("setRefreshToken", refreshToken);
-        },
-        logout({ commit }) {
-            commit("clearAuthData");
-        },
+    clearAuthData(state) {
+      state.token = null;
+      state.refreshToken = null;
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
     },
-    getters: {
-        isAuthenticated: (state) => !!state.token,
+  },
+  actions: {
+    login({ commit }, { token, refreshToken }) {
+      commit("setAccessToken", token);
+      commit("setRefreshToken", refreshToken);
     },
+    setToken({ commit }, token) {
+      commit("setAccessToken", token);
+    },
+    logout({ commit }) {
+      commit("clearAuthData");
+    },
+  },
+  getters: {
+    getToken: (state) => state.token,
+    getRefreshToken: (state) => state.refreshToken,
+    isAuthenticated: (state) => !!state.token,
+  },
 });
 
 export default store;

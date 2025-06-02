@@ -1,11 +1,13 @@
-<script setup>
-</script>
-
 <template>
   <div id="main">
+    <Notification />
     <router-view></router-view>
   </div>
 </template>
+<script setup>
 
-<style scoped>
-</style>
+import Notification from './components/Notification.vue';
+
+</script>
+
+<style scoped></style>
