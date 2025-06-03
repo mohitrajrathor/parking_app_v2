@@ -28,7 +28,7 @@ def create_app():
 
     ####### models init #######
     with app.app_context():
-        from .models import create_models, populate
+        from .utils import create_models, populate
 
         create_models()
         populate()

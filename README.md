@@ -1,3 +1,3 @@
 # MAD 2 project
 
-### Milestones 
+### Milestone 0 completed
