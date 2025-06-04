@@ -3,7 +3,10 @@
         <div class="bg-light rounded-4">
             <div class="p-4">
                 <h3 class=" text-center mb-3">Login</h3>
-                <form @submit.prevent="">
+                <p v-if="errorMsg" class="text-center text-danger fw-bold">
+                    {{ errorMsg }}
+                </p>
+                <form @submit.prevent="handleLogin">
                     <div>
                         <div class="form-floating mb-3">
                             <input type="email" required class="form-control" id="email" name="email" v-model="email" />
@@ -43,8 +46,64 @@ export default {
         return {
             email: "",
             password: "",
+            isLoading: false,
+            errorMsg: "",
         }
     },
+    inject: ['notify'],
+    methods: {
+        async handleLogin() {
+            try {
+
+                this.isLoading = true;
+
+                if (!this.email & !this.password) {
+                    this.notify({
+                        message: 'First fill all required fields',
+                        title: 'Warning',
+                        icon: 'https://cdn-icons-png.flaticon.com/512/4201/4201973.png',
+                        duration: 5000
+                    })
+                }
+
+                const response = await fetch(`http://127.0.0.1:1234/api_v1/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: this.email,
+                        password: this.password,
+                    })
+                });
+                if (!response.ok) throw new Error("failed to login!");
+
+                const data = await response.json();
+
+                this.$store.dispatch("login", {
+                    role: data.role,
+                    token: data.token,
+                    refreshToken: data.refresh_token
+                });
+
+                this.notify({
+                    message: 'You are successfully logged in as user!',
+                    title: 'Login Success',
+                    icon: 'https://cdn-icons-png.flaticon.com/512/190/190411.png',
+                    duration: 5000
+                })
+
+                this.$router.push({ name: "User" });
+
+            } catch (e) {
+                console.error(e.message)
+                this.errorMsg = e.message;
+
+            } finally {
+                this.isLoading = false;
+            }
+        },
+    }
 }
 </script>
 <style></style>

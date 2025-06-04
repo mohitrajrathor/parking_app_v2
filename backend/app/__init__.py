@@ -5,6 +5,7 @@ from flask import Flask, render_template, send_from_directory
 import os
 from .configs import Config
 from .extensions import db, migrate, jwt, mail, cors, celery_init_app, api
+from jinja2 import FileSystemLoader
 
 
 def create_app():
@@ -13,6 +14,10 @@ def create_app():
         static_folder="../../frontend/dist/",
         template_folder="../../frontend/dist/",
     )
+
+    ####### Adding jinja templates path #######
+    custom_template_dir = os.path.join(app.root_path, "templates")
+    app.jinja_loader = FileSystemLoader(custom_template_dir)
 
     ####### configs ########
     app.config.from_object(Config)
@@ -50,5 +55,9 @@ def create_app():
             return send_from_directory(app.static_folder, path)
         else:
             return render_template("index.html")
+
+    @app.errorhandler(500)
+    def internal_error(error):
+        return {"message": "Internal Server Error"}, 500
 
     return app

@@ -5,6 +5,8 @@ from flask_smorest import Blueprint
 from flask_mail import Message
 from flask_jwt_extended import jwt_required
 from ..extensions import mail
+from flask import render_template, current_app
+import os
 
 
 test_bp = Blueprint("test", __name__, url_prefix="/test")
@@ -20,6 +22,10 @@ def test():
 def test_email():
     msg = Message("Test Subject", recipients=["test@example.com"])
     msg.body = "This is a test email sent to the local aiosmtpd server."
+    msg.html = render_template(
+        "confirmation_mail",
+        confirmation_link="link",
+    )
     msg.sender = "admin@parkly.com"
     mail.send(msg)
     return "Email sent to local SMTP server!"

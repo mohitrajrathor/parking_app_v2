@@ -39,6 +39,7 @@ class User(db.Model):
     address = db.Column(db.String, nullable=False)
     pincode = db.Column(db.String, nullable=False)
     phone = db.Column(db.String, nullable=False)
+    email_confirmed = db.Column(db.Boolean, nullable=False, default=False)
     join_time = db.Column(
         db.DateTime, nullable=False, default=dt.now(ZoneInfo("Asia/Kolkata"))
     )
