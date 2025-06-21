@@ -82,6 +82,24 @@ class Parking(db.Model):
     reservations = db.relationship("Reservation", backref="parking", lazy=True)
     reviews = db.relationship("Review", backref="parking", lazy=True)
 
+    def __repr__(self):
+        return f"<Parking lat-{self.lat} | long-{self.long}>"
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "address": self.address,
+            "pincode": self.pincode,
+            "phone": self.phone,
+            "lat": self.lat,
+            "long": self.long,
+            "fee": self.fee,
+            "create_time": self.create_time,
+            "slots_num": self.slots_num,
+            "slots": [slot.to_dict() for slot in self.slots],
+        }
+
 
 class Slot(db.Model):
     __tablename__ = "slots"
@@ -97,6 +115,14 @@ class Slot(db.Model):
 
     def __repr__(self):
         return f"<Slot {self.serial_id} - Occupied: {self.is_occupied}>"
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "parking_id": self.parking_id,
+            "serial_id": self.serial_id,
+            "is_occupied": self.is_occupied,
+        }
 
 
 class Reservation(db.Model):

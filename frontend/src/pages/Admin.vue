@@ -5,7 +5,10 @@
                 <!-- Sidebar (visible on lg and up) -->
                 <nav class="col-lg-2 d-none d-lg-flex flex-column vh-100 pt-2 px-2">
                     <div class="mt-1 mx-2 d-lg-flex flex-column vh-100 side-bg-custom rounded-top-5 p-3">
+
                         <h4 class="text-center text-light fw-bold my-3">Admin Dashboard</h4>
+
+
                         <ul class="nav nav-pills flex-column">
                             <li class="nav-item">
                                 <router-link to="/admin/dashboard" class="nav-link text-light fw-bold fs-6" href="#">
@@ -26,6 +29,21 @@
                                 </router-link>
                             </li>
                         </ul>
+
+                        <div class="p-3 mt-auto bg-light text-black rounded-4">
+                            <h5 class="text-center">
+                                Quick Action
+                            </h5>
+                            <hr>
+                            <ul class="nav nav-pills flex-column text-black">
+                                <li class="nav-item">
+                                    <router-link to="/admin/add-parking" class="nav-link fw-bold" href="#">
+                                        <span class="nav-icon"><i class="bi bi-plus-circle"></i></span>
+                                        Add Parking
+                                    </router-link>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </nav>
 

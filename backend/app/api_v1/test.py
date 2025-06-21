@@ -23,7 +23,7 @@ def test_email():
     msg = Message("Test Subject", recipients=["test@example.com"])
     msg.body = "This is a test email sent to the local aiosmtpd server."
     msg.html = render_template(
-        "confirmation_mail",
+        "mail_templates/confirmation_mail.html",
         confirmation_link="link",
     )
     msg.sender = "admin@parkly.com"

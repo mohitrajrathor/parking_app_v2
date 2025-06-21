@@ -8,7 +8,12 @@
                 </div>
 
                 <!-- auth links -->
-                <div>
+                <div v-if="$store.getters.isAuthenticated">
+                    <button @click="logout" class="btn btn-dark rounded-pill mx-1">
+                        Logout
+                    </button>
+                </div>
+                <div v-else>
                     <button @click="$router.push('/auth/login')" class="btn btn-outline-dark rounded-pill mx-1">
                         Login
                     </button>
@@ -23,6 +28,23 @@
 <script>
 export default {
     name: "NavBar",
+    inject: ['notify'],
+    methods: {
+        logout() {
+            this.$store.dispatch("logout");
+
+            this.notify(
+                {
+                    message: "Logging out, please login again!",
+                    title: "Logout",
+                    icon: null,
+                    duration: 5000
+                }
+            );
+
+            this.$router.push('/');
+        }
+    }
 }
 </script>
 <style></style>

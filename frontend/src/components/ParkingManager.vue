@@ -1,9 +1,16 @@
 <template>
     <div class="parkingManager">
 
-        <h2>
-            Parking Managment
-        </h2>
+        <div class=" d-flex justify-content-between align-items-center">
+            <h2>
+                Parking Managment
+            </h2>
+            <div class="">
+                <button class="btn btn-primary rounded-pill" @click="$router.push({ name: 'CreateParking' })">
+                    <i class="bi bi-plus-circle"></i> New Parking
+                </button>
+            </div>
+        </div>
 
         <!-- analytics -->
         <div class="p-2 bg-light rounded-3 my-3">

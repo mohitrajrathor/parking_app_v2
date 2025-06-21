@@ -1,5 +1,5 @@
 <template>
-  <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999">
+  <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
     <div
       v-for="(toast, index) in toasts"
       :key="index"
@@ -34,6 +34,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'Notification',
   data() {
@@ -44,6 +46,19 @@ export default {
   created() {
     this.$.appContext.provides.notify = this.notify
   },
+
+  computed: {
+    ...mapGetters['isAuthenticated']
+  },
+
+  watch: {
+    isAuthenticated(newAuth, prevAuth) {
+      if (!newAuth) {
+        this.notify({message: 'Logging out, please login again!', title: "Logout", icon: null, duration: 5000});
+      }
+    }
+  },
+
   methods: {
     notify({ message, title = 'Notification', icon = null, duration = 3000 }) {
       const toast = { message, title, icon }

@@ -13,7 +13,8 @@ import User from "../pages/User.vue";
 import UserDashboard from "../components/UserDashboard.vue";
 import UserProfile from "../components/UserProfile.vue";
 import UserSupport from "../components/UserSupport.vue";
-
+import store from "../store";
+import AddParking from "../components/AddParking.vue";
 
 
 const routes = [
@@ -50,6 +51,10 @@ const routes = [
         name: "Admin",
         component: Admin,
         redirect: "/admin/dashboard",
+        meta: {
+            authRequired: true,
+            role: "admin",
+        },
         children: [
             {
                 path: 'dashboard',
@@ -60,11 +65,19 @@ const routes = [
                 path: 'user-manager',
                 name: "UserManager",
                 component: UserManager,
-            },{
+            },
+            {
                 path: 'parkings',
                 name: "Parkings",
                 component: ParkingManager,
             },
+
+            {
+                path: 'add-parking',
+                name: "AddParking",
+                component: AddParking,
+            },
+
         ]
     },
     {
@@ -72,6 +85,10 @@ const routes = [
         name: "User",
         component: User,
         redirect: "/user/dashboard",
+        meta: {
+            authRequired: true,
+            role: "user",
+        },
         children: [
             {
                 path: 'dashboard',
@@ -103,7 +120,28 @@ const router = createRouter({
 })
 
 
-// router.beforeEach()     // TODO: update after create store and api setup.
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = store.getters.isAuthenticated;
+  const userRole = store.getters.role;
+
+  if (to.meta.authRequired) {
+    if (!isAuthenticated) {
+        if (to.meta.role == 'admin') {
+            return next({ name: "AdminLogin" });
+        }
+    else return next({ name: "Login" });
+    }
+
+    if (to.meta.role && to.meta.role !== userRole) {
+      return next({ name: "Home" });
+    }
+
+    return next();
+  }
+
+
+  return next();
+});   
 
 
 export default router

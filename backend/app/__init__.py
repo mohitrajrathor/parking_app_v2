@@ -15,10 +15,6 @@ def create_app():
         template_folder="../../frontend/dist/",
     )
 
-    ####### Adding jinja templates path #######
-    custom_template_dir = os.path.join(app.root_path, "templates")
-    app.jinja_loader = FileSystemLoader(custom_template_dir)
-
     ####### configs ########
     app.config.from_object(Config)
 
