@@ -1,28 +1,44 @@
 <template>
-    <div id="ParkingCard" class="bg-light rounded-4 text-dark border-bottom border-2 p-2 pb-2"> 
-        <div class="mx-1 d-flex justify-content-end align-items-center">
-            <div class=" rounded-pill badge bg-success text-light">
-                Available
-            </div>
-            <div class="mx-1 rounded-pill badge bg-primary text-light">
-                Pick Ready
+    <div id="parkingCard">
+        <div class="card card-cover h-100 overflow-hidden text-bg-dark rounded-5 shadow-lg">
+            <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
+                <div class=" d-flex justify-content-between">
+                    <div class="px-2 rounded-pill lime-green text-success">
+                        ₹ {{ parking.fee }}
+                    </div>
+                    <div>
+                        <router-link :to="`/parking?id=${parking.id}`">
+                            <span class="badge text-bg-primary rounded-pill p-2">visit <i
+                                    class="bi bi-box-arrow-up-right"></i></span>
+                        </router-link>
+                    </div>
+                </div>
+                <h3 class="pt-5 mt-5 mb-4 display-6 lh-1 fw-bold">{{ parking.name }}</h3>
+                <ul class="d-flex list-unstyled mt-auto">
+                    <li class="d-flex align-items-center me-3"> <svg class="bi me-2" width="1em" height="1em" role="img"
+                            aria-label="Location">
+                            <use xlink:href="#geo-fill"></use>
+                        </svg> <small>{{ parking.address }}</small> </li>
+                    <li class="d-flex align-items-center"> <svg class="bi me-2" width="1em" height="1em" role="img"
+                            aria-label="Duration">
+
+                        </svg><i class="bi bi-calendar-week"></i> <small>{{ parking.slots_num }}</small> </li>
+                </ul>
             </div>
         </div>
-
-        <h4 class="m-2 fw-semibold">
-            XYZ Parking
-        </h4>
-        <p class=" text-end">
-            Cost <span class="text-success fw-bold"><i class="bi bi-currency-rupee"></i>400</span>
-        </p>
-        <button class="btn btn-outline-dark rounded-pill w-100">Book Slot <i class="bi bi-caret-right-fill"></i></button>
     </div>
 </template>
 <script>
 export default {
-    name: "ParkingCard"
+    name: "ParkingCard",
+    props: {
+        parking: {
+            type: Object,
+            required: true,
+        },
+    }
 }
 </script>
 <style lang="">
-    
+
 </style>

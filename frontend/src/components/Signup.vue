@@ -40,7 +40,7 @@
                                         required />
                                     <label for="name">Name</label>
                                     <div v-if="personalTabError.name" class="text-danger mt-1">{{ personalTabError.name
-                                        }}
+                                    }}
                                     </div>
                                 </div>
 
@@ -87,7 +87,8 @@
                                         <label for="email">Email</label>
                                         <small id="helpId" class="form-text text-muted">Email will be used for
                                             login.</small>
-                                        <div v-if="contactTabError.email" class="text-danger mt-1">{{ contactTabError.email
+                                        <div v-if="contactTabError.email" class="text-danger mt-1">{{
+                                            contactTabError.email
                                             }}</div>
                                     </div>
 
@@ -121,7 +122,8 @@
                                     </div>
 
                                     <div class="d-flex justify-content-between mx-4">
-                                        <button @click="personalTab.click()" class="btn btn-outline-primary rounded-pill">
+                                        <button @click="personalTab.click()"
+                                            class="btn btn-outline-primary rounded-pill">
                                             <i class="bi bi-arrow-left"></i> Back
                                         </button>
                                         <button @click="goToSecurityTab" class="btn btn-outline-primary rounded-pill">
@@ -168,10 +170,12 @@
                                     </div>
 
                                     <div class="d-flex justify-content-between mx-4">
-                                        <button @click="contactTab.click()" class="btn btn-outline-primary rounded-pill">
+                                        <button @click="contactTab.click()"
+                                            class="btn btn-outline-primary rounded-pill">
                                             <i class="bi bi-arrow-left"></i> Back
                                         </button>
-                                        <button type="submit" class="btn btn-primary rounded-pill" :disabled="isLoading">
+                                        <button type="submit" class="btn btn-primary rounded-pill"
+                                            :disabled="isLoading">
                                             {{ isLoading ? 'Signing up...' : 'Signup' }}
                                         </button>
                                     </div>
@@ -197,8 +201,8 @@
 
 <script setup>
 import { ref, computed, reactive, inject } from 'vue';
-import { useStore } from 'vuex'; 
-import { useRouter } from 'vue-router'; 
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
 
 
 const store = useStore();
@@ -248,7 +252,7 @@ const securityTabError = reactive({
 
 // Computed property for password help message styling
 const passHelpClass = computed(() => {
-    return passHelp.value.includes('matched') ? 'text-success' : 'text-danger';
+    return passHelp.value.includes('not') ? 'text-danger' : 'text-success';
 });
 
 // --- Methods ---
@@ -415,8 +419,14 @@ const handleSubmit = async () => {
         });
 
         if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || "Failed to signup!");
+            const data = await response.json();
+            notify({
+                message: data.message,
+                title: 'Warning',
+                icon: 'https://cdn-icons-png.flaticon.com/512/1680/1680012.png',
+                duration: 5000
+            })
+            throw new Error(data.message || "Failed to Signup !");
         }
 
         const data = await response.json();
@@ -456,13 +466,6 @@ const handleSubmit = async () => {
     } catch (e) {
         console.error("Signup error:", e.message);
         errorTag.value = `<span class="text-danger fw-bold">Error: ${e.message}</span>`;
-        
-        notify({
-                message: 'unable to signup',
-                title: 'Signup failed',
-                icon: 'https://cdn-icons-png.flaticon.com/512/190/190411.png',
-                duration: 5000
-            });
 
     } finally {
         isLoading.value = false;

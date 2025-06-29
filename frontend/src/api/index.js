@@ -1,7 +1,7 @@
 // axios.js
 import axios from 'axios'
-import store from './store'
-import router from './router'
+import store from '../store'
+import router from '../router'
 
 const api = axios.create({
   baseURL: 'http://localhost:1234',
@@ -56,16 +56,16 @@ api.interceptors.response.use(
       const refreshToken = store.getters.getRefreshToken
       if (!refreshToken) {
         store.dispatch('logout')
-        router.push({ name: 'Login' })
+        router.push({ name: 'Home' })
         return Promise.reject(error)
       }
 
       try {
-        const res = await axios.post('https://your-api.com/auth/refresh', {
+        const res = await axios.post('/api_v1/auth/refresh', {
           refreshToken: refreshToken
         })
 
-        const newToken = res.data.accessToken
+        const newToken = await res.data.accessToken;
         store.dispatch('setToken', newToken)
 
         api.defaults.headers.common['Authorization'] = 'Bearer ' + newToken
@@ -76,7 +76,7 @@ api.interceptors.response.use(
       } catch (err) {
         processQueue(err, null)
         store.dispatch('logout')
-        router.push({ name: 'Login' })
+        router.push({ name: 'Home' })
         return Promise.reject(err)
       } finally {
         isRefreshing = false

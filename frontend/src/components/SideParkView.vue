@@ -76,11 +76,7 @@
             </div>
 
             <div class="col-lg overflow-auto" style="height: 360px;">
-                <ParkingCard />
-                <ParkingCard />
-                <ParkingCard />
-                <ParkingCard />
-                <ParkingCard />
+                <ParkingCard v-for="parking in parkings" :key="parking.id" :parking="parking" />
             </div>
 
         </div>
@@ -88,6 +84,7 @@
 </template>
 <script>
 import ParkingCard from './ParkingCard.vue';
+import { mapActions, mapGetters } from 'vuex';
 
 export default {
     name: "SideParkView",
@@ -103,8 +100,21 @@ export default {
             inTime: 20,
         }
     },
+
+    computed: {
+        ...mapGetters("parking", ['page', 'total', 'parkings'])
+    },
+
+    methods: {
+        ...mapActions("parking", ['fetchParkings'])
+    },
+    
+    mounted() {
+        this.fetchParkings();
+    }, 
+
     components: {
-        ParkingCard
+        ParkingCard,
     }
 
 }

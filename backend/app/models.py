@@ -67,8 +67,8 @@ class Parking(db.Model):
     lat = db.Column(db.Float, nullable=False)
     long = db.Column(db.Float, nullable=False)
     fee = db.Column(db.Float, nullable=False)
-    create_time = db.Column(
-        db.DateTime, nullable=False, default=dt.now(ZoneInfo("Asia/Kolkata"))
+    create_time: dt = db.Column(
+        db.DateTime, nullable=False, default=dt.now(tz=ZoneInfo("Asia/Kolkata"))
     )
     slots_num = db.Column(db.Integer, nullable=False)
 
@@ -95,9 +95,14 @@ class Parking(db.Model):
             "lat": self.lat,
             "long": self.long,
             "fee": self.fee,
-            "create_time": self.create_time,
+            "create_time": self.create_time.strftime("%d-%m-%yT%H:%M%S"),
             "slots_num": self.slots_num,
             "slots": [slot.to_dict() for slot in self.slots],
+            "booked": Slot.query.filter_by(
+                parking_id=self.id, is_occupied=True
+            ).count(),
+            "reviews_count": Review.query.filter_by(parking_id=self.id).count(),
+            "reviews": [rv.to_dict() for rv in self.reviews],
         }
 
 
@@ -132,8 +137,12 @@ class Reservation(db.Model):
         db.Integer, primary_key=True, autoincrement=True, nullable=False, unique=True
     )
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    parking_id = db.Column(db.Integer, db.ForeignKey("parkings.id"), nullable=False)
-    slot_id = db.Column(db.Integer, db.ForeignKey("slots.id"), nullable=False)
+    parking_id = db.Column(
+        db.Integer, db.ForeignKey("parkings.id", ondelete="SET NULL"), nullable=True
+    )
+    slot_id = db.Column(
+        db.Integer, db.ForeignKey("slots.id", ondelete="SET NULL"), nullable=True
+    )
     start_time = db.Column(
         db.DateTime, nullable=False, default=dt.now(ZoneInfo("Asia/Kolkata"))
     )
@@ -153,14 +162,33 @@ class Review(db.Model):
         db.Integer, primary_key=True, autoincrement=True, nullable=False, unique=True
     )
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    parking_id = db.Column(db.Integer, db.ForeignKey("parkings.id"), nullable=False)
+    parking_id = db.Column(
+        db.Integer, db.ForeignKey("parkings.id", ondelete="SET NULL"), nullable=True
+    )
     feedback = db.Column(db.Text, nullable=False)
     rating = db.Column(db.Integer, nullable=False)
+    create_time = db.Column(
+        db.DateTime, nullable=False, default=dt.now(ZoneInfo("Asia/Kolkata"))
+    )
 
     user = db.relationship("User", backref="reviews", lazy=True)
 
     def __repr__(self):
         return f"<Review {self.id} - User {self.user_id}, Parking {self.parking_id}, Rating {self.rating}>"
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "user": {
+                "id": self.user.id,
+                "name": self.user.name,
+                "email": self.user.email,
+            },
+            "parking_id": self.parking_id,
+            "feedback": self.feedback,
+            "rating": self.rating,
+            "create_at": self.create_time.strftime("%d-%m-%yT%H:%M%S"),
+        }
 
 
 class Payment(db.Model):
@@ -170,8 +198,10 @@ class Payment(db.Model):
         db.Integer, primary_key=True, autoincrement=True, nullable=False, unique=True
     )
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    parking_id = db.Column(db.Integer, db.ForeignKey("parkings.id"), nullable=False)
-    reserve_id = db.Column(db.Integer, db.ForeignKey("reservations.id"), nullable=False)
+    parking_id = db.Column(
+        db.Integer, db.ForeignKey("parkings.id", ondelete="SET NULL"), nullable=True
+    )
+    reserve_id = db.Column(db.Integer, db.ForeignKey("reservations.id"), nullable=True)
     hour_used = db.Column(db.Integer, nullable=False)
     fee = db.Column(db.Float, nullable=False)
     cost = db.Column(db.Float, nullable=False)

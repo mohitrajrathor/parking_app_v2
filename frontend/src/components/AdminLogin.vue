@@ -79,14 +79,26 @@ export default {
                 const response = await fetch(`http://127.0.0.1:1234/api_v1/auth/admin-login`, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'withCredentials': true,
                     },
                     body: JSON.stringify({
                         username: this.username,
                         password: this.password,
                     })
                 });
-                if (!response.ok) throw new Error("failed to login!");
+                
+                if (!response.ok) {
+                    const data = await response.json();
+                    this.notify({
+                        message: data.message,
+                        title: 'Warning',
+                        icon: 'https://cdn-icons-png.flaticon.com/512/1680/1680012.png',
+                        duration: 5000
+                    })
+                    throw new Error(data.message || "Failed to login!");
+
+                }
 
                 const data = await response.json();
 

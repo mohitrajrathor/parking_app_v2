@@ -12,7 +12,8 @@
                         <div class="row">
                             <div class=" col-lg-4">
                                 <p class="m-0 text-center fs-5 text-muted fw-bold kaushan"><span class="text-primary"><i
-                                            class="bi bi-check-circle-fill"></i></span> Quick, Relieble & Hassele free</p>
+                                            class="bi bi-check-circle-fill"></i></span> Quick, Relieble & Hassele free
+                                </p>
                                 <div class="p-2 light-gray rounded-3">
                                     <h1 class="brand-font fw-bold text-center">Parkly</h1>
                                 </div>
@@ -85,6 +86,7 @@ import Perks from '../components/Perks.vue';
 import SideParkView from '../components/SideParkView.vue';
 import Footer from '../components/Footer.vue';
 import SearchBar from '../components/SearchBar.vue';
+import { isAxiosError } from 'axios';
 
 export default {
     name: "Home",
@@ -96,7 +98,7 @@ export default {
         SideParkView,
         Footer,
         SearchBar
-    }
+    }, 
 }
 </script>
 <style></style>

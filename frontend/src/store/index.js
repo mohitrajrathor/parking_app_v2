@@ -1,4 +1,6 @@
 import { createStore } from "vuex";
+import parking from "./parking";
+
 
 const store = createStore({
   state: {
@@ -99,6 +101,11 @@ const store = createStore({
     getPosition: (state) => state.position,
     getChoosenPos: (state) => state.choosenPos,
   },
+
+  modules: {
+    parking
+  }
+
 });
 
 export default store;

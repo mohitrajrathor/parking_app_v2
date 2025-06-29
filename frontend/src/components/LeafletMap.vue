@@ -1,5 +1,5 @@
 <template>
-  <div id="leafletMap">
+  <div id="leafletMap" class=" text-black">
     <div id="map" class="rounded-4" style="height: 500px;"></div>
   </div>
 </template>
@@ -9,12 +9,17 @@ import { onMounted, watch, computed } from 'vue';
 import L from 'leaflet';
 import store from '../store';
 
+const props = defineProps({
+  parkingToShow: { type: Object }
+})
+
 const position = computed(() => store.state.position);
 const choosenPos = computed(() => store.state.choosenPos);
 
 let map;
 let currentMarker = null;
 let chosenMarker = null;
+let parkingMarker = null;
 
 onMounted(() => {
   map = L.map('map');
@@ -31,6 +36,51 @@ onMounted(() => {
     popupAnchor: [0, -35], // where popup opens relative to the icon
   });
 
+
+  const parkingIcon = L.icon({
+    iconUrl: 'https://cdn-icons-png.flaticon.com/512/421/421836.png', // parking icon
+    iconSize: [40, 40], // width, height
+    iconAnchor: [20, 40], // where the icon "points"
+    popupAnchor: [0, -35], // where popup opens relative to the icon
+  });
+
+  // Function to update parking marker
+  const updateParkingMarker = () => {
+    if (props.parkingToShow?.lat && props.parkingToShow?.long) {
+      const lat = parseFloat(props.parkingToShow.lat);
+      const lng = parseFloat(props.parkingToShow.long);
+
+      // Remove existing parking marker
+      if (parkingMarker) {
+        map.removeLayer(parkingMarker);
+      }
+
+      // Add new parking marker
+      parkingMarker = L.marker([lat, lng], { icon: parkingIcon })
+        .addTo(map)
+        .bindPopup(`${props.parkingToShow.name}`)
+        .bindTooltip(`${props.parkingToShow.name}`, {
+          permanent: true,
+          direction: "bottom",
+          offset: [0, -5],
+          className: "leaflet-tooltip-own"
+        })
+        // instead bind popup use something that shows the name with out clicking on it
+        .openPopup();
+
+      map.setView([lat, lng], 16);
+    }
+  };
+
+  // Initial parking marker setup
+  updateParkingMarker();
+
+  // Watch for parkingToShow changes
+  watch(() => props.parkingToShow, (newParking) => {
+    if (newParking?.lat && newParking?.long) {
+      updateParkingMarker();
+    }
+  }, { deep: true });
 
   // Watch current position
   watch(position, (new_) => {
@@ -56,7 +106,7 @@ onMounted(() => {
       map.removeLayer(chosenMarker);
     }
 
-    chosenMarker = L.marker([new_.lat, new_.long], {icon: customIcon})
+    chosenMarker = L.marker([new_.lat, new_.long], { icon: customIcon })
       .addTo(map)
       .bindPopup(`Your chosen position:<br>${new_.lat.toFixed(5)}, ${new_.long.toFixed(5)}`)
       .openPopup();

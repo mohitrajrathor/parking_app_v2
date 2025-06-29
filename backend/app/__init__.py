@@ -5,7 +5,6 @@ from flask import Flask, render_template, send_from_directory
 import os
 from .configs import Config
 from .extensions import db, migrate, jwt, mail, cors, celery_init_app, api
-from jinja2 import FileSystemLoader
 
 
 def create_app():
@@ -24,7 +23,12 @@ def create_app():
     migrate.init_app(app=app, db=db)
     jwt.init_app(app)
     mail.init_app(app)
-    cors.init_app(app)
+    cors.init_app(
+        app,
+        resources={r"/api_v1/*": {"origins": "http://localhost:5173"}},
+        supports_credentials=True,
+    )
+
     celery_init_app(app)
 
     ####### models init #######

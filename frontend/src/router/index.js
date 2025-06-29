@@ -15,6 +15,7 @@ import UserProfile from "../components/UserProfile.vue";
 import UserSupport from "../components/UserSupport.vue";
 import store from "../store";
 import AddParking from "../components/AddParking.vue";
+import Parking from "../pages/Parking.vue";
 
 
 const routes = [
@@ -108,6 +109,11 @@ const routes = [
         ]
     },
     {
+        path: '/parking/:id',
+        name: "Parking",
+        component: Parking,
+    },
+    {
         path: '/:pathMatch(.*)*',
         name: "Notfound",
         component: NotFound,
@@ -121,27 +127,27 @@ const router = createRouter({
 
 
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = store.getters.isAuthenticated;
-  const userRole = store.getters.role;
+    const isAuthenticated = store.getters.isAuthenticated;
+    const userRole = store.getters.role;
 
-  if (to.meta.authRequired) {
-    if (!isAuthenticated) {
-        if (to.meta.role == 'admin') {
-            return next({ name: "AdminLogin" });
+    if (to.meta.authRequired) {
+        if (!isAuthenticated) {
+            if (to.meta.role == 'admin') {
+                return next({ name: "AdminLogin" });
+            }
+            else return next({ name: "Login" });
         }
-    else return next({ name: "Login" });
+
+        if (to.meta.role && to.meta.role !== userRole) {
+            return next({ name: "Home" });
+        }
+
+        return next();
     }
 
-    if (to.meta.role && to.meta.role !== userRole) {
-      return next({ name: "Home" });
-    }
 
     return next();
-  }
-
-
-  return next();
-});   
+});
 
 
 export default router

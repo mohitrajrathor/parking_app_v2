@@ -9,6 +9,7 @@ class TokenSchema(Schema):
     role = fields.Str(required=True)
     token = fields.Str(required=True)
     refresh_token = fields.Str(required=True)
+    message = fields.Str()
 
 
 class AdminLoginSchema(Schema):

@@ -7,8 +7,15 @@ from .auth_schemas import (
     TokenSchema,
     UserSignupSchema,
 )
-from .parkings import ParkingSchema, SlotSchema, ParkingResponseSchema
-from marshmallow import Schema, fields
+from .parking_schemas import (
+    ParkingSchema,
+    SlotSchema,
+    ParkingResponseSchema,
+    ParkingWithSlothSchema,
+)
+
+from .query_schemas import IdSchema, QuerySchema, SlotQuerySchema
+
 
 __all__ = [
     "AdminLoginSchema",
@@ -18,12 +25,8 @@ __all__ = [
     "ParkingSchema",
     "SlotSchema",
     "ParkingResponseSchema",
+    "ParkingWithSlothSchema",
+    "SlotQuerySchema",
+    "IdSchema",
+    "QuerySchema",
 ]
-
-
-class QuerySchema(Schema):
-    id = fields.Integer()
-    query = fields.Str()
-    page = fields.Integer()
-    lat = fields.Float()
-    long = fields.Float()

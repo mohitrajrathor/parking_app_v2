@@ -19,6 +19,7 @@ from ..extensions import mail
 from flask_mail import Message
 from datetime import datetime as dt
 import os
+from ..utils import generate_confirmation_email, role_required
 
 
 auth_bp = Blueprint(
@@ -49,9 +50,11 @@ def admin_login(args):
 
         return {
             "role": "admin",
-            "token": create_access_token(identity={"role": "admin", "id": admin.id}),
+            "token": create_access_token(
+                identity=admin.id, additional_claims={"role": "admin"}
+            ),
             "refresh_token": create_refresh_token(
-                identity={"role": "admin", "id": admin.id}
+                identity=admin.id, additional_claims={"role": "admin"}
             ),
         }
 
@@ -78,7 +81,9 @@ def user_login(args):
     user login
     """
     try:
+
         user = User.query.filter_by(email=args["email"]).first()
+
         if not user:
             raise APIError("User not found!")
 
@@ -86,18 +91,15 @@ def user_login(args):
             raise APIError("Wrong password", 401)
 
         return {
+            "message": "Login success!",
             "role": "user",
-            "token": create_access_token(identity={"role": "user", "id": user.id}),
+            "token": create_access_token(
+                identity=user.id, additional_claims={"role": "user"}
+            ),
             "refresh_token": create_refresh_token(
-                identity={"role": "user", "id": user.id}
+                identity=user.id, additional_claims={"role": "user"}
             ),
         }
-
-    # except ValidationError as e:
-    #     current_app.logger.error(e)
-    #     return abort(
-    #         404, message="Field validation failed", additional_data={"details": str(e)}
-    #     )
 
     except APIError as e:
         current_app.logger.error(e.message)
@@ -138,13 +140,12 @@ def signup(args):
             subject="Confirm you email",
             recipients=[user.email],
             body=f"welcome to parkly.com, to confirm mail follow this link {url_for("api_v1.auth.confirm_mail", token=create_refresh_token(identity=user.email), _external=True)}",
-            html=render_template(
-                "confirmation_mail.html",
-                confirmation_link=url_for(
+            html=generate_confirmation_email(
+                link=url_for(
                     "api_v1.auth.confirm_mail",
                     token=create_refresh_token(identity=user.email),
                     _external=True,
-                ),
+                )
             ),
         )
 
@@ -154,10 +155,13 @@ def signup(args):
         db.session.commit()
 
         return {
+            "message": "Signup complete, please confirm your email !",
             "role": "user",
-            "token": create_access_token(identity={"role": "user", "id": user.id}),
+            "token": create_access_token(
+                identity=user.id, additional_claims={"role": "user"}
+            ),
             "refresh_token": create_refresh_token(
-                identity={"role": "user", "id": user.id}
+                identity=user.id, additional_claims={"role": "user"}
             ),
         }
 
@@ -171,7 +175,7 @@ def signup(args):
 
 
 @auth_bp.route("/send-confirm-mail", methods=["POST"])
-@jwt_required()
+@role_required("user")
 def send_confirm_mail():
     try:
         identity = get_jwt_identity()
@@ -186,12 +190,12 @@ def send_confirm_mail():
             subject="Confirm you email",
             recipients=[user.email],
             body=f"welcome to parkly.com, to confirm mail follow this link {url_for("api_v1.auth.confirm_mail", token=create_refresh_token(identity=user.email))}",
-            html=render_template(
-                "confirmation_mail.html",
-                confirmation_link=url_for(
+            html=generate_confirmation_email(
+                link=url_for(
                     "api_v1.auth.confirm_mail",
                     token=create_refresh_token(identity=user.email),
-                ),
+                    _external=True,
+                )
             ),
         )
 
