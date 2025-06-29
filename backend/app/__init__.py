@@ -39,9 +39,9 @@ def create_app():
         populate()
 
     ####### blueprints ########
-    from .api_v1 import api_vi
+    from .api_v1 import api_v1
 
-    api.register_blueprint(api_vi)
+    api.register_blueprint(api_v1)
 
     ####### Basic routes #######
     @app.route("/")
@@ -50,9 +50,9 @@ def create_app():
 
     @app.route("/<path:path>")
     def static_path(path):
-        file_path = os.path.join(app.static_folder, path)
+        file_path = os.path.join(app.static_folder or "", path)
         if os.path.isfile(file_path):
-            return send_from_directory(app.static_folder, path)
+            return send_from_directory(app.static_folder or "", path)
         else:
             return render_template("index.html")
 

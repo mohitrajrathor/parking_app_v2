@@ -1,106 +1,103 @@
 <template>
   <div class="chart-container">
-    <canvas ref="canvas"></canvas>
+    <Line :data="chartData" :options="chartOptions" />
   </div>
 </template>
 
-<script>
+<script setup>
 import {
   Chart as ChartJS,
-  LineController,
-  LineElement,
-  PointElement,
-  LinearScale,
   Title,
-  CategoryScale,
   Tooltip,
-  Legend
-} from 'chart.js'
+  Legend,
+  LineElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+} from 'chart.js';
+import { Line } from 'vue-chartjs';
 
+// Register Chart.js components
 ChartJS.register(
-  LineController,
-  LineElement,
-  PointElement,
-  LinearScale,
   Title,
-  CategoryScale,
   Tooltip,
-  Legend
-)
+  Legend,
+  LineElement,
+  CategoryScale,
+  LinearScale,
+  PointElement
+);
 
-export default {
-  name: 'UserGrowthChart',
-  data() {
-    return {
-      chart: null,
-      chartData: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
-        datasets: [
-          {
-            label: 'User Growth',
-            data: [120, 180, 260, 310, 400, 480, 560, 630],
-            borderColor: '#42A5F5',
-            backgroundColor: 'rgba(66, 165, 245, 0.2)',
-            fill: true,
-            tension: 0.3,
-            pointBackgroundColor: '#1E88E5'
-          }
-        ]
-      },
-      chartOptions: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          title: {
-            display: true,
-            text: 'User Growth Over Time',
-            font: {
-              size: 18
-            }
-          },
-          legend: {
-            display: true,
-            position: 'top'
-          }
+// Dummy data for user growth
+const chartData = {
+  labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+  datasets: [
+    {
+      label: 'Users',
+      data: [50, 80, 120, 180, 250, 320, 400],
+      borderColor: '#1976d2',
+      backgroundColor: 'rgba(25, 118, 210, 0.2)',
+      fill: true,
+      tension: 0.4,
+      pointBackgroundColor: '#42a5f5',
+      pointBorderColor: '#1976d2',
+    },
+  ],
+};
+
+// Chart appearance and responsiveness
+const chartOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      labels: {
+        color: '#1976d2',
+        font: {
+          size: 14,
+          weight: 'bold',
         },
-        scales: {
-          x: {
-            title: {
-              display: true,
-              text: 'Month'
-            }
-          },
-          y: {
-            beginAtZero: true,
-            title: {
-              display: true,
-              text: 'Users'
-            }
-          }
-        }
-      }
-    }
+      },
+    },
+    title: {
+      display: true,
+      text: 'User Growth Over Time',
+      color: '#1976d2',
+      font: {
+        size: 18,
+        weight: 'bold',
+      },
+    },
   },
-  mounted() {
-    const ctx = this.$refs.canvas.getContext('2d')
-    this.chart = new ChartJS(ctx, {
-      type: 'line',
-      data: this.chartData,
-      options: this.chartOptions
-    })
+  scales: {
+    x: {
+      ticks: {
+        color: '#1976d2',
+      },
+      grid: {
+        display: false,
+      },
+    },
+    y: {
+      ticks: {
+        color: '#1976d2',
+      },
+      grid: {
+        color: 'rgba(25, 118, 210, 0.1)',
+      },
+    },
   },
-  beforeUnmount() {
-    if (this.chart) {
-      this.chart.destroy()
-    }
-  }
-}
+};
 </script>
 
 <style scoped>
 .chart-container {
   position: relative;
+  height: 300px;
   width: 100%;
-  height: 400px;
+  padding: 1rem;
+  background-color: #e3f2fd;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.15);
 }
 </style>

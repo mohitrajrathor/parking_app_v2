@@ -1,4 +1,4 @@
-// store/modules/parking.js
+// store/modules/user.js
 import api from '../api';
 
 const state = {
@@ -11,41 +11,42 @@ const state = {
 
 const mutations = {
     SET_USERS(state, payload) {
-        state.parkings = payload.users;
+        state.users = payload.users;
         state.total = payload.total;
         state.page = payload.page;
         state.pages = payload.pages;
-    }
+    }, 
+    SET_USER(state, payload){
+        state.user = payload;
+    },
 };
 
 const actions = {
 
-    async fetchCurrentUser({commit}) {
-        const response = await api.get("/api_v1/user")
+    async fetchCurrentUser({commit}, id) {
+        const response = await api.get(`/api_v1/user/by_id?id=${id}`)
+
+        const data = await response.data;
+        commit('SET_USERS', data);
     },
 
-    async fetchUsers({ commit }, page = 1, query = null, lat = null, long = null) {
+    async fetchUsers({ commit }, page = 1, query = null) {
         try {
 
             let url = `/api_v1/user?page=${page}`
 
             if (query != null) {
                 url = `/api_v1/user?page=${page}&query=${query}`
-            } else if (query != null & lat != null & long != null) {
-                url = `/api_v1/user?page=${page}&query=${query}&lat=${lat}&long=${long}`
-            } else if (lat != null & long != null) {
-                url = `/api_v1/user?page=${page}&lat=${lat}&long=${long}`
-            }
-
-
-
+            } 
             const response = await api.get(url, {
                 withCredentials: true,
             });
-            const data = response.data;
+            const data = await response.data;
 
-            commit('SET_USER', {
-                parkings: data.parkings,
+            console.log(data);
+
+            commit('SET_USERS', {
+                users: data.users,
                 total: data.total,
                 page: data.page,
                 pages: data.pages,

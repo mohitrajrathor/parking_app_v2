@@ -33,7 +33,7 @@ def populate():
     add_test_payment()
 
 
-def role_required(*allowed_roles: List[str]):
+def role_required(*allowed_roles):
     """
     decorator for role based access control
 

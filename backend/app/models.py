@@ -44,14 +44,39 @@ class User(db.Model):
         db.DateTime, nullable=False, default=dt.now(ZoneInfo("Asia/Kolkata"))
     )
 
-    def __repr__(self) -> None:
+    def __repr__(self) -> str:
         return f"User <email : {self.email}>"
 
     def set_password(self, password: str) -> None:
         self.password = generate_password_hash(password)
 
-    def check_password(self, password: str) -> None:
+    def check_password(self, password: str) -> bool:
         return check_password_hash(self.password, password)
+
+    def to_dict(self):
+
+        reservations = [res.to_dict() for res in self.reservations]
+        reviews = [rw.to_dict() for rw in self.reviews]
+
+
+        return {
+            "id": self.id,
+            "unique_id": self.unique_id,
+            "email": self.email,
+            "name": self.name,
+            "dob": self.dob.strftime("%Y-%m-%d") if self.dob else None,
+            "profession": self.profession,
+            "address": self.address,
+            "pincode": self.pincode,
+            "phone": self.phone,
+            "email_confirmed": self.email_confirmed,
+            "join_time": self.join_time.strftime("%d-%m-%yT%H:%M%S") if self.join_time else None,
+            "bookings": reservations,
+            "total_bookings": len(reservations),
+            "active_bookings": len([res for res in reservations if res.get("is_booked")]),
+            "reviews": reviews,
+            "total_reviews": len(reviews)
+        }
 
 
 class Parking(db.Model):
@@ -146,13 +171,40 @@ class Reservation(db.Model):
     start_time = db.Column(
         db.DateTime, nullable=False, default=dt.now(ZoneInfo("Asia/Kolkata"))
     )
+    is_booked = db.Column(
+        db.Boolean, nullable=False, default=True
+    )
     leave_time = db.Column(db.DateTime, nullable=False)
+
 
     user = db.relationship("User", backref="reservations", lazy=True)
     slot = db.relationship("Slot", backref="reservations", lazy=True)
 
     def __repr__(self):
         return f"<Reservation {self.id} - User {self.user_id}, Slot {self.slot_id}>"
+
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "user": {
+                "id": self.user.id,
+                "name": self.user.name,
+                "email": self.user.email,
+            } if self.user else None,
+            "parking": {
+                "id": self.parking_id,
+                "name": self.parking.name if getattr(self, "parking", None) else None,
+                "fee": self.parking.fee if getattr(self, "parking", None) else None,
+            } if self.parking_id else None,
+            "slot": {
+                "id": self.slot.id,
+                "serial_id": self.slot.serial_id,
+                "is_occupied": self.slot.is_occupied,
+            } if self.slot else None,
+            "start_time": self.start_time.strftime("%d-%m-%yT%H:%M%S") if self.start_time else None,
+            "leave_time": self.leave_time.strftime("%d-%m-%yT%H:%M%S") if self.leave_time else None,
+        }
 
 
 class Review(db.Model):
@@ -184,7 +236,11 @@ class Review(db.Model):
                 "name": self.user.name,
                 "email": self.user.email,
             },
-            "parking_id": self.parking_id,
+            "parking": {
+                "id": self.parking.id if getattr(self, "parking", None) else self.parking_id,
+                "name": self.parking.name if getattr(self, "parking", None) else None,
+                "fee": self.parking.fee if getattr(self, "parking", None) else None,
+            },
             "feedback": self.feedback,
             "rating": self.rating,
             "create_at": self.create_time.strftime("%d-%m-%yT%H:%M%S"),

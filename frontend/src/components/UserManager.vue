@@ -22,59 +22,21 @@
         </div>
 
         <!-- user -->
-        <div class=" bg-primary m-1 text-light rounded-4 p-3 mt-3">
-
-            <h1 class="text-center">
-                Recent Users
-            </h1>
-
-            <div class="p-3">
-                <UserTile :user="{
-                    status: true,
-                    name: 'user 01',
-                    phone: '9876543210',
-                    email: 'test@parkly.com'
-                }" />
-                <UserTile :user="{
-                    status: true,
-                    name: 'user 01',
-                    phone: '9876543210',
-                    email: 'test@parkly.com'
-                }" />
-                <UserTile :user="{
-                    status: true,
-                    name: 'user 01',
-                    phone: '9876543210',
-                    email: 'test@parkly.com'
-                }" />
-                <UserTile :user="{
-                    status: true,
-                    name: 'user 01',
-                    phone: '9876543210',
-                    email: 'test@parkly.com'
-                }" />
-                <UserTile :user="{
-                    status: true,
-                    name: 'user 01',
-                    phone: '9876543210',
-                    email: 'test@parkly.com'
-                }" />
-                <UserTile :user="{
-                    status: true,
-                    name: 'user 01',
-                    phone: '9876543210',
-                    email: 'test@parkly.com'
-                }" />
-            </div>
+        <div class="my-3">
+            <UserTable :users="users" :page="page" :pages="pages" @update:page="fetchUsers" />
 
         </div>
     </div>
 </template>
 <script>
 import UserAgeDistChart from './UserAgeDistChart.vue';
-import UserTile from './UserTile.vue';
 import UserProfessionDist from './UserProfessionDist.vue';
 import UserGrowthChart from './UserGrowthChart.vue';
+import UserTable from './user/UserTable.vue';
+import api from '../api';
+import {
+    mapGetters, mapActions
+} from "vuex";
 
 export default {
     name: "UserManager",
@@ -82,7 +44,38 @@ export default {
         UserGrowthChart,
         UserProfessionDist,
         UserAgeDistChart,
-        UserTile,
+        UserTable,
+    },
+    computed: {
+        ...mapGetters("user", ["users", "pages", "page"]),
+    },
+    methods: {
+        ...mapActions("user", ["fetchUsers"]),
+        changePage(newPage) {
+            this.fetchUsers(newPage);
+        },
+
+        // async fetchUsers(page = 1, query = null) {
+        //     try {
+
+        //         let url = `/api_v1/user?page=${page}`
+
+        //         if (query != null) {
+        //             url = `/api_v1/user?page=${page}&query=${query}`
+        //         }
+        //         const response = await api.get(url, {
+        //             withCredentials: true,
+        //         });
+        //         const data = await response.data;
+
+        //         console.log(data);
+        //     } catch (error) {
+        //         console.error('Failed to fetch user data:', error);
+        //     }
+        // },
+    },
+    mounted() {
+        this.fetchUsers();
     }
 }
 </script>
