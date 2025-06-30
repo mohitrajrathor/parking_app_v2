@@ -127,7 +127,8 @@ def create_parking(args):
             phone=args.get("phone"),
             lat=args.get("lat"),
             long=args.get("long"),
-            fee=args.get("fee"),
+            hourly_fee=args.get("hourly_fee"),
+            booking_fee=args.get("booking_fee"),
             slots_num=slots_num,
         )
 
@@ -178,7 +179,8 @@ def update_parking(args):
         parking.phone = args.get("phone")
         parking.lat = args.get("lat")
         parking.long = args.get("long")
-        parking.fee = args.get("fee")
+        parking.hourly_fee = args.get("hourly_fee")
+        parking.booking_fee = args.get("booking_fee")
 
         db.session.commit()
 

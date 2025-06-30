@@ -60,8 +60,14 @@
 
 						<!-- Fee Input -->
 						<div class="row">
+							<label for="fee" class="form-label text-muted">Booking Fee</label>
+							<input v-model="parking.booking_fee" type="number" class="form-control" id="fee"
+								placeholder="e.g., 50" min="0" required />
+						</div>
+
+						<div class="row">
 							<label for="fee" class="form-label text-muted">Parking Fee (per hour)</label>
-							<input v-model="parking.fee" type="number" class="form-control" id="fee"
+							<input v-model="parking.hourly_fee" type="number" class="form-control" id="fee"
 								placeholder="e.g., 50" min="0" required />
 						</div>
 
@@ -105,7 +111,7 @@
 <script>
 import LeafletMap from './LeafletMap.vue';
 import api from '../api';
-import { Title } from 'chart.js';
+
 
 
 export default {
@@ -119,7 +125,8 @@ export default {
 				name: "",
 				address: "",
 				pincode: "",
-				fee: "",
+				hourly_fee: "",
+				booking_fee: "",
 				phone: "",
 				lat: null,
 				long: null,
@@ -150,11 +157,11 @@ export default {
 	methods: {
 		async submitForm() {
 			try {
-				const { fee, name, address, lat, long, pincode, phone, slots_num } = this.parking;
+				const { hourly_fee, booking_fee, name, address, lat, long, pincode, phone, slots_num } = this.parking;
 
-				if (!fee || !name || !address || !lat || !long || !pincode || !phone || !slots_num) {
+				if (!hourly_fee || !booking_fee || !name || !address || !lat || !long || !pincode || !phone || !slots_num) {
 					this.notify("All fields are required!");
-					return; 
+					throw new Error("All fields are required!");
 				}
 
 				this.isLoading = true; 
@@ -178,7 +185,8 @@ export default {
 					name: "",
 					address: "",
 					pincode: "",
-					fee: "",
+					hourly_fee: "",
+					booking_fee: "",
 					phone: "",
 					lat: null,
 					long: null,

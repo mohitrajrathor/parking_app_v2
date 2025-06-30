@@ -34,7 +34,8 @@ def add_test_parking_and_slots():
             phone="9876543210",
             lat=24.58412446451834,
             long=76.17353439331056,
-            fee=40,
+            hourly_fee=10,
+            booking_fee=40,
             slots_num=10,
         )
 
@@ -110,8 +111,23 @@ def add_test_payment():
             reserve_id=1,
             hour_used=3,
             fee=40,
-            cost=3 * 40,
+            cost=40,
             exit_time=dt.now(ZoneInfo("Asia/Kolkata")),
+            pay_for="book"
+        )
+
+        db.session.add(pay)
+        db.session.commit()
+
+        pay = Payment(
+            user_id=1,
+            parking_id=1,
+            reserve_id=1,
+            hour_used=3,
+            fee=40,
+            cost=40 * 3,
+            exit_time=dt.now(ZoneInfo("Asia/Kolkata")) + timedelta(hours=3),
+            pay_for="charge"
         )
 
         db.session.add(pay)

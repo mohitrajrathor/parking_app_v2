@@ -11,9 +11,11 @@
               <th>Address</th>
               <th>Pincode</th>
               <th>Phone</th>
-              <th>Fee</th>
+              <th>Booking Fee</th>
+              <th>hourly Fee</th>
               <th>Slots_num</th>
               <th>Booked</th>
+              <th>Reviews</th>
               <th>Actions</th>
             </tr>
           </thead>

@@ -91,7 +91,8 @@ class Parking(db.Model):
     phone = db.Column(db.String, nullable=False)
     lat = db.Column(db.Float, nullable=False)
     long = db.Column(db.Float, nullable=False)
-    fee = db.Column(db.Float, nullable=False)
+    hourly_fee = db.Column(db.Float, nullable=False)
+    booking_fee = db.Column(db.Float, nullable=False)
     create_time: dt = db.Column(
         db.DateTime, nullable=False, default=dt.now(tz=ZoneInfo("Asia/Kolkata"))
     )
@@ -104,6 +105,7 @@ class Parking(db.Model):
         cascade="all, delete-orphan",
         foreign_keys="Slot.parking_id",
     )
+
     reservations = db.relationship("Reservation", backref="parking", lazy=True)
     reviews = db.relationship("Review", backref="parking", lazy=True)
 
@@ -119,7 +121,8 @@ class Parking(db.Model):
             "phone": self.phone,
             "lat": self.lat,
             "long": self.long,
-            "fee": self.fee,
+            "hourly_fee": self.hourly_fee,
+            "booking_fee": self.booking_fee,
             "create_time": self.create_time.strftime("%d-%m-%yT%H:%M%S"),
             "slots_num": self.slots_num,
             "slots": [slot.to_dict() for slot in self.slots],
@@ -239,7 +242,6 @@ class Review(db.Model):
             "parking": {
                 "id": self.parking.id if getattr(self, "parking", None) else self.parking_id,
                 "name": self.parking.name if getattr(self, "parking", None) else None,
-                "fee": self.parking.fee if getattr(self, "parking", None) else None,
             },
             "feedback": self.feedback,
             "rating": self.rating,
@@ -262,6 +264,7 @@ class Payment(db.Model):
     fee = db.Column(db.Float, nullable=False)
     cost = db.Column(db.Float, nullable=False)
     exit_time = db.Column(db.DateTime, nullable=False)
+    pay_for = db.Column(db.String(25), nullable=False)
 
     user = db.relationship("User", backref="payments", lazy=True)
     parking = db.relationship("Parking", backref="payments", lazy=True)

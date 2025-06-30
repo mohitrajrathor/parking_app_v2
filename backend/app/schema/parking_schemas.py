@@ -19,9 +19,11 @@ class ParkingSchema(Schema):
     phone = fields.Str(required=True)
     lat = fields.Float(required=True)
     long = fields.Float(required=True)
-    fee = fields.Float(required=True)
+    hourly_fee = fields.Float(required=True)
+    booking_fee = fields.Float(required=True)
     slots_num = fields.Float(required=True)
     create_time = fields.Str()
+    
 
 
 class UserSchema(Schema):
@@ -37,7 +39,6 @@ class ReviewSchema(Schema):
     feedback = fields.Str()
     rating = fields.Integer()
     create_at = fields.Str()
-    # user contain dict having id, name, email
     user = fields.Nested(UserSchema)
 
 class ParkingWithSlothSchema(ParkingSchema):

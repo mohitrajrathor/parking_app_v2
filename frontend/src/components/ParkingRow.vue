@@ -27,9 +27,15 @@
 		</td>
 		<td>
 			<span v-if="mode === 'edit'">
-				<input type="number" class="form-control" v-model="updateData.fee" />
+				<input type="number" class="form-control" v-model="updateData.booking_fee" />
 			</span>
-			<span v-else>{{ parking.fee }}</span>
+			<span v-else>{{ parking.booking_fee }}</span>
+		</td>
+		<td>
+			<span v-if="mode === 'edit'">
+				<input type="number" class="form-control" v-model="updateData.hourly_fee" />
+			</span>
+			<span v-else>{{ parking.hourly_fee }}</span>
 		</td>
 		<td>
 			<span v-if="mode === 'edit'">
@@ -40,21 +46,24 @@
 		<td>
 			{{ parking.booked }}
 		</td>
+		<td>
+			{{ parking.reviews_count }}
+		</td>
 
 		<td>
 			<span>
-				<button v-if="mode === 'normal'" @click="redirectToParking(parking.id)" class="me-1 btn btn-sm btn-primary rounded-pill"><i
-						class="bi bi-box-arrow-up-right"></i></button>
-				<button v-if="mode === 'normal'" @click="mode = 'edit'" class="me-1 btn btn-sm rounded-pill btn-success"><i
-						class="bi bi-pencil-square"></i></button>
-				<button v-if="mode === 'edit'" @click="updateParking" class="me-1 btn btn-sm rounded-pill btn-success"><i
-						class="bi bi-check-lg"></i></button>
+				<button v-if="mode === 'normal'" @click="redirectToParking(parking.id)"
+					class="me-1 btn btn-sm btn-primary rounded-pill"><i class="bi bi-box-arrow-up-right"></i></button>
+				<button v-if="mode === 'normal'" @click="mode = 'edit'"
+					class="me-1 btn btn-sm rounded-pill btn-success"><i class="bi bi-pencil-square"></i></button>
+				<button v-if="mode === 'edit'" @click="updateParking"
+					class="me-1 btn btn-sm rounded-pill btn-success"><i class="bi bi-check-lg"></i></button>
 
-				<button v-if="mode === 'edit'" @click="mode = 'normal'" class="me-1 btn btn-sm rounded-pill btn-danger"><i
-						class="bi bi-x-lg"></i></button>
+				<button v-if="mode === 'edit'" @click="mode = 'normal'"
+					class="me-1 btn btn-sm rounded-pill btn-danger"><i class="bi bi-x-lg"></i></button>
 
-				<button v-if="mode === 'normal'" @click="deleteParking" class="me-1 btn btn-sm rounded-pill btn-danger"><i
-						class="bi bi-trash3-fill"></i></button>
+				<button v-if="mode === 'normal'" @click="deleteParking"
+					class="me-1 btn btn-sm rounded-pill btn-danger"><i class="bi bi-trash3-fill"></i></button>
 			</span>
 		</td>
 	</tr>
@@ -112,7 +121,7 @@ export default {
 			try {
 				this.isLoading = true;
 
-				const { booked, slots, ...toUpdate } = this.updateData;
+				const { booked, slots, reviews_count, reviews, ...toUpdate } = this.updateData;
 
 				const response = await api.put("/api_v1/parking", toUpdate);
 
@@ -124,9 +133,9 @@ export default {
 				this.notify({
 					message: data.message
 				});
-				
+
 				this.$store.dispatch("parking/fetchParkings");
-				
+
 
 			} catch (err) {
 
