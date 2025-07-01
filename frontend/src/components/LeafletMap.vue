@@ -15,11 +15,14 @@ const props = defineProps({
 
 const position = computed(() => store.state.position);
 const choosenPos = computed(() => store.state.choosenPos);
+const parkings = computed(() => store.state.parking.parkings);
+
 
 let map;
 let currentMarker = null;
 let chosenMarker = null;
 let parkingMarker = null;
+let carparkingMarker = null;
 
 onMounted(() => {
   map = L.map('map');
@@ -37,14 +40,57 @@ onMounted(() => {
   });
 
 
-  const parkingIcon = L.icon({
-    iconUrl: 'https://cdn-icons-png.flaticon.com/512/421/421836.png', // parking icon
+  const paddingIcon = L.icon({
+    iconUrl: 'https://cdn-icons-png.flaticon.com/512/1788/1788637.png', // parking icon
     iconSize: [40, 40], // width, height
     iconAnchor: [20, 40], // where the icon "points"
     popupAnchor: [0, -35], // where popup opens relative to the icon
   });
 
-  // Function to update parking marker
+  const currentParkingIcon = L.icon({
+    iconUrl: 'https://cdn-icons-png.flaticon.com/512/421/421836.png', // parking icon
+    iconSize: [60, 60], // width, height
+    iconAnchor: [20, 40], // where the icon "points"
+    popupAnchor: [0, -35], // where popup opens relative to the icon
+  });
+
+
+
+  // function to update car parkings available in parkings
+  const updateCarParkings = () => {
+    if (carparkingMarker) {
+      map.removeLayer(carparkingMarker);
+    }
+
+    if (parkings.value.length > 0) {
+      carparkingMarker = L.layerGroup(
+        parkings.value.map(parking => {
+          return L.marker([parseFloat(parking.lat), parseFloat(parking.long)], { icon: paddingIcon })
+            .bindPopup(
+              `<strong style="text-transform:uppercase;">${parking.name}</strong><br>
+               <strong style="color:green;font-weight:bold;">
+                 ${parking.slots_num - parking.booked} free
+               </strong> parking spaces`
+            )
+            // .bindTooltip(`${parking.name}`, {
+            //   permanent: true,
+            //   direction: "top",
+            //   offset: [5, -40],
+            //   className: "leaflet-tooltip-own"
+            // });
+        })
+      ).addTo(map);
+    }
+  };
+
+  // Initial car parkings setup
+  updateCarParkings();
+
+
+
+
+
+  // Function to update given parking parking marker
   const updateParkingMarker = () => {
     if (props.parkingToShow?.lat && props.parkingToShow?.long) {
       const lat = parseFloat(props.parkingToShow.lat);
@@ -56,13 +102,13 @@ onMounted(() => {
       }
 
       // Add new parking marker
-      parkingMarker = L.marker([lat, lng], { icon: parkingIcon })
+      parkingMarker = L.marker([lat, lng], { icon: currentParkingIcon })
         .addTo(map)
         .bindPopup(`${props.parkingToShow.name}`)
         .bindTooltip(`${props.parkingToShow.name}`, {
           permanent: true,
-          direction: "bottom",
-          offset: [0, -5],
+          direction: "top",
+          offset: [10, -40],
           className: "leaflet-tooltip-own"
         })
         // instead bind popup use something that shows the name with out clicking on it
@@ -74,6 +120,24 @@ onMounted(() => {
 
   // Initial parking marker setup
   updateParkingMarker();
+
+
+
+
+  // Watch for parkings changes
+  watch(parkings, (newParkings) => {
+    if (newParkings && newParkings.length > 0) {
+      updateCarParkings();
+    } else {
+      if (carparkingMarker) {
+        map.removeLayer(carparkingMarker);
+        carparkingMarker = null;
+      }
+    }
+  }, { immediate: true });  
+
+
+
 
   // Watch for parkingToShow changes
   watch(() => props.parkingToShow, (newParking) => {
@@ -143,6 +207,7 @@ onMounted(() => {
 
     return div;
   };
+
 
 
   customControl.addTo(map);

@@ -7,6 +7,7 @@ from typing import List
 from functools import wraps
 from flask_jwt_extended import verify_jwt_in_request, get_jwt
 from flask import jsonify
+from math import radians, sin, cos, sqrt, atan2
 
 
 def create_models():
@@ -67,8 +68,26 @@ def generate_confirmation_email(link):
         <h2>Confirm your email</h2>
         <p>Click the link below to verify your email for Parkly:</p>
         <p><a href="{link}">{link}</a></p>
-        <p>If you didn’t request this, you can ignore this email.</p>
+        <p>If you didn't request this, you can ignore this email.</p>
         <p>– Parkly Team</p>
     </body>
     </html>
     """
+
+
+def haversine_distance(lat1, lon1, lat2, lon2):
+    """
+    Calculate the great-circle distance between two points on the Earth surface.
+    Args:
+        lat1, lon1: Latitude and longitude of point 1 (in decimal degrees)
+        lat2, lon2: Latitude and longitude of point 2 (in decimal degrees)
+    Returns:
+        Distance in kilometers (float)
+    """
+    R = 6371.0  # Earth radius in kilometers
+    lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
+    dlat = lat2 - lat1
+    dlon = lon2 - lon1
+    a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
+    c = 2 * atan2(sqrt(a), sqrt(1 - a))
+    return R * c

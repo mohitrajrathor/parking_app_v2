@@ -23,11 +23,13 @@ const mutations = {
 
 const actions = {
 
-    async fetchCurrentUser({commit}, id) {
-        const response = await api.get(`/api_v1/user/by_id?id=${id}`)
+    async fetchCurrentUser({commit}) {
+        const response = await api.get(`/api_v1/user/me`, {
+            withCredentials: true,
+        });
 
         const data = await response.data;
-        commit('SET_USERS', data);
+        commit('SET_USER', data);
     },
 
     async fetchUsers({ commit }, page = 1, query = null) {

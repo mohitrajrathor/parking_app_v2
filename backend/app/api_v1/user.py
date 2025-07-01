@@ -1,6 +1,6 @@
-# module to manage user routes and logic 
+# module to manage user routes and logic
 
-# imports 
+# imports
 from flask_smorest import Blueprint, abort
 from sqlalchemy.sql.functions import user
 from ..models import User
@@ -8,6 +8,7 @@ from ..schema import IdSchema
 from ..exceptions import APIError
 from flask import current_app
 from ..utils import role_required
+from flask_jwt_extended import get_jwt_identity
 
 
 user_bp = Blueprint(
@@ -55,7 +56,9 @@ def get_users(args):
         query = args.get("query", "")
 
         if query:
-            users_paginated = User.query.filter(User.name.ilike(f"%{query}%")).paginate(page=page, per_page=per_page)
+            users_paginated = User.query.filter(User.name.ilike(f"%{query}%")).paginate(
+                page=page, per_page=per_page
+            )
         else:
             users_paginated = User.query.paginate(page=page, per_page=per_page)
 
@@ -65,9 +68,8 @@ def get_users(args):
             "pages": users_paginated.pages,
             "has_next": users_paginated.has_next,
             "has_prev": users_paginated.has_prev,
-            "users": [user.to_dict() for user in users_paginated.items]
+            "users": [user.to_dict() for user in users_paginated.items],
         }
-    
 
     except APIError as e:
         current_app.logger.error(e.message)
@@ -78,4 +80,23 @@ def get_users(args):
         return abort(500, message="Internal Server Error.")
 
 
-
+@user_bp.route("/me", methods=["GET"])
+@role_required("user")
+def get_current_user():
+    """
+    Get current user details from token
+    """
+    try:
+        user_id = get_jwt_identity()
+        if not user_id:
+            raise APIError("No user id found in token!", 401)
+        user = User.query.get(user_id)
+        if user:
+            return user.to_dict()
+        return {"message": "No user found!"}, 404
+    except APIError as e:
+        current_app.logger.error(e.message)
+        return abort(e.status_code, message=str(e), additional_data=e.extra)
+    except Exception as e:
+        current_app.logger.error(e)
+        return abort(500, message="Internal Server Error.")

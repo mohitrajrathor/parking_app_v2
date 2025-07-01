@@ -102,6 +102,10 @@
 
             </div>
 
+            <div id="parkings">
+                <ParkingCardContainer />
+            </div>
+
             <div class="row row-gap-2 my-3">
                 <div class="col-md-6">
                     <div class=" bg-light p-4 rounded-4">
@@ -125,11 +129,13 @@
 </template>
 <script>
 import LeafletMap from './LeafletMap.vue';
+import ParkingCardContainer from './user/ParkingCardContainer.vue';
 
 export default {
     name: "UserDashboard",
     components: {
-        LeafletMap
+        LeafletMap, 
+        ParkingCardContainer
     }
 }
 </script>

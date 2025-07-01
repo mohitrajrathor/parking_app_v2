@@ -23,19 +23,16 @@ const mutations = {
 
 
 const actions = {
-  async fetchParkings({ commit }, page = 1, query = null, lat = null, long = null) {
+  async fetchParkings({ commit }, { page = 1, query = '', lat = null, long = null } = {}) {
     try {
-
-      let url = `/api_v1/parking?page=${page}`
-
-      if (query != null) {
-        url = `/api_v1/parking?page=${page}&query=${query}`
-      } else if (query != null & lat != null & long != null) {
-        url = `/api_v1/parking?page=${page}&query=${query}&lat=${lat}&long=${long}`
-      } else if (lat != null & long != null) {
-        url = `/api_v1/parking?page=${page}&lat=${lat}&long=${long}`
+      let url = `/api_v1/parking?page=${page}`;
+      const params = [];
+      if (query && query !== '') params.push(`query=${encodeURIComponent(query)}`);
+      if (lat !== null) params.push(`lat=${lat}`);
+      if (long !== null) params.push(`long=${long}`);
+      if (params.length > 0) {
+        url += '&' + params.join('&');
       }
-
 
       const response = await api.get(url, {
         withCredentials: true,

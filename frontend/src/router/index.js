@@ -16,6 +16,8 @@ import UserSupport from "../components/UserSupport.vue";
 import store from "../store";
 import AddParking from "../components/AddParking.vue";
 import Parking from "../pages/Parking.vue";
+import Payment from "../pages/Payment.vue";
+
 
 
 const routes = [
@@ -113,6 +115,12 @@ const routes = [
         name: "Parking",
         component: Parking,
     },
+    {
+        path: '/payment/:payment_for',
+        name: "Payment",
+        component: Payment,
+    },
+    
     {
         path: '/:pathMatch(.*)*',
         name: "Notfound",

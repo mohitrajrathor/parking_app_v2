@@ -2,6 +2,8 @@
 
 
 # imports
+from curses import ALL_MOUSE_EVENTS
+from sqlalchemy import true
 from .extensions import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime as dt
@@ -58,7 +60,6 @@ class User(db.Model):
         reservations = [res.to_dict() for res in self.reservations]
         reviews = [rw.to_dict() for rw in self.reviews]
 
-
         return {
             "id": self.id,
             "unique_id": self.unique_id,
@@ -70,12 +71,16 @@ class User(db.Model):
             "pincode": self.pincode,
             "phone": self.phone,
             "email_confirmed": self.email_confirmed,
-            "join_time": self.join_time.strftime("%d-%m-%yT%H:%M%S") if self.join_time else None,
+            "join_time": (
+                self.join_time.strftime("%d-%m-%yT%H:%M%S") if self.join_time else None
+            ),
             "bookings": reservations,
             "total_bookings": len(reservations),
-            "active_bookings": len([res for res in reservations if res.get("is_booked")]),
+            "active_bookings": len(
+                [res for res in reservations if res.get("is_booked")]
+            ),
             "reviews": reviews,
-            "total_reviews": len(reviews)
+            "total_reviews": len(reviews),
         }
 
 
@@ -174,11 +179,8 @@ class Reservation(db.Model):
     start_time = db.Column(
         db.DateTime, nullable=False, default=dt.now(ZoneInfo("Asia/Kolkata"))
     )
-    is_booked = db.Column(
-        db.Boolean, nullable=False, default=True
-    )
-    leave_time = db.Column(db.DateTime, nullable=False)
-
+    is_booked = db.Column(db.Boolean, nullable=False, default=True)
+    leave_time = db.Column(db.DateTime, nullable=True)
 
     user = db.relationship("User", backref="reservations", lazy=True)
     slot = db.relationship("Slot", backref="reservations", lazy=True)
@@ -186,27 +188,57 @@ class Reservation(db.Model):
     def __repr__(self):
         return f"<Reservation {self.id} - User {self.user_id}, Slot {self.slot_id}>"
 
-
     def to_dict(self):
         return {
             "id": self.id,
-            "user": {
-                "id": self.user.id,
-                "name": self.user.name,
-                "email": self.user.email,
-            } if self.user else None,
-            "parking": {
-                "id": self.parking_id,
-                "name": self.parking.name if getattr(self, "parking", None) else None,
-                "fee": self.parking.fee if getattr(self, "parking", None) else None,
-            } if self.parking_id else None,
-            "slot": {
-                "id": self.slot.id,
-                "serial_id": self.slot.serial_id,
-                "is_occupied": self.slot.is_occupied,
-            } if self.slot else None,
-            "start_time": self.start_time.strftime("%d-%m-%yT%H:%M%S") if self.start_time else None,
-            "leave_time": self.leave_time.strftime("%d-%m-%yT%H:%M%S") if self.leave_time else None,
+            "user": (
+                {
+                    "id": self.user.id,
+                    "name": self.user.name,
+                    "email": self.user.email,
+                }
+                if self.user
+                else None
+            ),
+            "parking": (
+                {
+                    "id": self.parking_id,
+                    "name": (
+                        self.parking.name if getattr(self, "parking", None) else None
+                    ),
+                    "hourly_fee": (
+                        self.parking.hourly_fee
+                        if getattr(self, "parking", None)
+                        else None
+                    ),
+                    "booking_fee": (
+                        self.parking.booking_fee
+                        if getattr(self, "parking", None)
+                        else None
+                    ),
+                }
+                if self.parking_id
+                else None
+            ),
+            "slot": (
+                {
+                    "id": self.slot.id,
+                    "serial_id": self.slot.serial_id,
+                    "is_occupied": self.slot.is_occupied,
+                }
+                if self.slot
+                else None
+            ),
+            "start_time": (
+                self.start_time.strftime("%d-%m-%yT%H:%M%S")
+                if self.start_time
+                else None
+            ),
+            "leave_time": (
+                self.leave_time.strftime("%d-%m-%yT%H:%M%S")
+                if self.leave_time
+                else None
+            ),
         }
 
 
@@ -240,7 +272,11 @@ class Review(db.Model):
                 "email": self.user.email,
             },
             "parking": {
-                "id": self.parking.id if getattr(self, "parking", None) else self.parking_id,
+                "id": (
+                    self.parking.id
+                    if getattr(self, "parking", None)
+                    else self.parking_id
+                ),
                 "name": self.parking.name if getattr(self, "parking", None) else None,
             },
             "feedback": self.feedback,
@@ -260,10 +296,11 @@ class Payment(db.Model):
         db.Integer, db.ForeignKey("parkings.id", ondelete="SET NULL"), nullable=True
     )
     reserve_id = db.Column(db.Integer, db.ForeignKey("reservations.id"), nullable=True)
-    hour_used = db.Column(db.Integer, nullable=False)
     fee = db.Column(db.Float, nullable=False)
-    cost = db.Column(db.Float, nullable=False)
-    exit_time = db.Column(db.DateTime, nullable=False)
+    amount = db.Column(db.Float, nullable=False)
+    payment_time = db.Column(
+        db.DateTime, nullable=False, default=dt.now(ZoneInfo("Asia/Kolkata"))
+    )
     pay_for = db.Column(db.String(25), nullable=False)
 
     user = db.relationship("User", backref="payments", lazy=True)
@@ -273,4 +310,4 @@ class Payment(db.Model):
     )
 
     def __repr__(self):
-        return f"<Payment {self.id} - User {self.user_id}, Cost {self.cost}>"
+        return f"<Payment {self.id} - User {self.user_id}, Cost {self.amount}>"

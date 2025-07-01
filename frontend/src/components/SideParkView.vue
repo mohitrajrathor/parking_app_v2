@@ -76,14 +76,16 @@
             </div>
 
             <div class="col-lg overflow-auto" style="height: 360px;">
-                <ParkingCard v-for="parking in parkings" :key="parking.id" :parking="parking" />
+                <ParkingCard v-for="parking in parkgings" :id="parking.id" :name="parking.name" :bookingFee="parking.booking_fee"
+                    :hourlyFee="parking.hourly_fee" :availableSlots="parking.slots_num - (parking.booked || 0)"
+                    @view="handleViewParking" />
             </div>
 
         </div>
     </div>
 </template>
 <script>
-import ParkingCard from './ParkingCard.vue';
+import ParkingCard from './user/ParkingCard.vue';
 import { mapActions, mapGetters } from 'vuex';
 
 export default {
@@ -102,16 +104,20 @@ export default {
     },
 
     computed: {
-        ...mapGetters("parking", ['page', 'total', 'parkings'])
+        ...mapGetters("parking", ['page', 'total', 'parkings']),
     },
 
     methods: {
-        ...mapActions("parking", ['fetchParkings'])
+        ...mapActions("parking", ['fetchParkings']),
+        handleViewParking(id) {
+            this.$router.push(`/parking/${id}`)
+            return;
+        }
     },
-    
-    mounted() {
+
+    created() {
         this.fetchParkings();
-    }, 
+    },
 
     components: {
         ParkingCard,

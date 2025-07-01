@@ -5,7 +5,7 @@
 			<span v-if="mode === 'edit'">
 				<input type="text" class="form-control" v-model="updateData.name" />
 			</span>
-			<span v-else>{{ parking.name }}</span>
+			<span v-else class=" text-capitalize">{{ parking.name }}</span>
 		</td>
 		<td>
 			<span v-if="mode === 'edit'">

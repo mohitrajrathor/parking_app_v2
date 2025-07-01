@@ -8,7 +8,12 @@
       </button>
     </div>
 
+    
     <ParkingAnalytics />
+    
+    <div class="my-4">
+      <LeafletMap />
+    </div>
 
     <ParkingTable :parkings="parkings" :page="page" :pages="pages" @update:page="fetchParkings" />
   </div>
@@ -17,13 +22,17 @@
 <script>
 import ParkingAnalytics from './ParkingAnalytics.vue';
 import ParkingTable from './ParkingTable.vue';
+import LeafletMap from './LeafletMap.vue';
 import { mapGetters, mapActions } from 'vuex';
+
+
 
 export default {
   name: "ParkingManager",
   components: {
     ParkingAnalytics,
-    ParkingTable
+    ParkingTable,
+    LeafletMap
   },
   computed: {
     ...mapGetters("parking", ['parkings', 'page', 'pages'])

@@ -109,11 +109,10 @@ def add_test_payment():
             user_id=1,
             parking_id=1,
             reserve_id=1,
-            hour_used=3,
             fee=40,
-            cost=40,
-            exit_time=dt.now(ZoneInfo("Asia/Kolkata")),
-            pay_for="book"
+            amount=40,
+            payment_time=dt.now(ZoneInfo("Asia/Kolkata")),
+            pay_for="booking"
         )
 
         db.session.add(pay)
@@ -123,10 +122,9 @@ def add_test_payment():
             user_id=1,
             parking_id=1,
             reserve_id=1,
-            hour_used=3,
             fee=40,
-            cost=40 * 3,
-            exit_time=dt.now(ZoneInfo("Asia/Kolkata")) + timedelta(hours=3),
+            amount=40 * 3,
+            payment_time=dt.now(ZoneInfo("Asia/Kolkata")) + timedelta(hours=3),
             pay_for="charge"
         )
 

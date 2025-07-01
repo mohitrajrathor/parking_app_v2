@@ -40,6 +40,9 @@
     </div>
 </template>
 <script>
+import { mapActions } from 'vuex';
+
+
 export default {
     name: "Login",
     data() {
@@ -52,6 +55,8 @@ export default {
     },
     inject: ['notify'],
     methods: {
+        ...mapActions('user', ['fetchCurrentUser']),
+
         async handleLogin() {
             try {
 
@@ -105,6 +110,9 @@ export default {
                 })
 
                 this.$router.push({ name: "User" });
+
+                this.fetchCurrentUser();
+
 
             } catch (e) {
                 console.error(e.message)

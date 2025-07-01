@@ -14,7 +14,7 @@ from ..extensions import db
 from ..models import Parking, Slot
 from ..exceptions import APIError
 from flask import current_app
-from ..utils import role_required
+from ..utils import role_required, haversine_distance
 
 parking_bp = Blueprint(
     "parking", __name__, url_prefix="/parking", description="parking related routes"
@@ -72,8 +72,26 @@ def get_parking(args):
             }
 
         if args.get("lat") and args.get("long"):
-            # TODO: calculate parking distance and then return closest parkings
-            ...
+            user_lat = float(args.get("lat"))
+            user_long = float(args.get("long"))
+            all_parkings = Parking.query.all()
+            parkings_with_distance = []
+            for parking in all_parkings:
+                distance = haversine_distance(user_lat, user_long, parking.lat, parking.long)
+                parkings_with_distance.append((parking, distance))
+            parkings_with_distance.sort(key=lambda x: x[1])
+            # Paginate manually
+            start = (page - 1) * per_page
+            end = start + per_page
+            paginated = parkings_with_distance[start:end]
+            return {
+                "total": len(parkings_with_distance),
+                "page": page,
+                "pages": (len(parkings_with_distance) + per_page - 1) // per_page,
+                "has_next": end < len(parkings_with_distance),
+                "has_prev": start > 0,
+                "parkings": [p[0].to_dict() | {"distance_km": round(p[1], 2)} for p in paginated],
+            }
 
         parkings = Parking.query.paginate(page=page, per_page=per_page)
 
