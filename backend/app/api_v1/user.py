@@ -97,6 +97,6 @@ def get_current_user():
     except APIError as e:
         current_app.logger.error(e.message)
         return abort(e.status_code, message=str(e), additional_data=e.extra)
-    except Exception as e:
-        current_app.logger.error(e)
-        return abort(500, message="Internal Server Error.")
+    # except Exception as e:
+    #     current_app.logger.error(e)
+    #     return abort(500, message="Internal Server Error.")

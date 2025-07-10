@@ -79,6 +79,7 @@ def add_test_reservation():
             user_id=1,
             parking_id=1,
             slot_id=1,
+            is_booked=False,
             start_time=dt.now(ZoneInfo("Asia/Kolkata"))
             - timedelta(hours=5, minutes=45),
             leave_time=dt.now(ZoneInfo("Asia/Kolkata"))
@@ -94,7 +95,13 @@ def add_test_review():
 
     if not Review.query.filter_by(user_id=1, parking_id=1).first():
 
-        rw = Review(user_id=1, parking_id=1, feedback="test parking is good!", rating=4)
+        rw = Review(
+            user_id=1,
+            parking_id=1,
+            reservation_id=1,
+            feedback="test parking is good!",
+            rating=4,
+        )
 
         db.session.add(rw)
         db.session.commit()
@@ -112,7 +119,7 @@ def add_test_payment():
             fee=40,
             amount=40,
             payment_time=dt.now(ZoneInfo("Asia/Kolkata")),
-            pay_for="booking"
+            pay_for="booking",
         )
 
         db.session.add(pay)
@@ -125,7 +132,7 @@ def add_test_payment():
             fee=40,
             amount=40 * 3,
             payment_time=dt.now(ZoneInfo("Asia/Kolkata")) + timedelta(hours=3),
-            pay_for="charge"
+            pay_for="charge",
         )
 
         db.session.add(pay)

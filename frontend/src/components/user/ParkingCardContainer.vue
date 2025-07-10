@@ -1,35 +1,40 @@
 <template>
-  <div class="p-2 bg-warning rounded-4 bg-opacity-5 min-vh-50">
+  <div class="p-2 bg-primary-subtle rounded-4 min-vh-50">
     <div class="container py-4">
 
-      <div class="row flex-column flex-md-row justify-content-between align-items-center mb-4 g-2">
-        <div class="col-auto text-center text-md-start mb-2 mb-md-0">
-          <h2 class="text-light">Parkings</h2>
+      <div class="row g-2 align-items-center mb-4 flex-column flex-md-row">
+        <div class="col-12 col-md-auto mb-2 mb-md-0">
+          <h2 class="text-primary fw-bold mb-0 d-flex align-items-center">
+            <i class="bi bi-geo-alt-fill me-2 fs-3 text-dark"></i>
+            Parkings
+          </h2>
         </div>
-        <div class="col-auto w-100 w-md-auto">
-          <form class="d-flex flex-column flex-sm-row gap-2" @submit.prevent="onQuerySubmit">
-            <div class="input-group">
-              <input
-                v-model="query"
-                type="text"
-                class="form-control rounded-pill rounded-end-0"
-                placeholder="Search parkings..."
-                style="border-right: 0;"
-              />
-              <button
-                class="btn btn-primary rounded-pill rounded-start-0"
-                type="submit"
-                style="margin-left: -12px;"
-              >
-                Search
-              </button>
-            </div>
+        <div class="col-12 col-md flex-grow-1">
+          <form class="d-flex" @submit.prevent="onQuerySubmit">
+            <input
+              v-model="query"
+              type="text"
+              class="form-control rounded-start-pill border-primary border-end-0 shadow-sm"
+              placeholder="Search parkings by name, area..."
+              aria-label="Search parkings"
+            />
+            <button
+              class="btn btn-primary rounded-end-pill px-4 shadow-sm"
+              type="submit"
+              style="margin-left: -1px;"
+            >
+              <i class="bi bi-search"></i>
+            </button>
           </form>
         </div>
       </div>
 
       <div class="row g-4">
-        <div class="col-12 col-sm-6 col-md-4" v-for="parking in parkings" :key="parking.id">
+        <div
+          class="col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3 d-flex"
+          v-for="parking in parkings"
+          :key="parking.id"
+        >
           <ParkingCard
             :id="parking.id"
             :name="parking.name"
@@ -37,6 +42,7 @@
             :hourlyFee="parking.hourly_fee"
             :availableSlots="parking.slots_num - (parking.booked || 0)"
             @view="handleViewParking"
+            class="flex-fill"
           />
         </div>
       </div>
@@ -95,13 +101,7 @@ export default {
 </script>
 
 <style scoped>
-@media (max-width: 575.98px) {
-  .container {
-    padding-left: 0.5rem !important;
-    padding-right: 0.5rem !important;
-  }
-  .row.g-4 > [class^='col-'] {
-    margin-bottom: 1.5rem;
-  }
+.bg-primary-subtle {
+  background-color: #e7f1ff !important;
 }
 </style>

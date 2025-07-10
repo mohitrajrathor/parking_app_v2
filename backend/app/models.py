@@ -57,9 +57,6 @@ class User(db.Model):
 
     def to_dict(self):
 
-        reservations = [res.to_dict() for res in self.reservations]
-        reviews = [rw.to_dict() for rw in self.reviews]
-
         return {
             "id": self.id,
             "unique_id": self.unique_id,
@@ -74,13 +71,22 @@ class User(db.Model):
             "join_time": (
                 self.join_time.strftime("%d-%m-%yT%H:%M%S") if self.join_time else None
             ),
-            "bookings": reservations,
-            "total_bookings": len(reservations),
-            "active_bookings": len(
-                [res for res in reservations if res.get("is_booked")]
-            ),
-            "reviews": reviews,
-            "total_reviews": len(reviews),
+            "history": [
+                res.to_dict() for res in self.reservations if not res.is_booked
+            ],
+            "total_bookings": Reservation.query.filter_by(user_id=self.id).count(),
+            "active_bookings": Reservation.query.filter_by(
+                user_id=self.id, is_booked=True
+            ).count(),
+            "bookings": [
+                booking.to_dict() for booking in self.reservations if booking.is_booked
+            ],
+            "average_rating": db.session.query(db.func.avg(Review.rating))
+            .filter(Review.user_id == self.id)
+            .scalar(),
+            "amount_spended": db.session.query(db.func.sum(Payment.amount))
+            .filter(Payment.user_id == self.id)
+            .scalar(),
         }
 
 
@@ -184,6 +190,7 @@ class Reservation(db.Model):
 
     user = db.relationship("User", backref="reservations", lazy=True)
     slot = db.relationship("Slot", backref="reservations", lazy=True)
+    review = db.relationship("Review", backref="reservation", uselist=False, lazy=True)
 
     def __repr__(self):
         return f"<Reservation {self.id} - User {self.user_id}, Slot {self.slot_id}>"
@@ -191,6 +198,7 @@ class Reservation(db.Model):
     def to_dict(self):
         return {
             "id": self.id,
+            "is_booked": self.is_booked,
             "user": (
                 {
                     "id": self.user.id,
@@ -217,7 +225,17 @@ class Reservation(db.Model):
                         else None
                     ),
                 }
-                if self.parking_id
+                if self.parking
+                else None
+            ),
+            "review": (
+                {
+                    "id": self.review.id,
+                    "feedback": self.review.feedback,
+                    "rating": self.review.rating,
+                    "created_at": self.review.create_time.strftime("%d-%m-%yT%H:%M%S"),
+                }
+                if hasattr(self, "review") and self.review is not None
                 else None
             ),
             "slot": (
@@ -229,16 +247,21 @@ class Reservation(db.Model):
                 if self.slot
                 else None
             ),
-            "start_time": (
-                self.start_time.strftime("%d-%m-%yT%H:%M%S")
-                if self.start_time
+            "charges": (
+                [
+                    {
+                        "id": charge.id,
+                        "amount": charge.amount,
+                        "pay_for": charge.pay_for,
+                        "paid_at": charge.payment_time,
+                    }
+                    for charge in self.payment
+                ]
+                if hasattr(self, "payment") and self.payment is not None
                 else None
             ),
-            "leave_time": (
-                self.leave_time.strftime("%d-%m-%yT%H:%M%S")
-                if self.leave_time
-                else None
-            ),
+            "start_time": (self.start_time.isoformat() if self.start_time else None),
+            "leave_time": (self.leave_time.isoformat() if self.leave_time else None),
         }
 
 
@@ -249,6 +272,9 @@ class Review(db.Model):
         db.Integer, primary_key=True, autoincrement=True, nullable=False, unique=True
     )
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    reservation_id = db.Column(
+        db.Integer, db.ForeignKey("reservations.id"), nullable=False
+    )
     parking_id = db.Column(
         db.Integer, db.ForeignKey("parkings.id", ondelete="SET NULL"), nullable=True
     )
@@ -306,8 +332,27 @@ class Payment(db.Model):
     user = db.relationship("User", backref="payments", lazy=True)
     parking = db.relationship("Parking", backref="payments", lazy=True)
     reservation = db.relationship(
-        "Reservation", backref="payment", lazy=True, uselist=False
+        "Reservation", backref="payment", lazy=True, uselist=True
     )
+
+    def to_dict(self):
+        """
+        to convert model to dictionary
+        """
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "parking_id": self.parking_id,
+            "reserve_id": self.reserve_id,
+            "fee": self.fee,
+            "amount_paid": self.amount,
+            "paid_at": (
+                self.payment_time.strftime("%d-%m-%yT%H:%M%S")
+                if self.payment_time
+                else None
+            ),
+            "pay_for": self.pay_for,
+        }
 
     def __repr__(self):
         return f"<Payment {self.id} - User {self.user_id}, Cost {self.amount}>"

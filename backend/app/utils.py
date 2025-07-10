@@ -8,6 +8,7 @@ from functools import wraps
 from flask_jwt_extended import verify_jwt_in_request, get_jwt
 from flask import jsonify
 from math import radians, sin, cos, sqrt, atan2
+import datetime as dt
 
 
 def create_models():
@@ -91,3 +92,13 @@ def haversine_distance(lat1, lon1, lat2, lon2):
     a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
     c = 2 * atan2(sqrt(a), sqrt(1 - a))
     return R * c
+
+
+def calculate_hours(start: dt.datetime, end: dt.datetime) -> float:
+    """
+    Calculate time difference in hours, rounded down to nearest 0.5 hour, minimum 0.5 hour.
+    """
+    delta = end - start
+    hours = delta.total_seconds() / 3600
+    rounded = max((hours // 0.5) * 0.5, 0)
+    return rounded

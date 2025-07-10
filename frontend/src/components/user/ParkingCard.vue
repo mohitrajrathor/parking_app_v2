@@ -1,7 +1,7 @@
 <template>
-  <div class="card mb-3 rounded-4 border-0 parking-card-responsive">
+  <div class="card mb-1 rounded-4 border-0 parking-card-responsive">
     <div class="card-body">
-      <h5 class="card-title mb-3 text-capitalize">{{ name }}</h5>
+      <h4 class="card-title mb-3 text-capitalize">{{ name }}</h4>
       <div class="mb-2 d-flex flex-column flex-sm-row gap-2">
         <span class="p-2 bg-primary-subtle rounded-2 text-primary fw-bold me-2">Booking Fee: ₹{{ bookingFee }}</span>
         <span class="p-2 bg-success-subtle rounded-2 text-success fw-bold me-2">Hourly Fee: ₹{{ hourlyFee }}</span>

@@ -128,6 +128,7 @@
     </div>
 </template>
 <script>
+import { mapActions } from "vuex";
 import LeafletMap from './LeafletMap.vue';
 import ParkingCardContainer from './user/ParkingCardContainer.vue';
 
@@ -136,6 +137,12 @@ export default {
     components: {
         LeafletMap, 
         ParkingCardContainer
+    }, 
+    methods: {
+        ...mapActions('user', ['fetchCurrentUser']),
+    },
+    created() {
+        this.fetchCurrentUser();
     }
 }
 </script>

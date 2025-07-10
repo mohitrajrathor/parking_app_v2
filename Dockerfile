@@ -4,10 +4,10 @@ FROM node:22-slim AS frontend-build
 WORKDIR /app
 
 COPY ./frontend/package*.json ./
-RUN npm install 
+RUN npm install --production
 
 COPY ./frontend ./
-RUN npm run build 
+RUN npm run build
 
 
 # ------- main application -------
@@ -16,14 +16,16 @@ FROM python:3.12-slim AS backend
 WORKDIR /app
 
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt 
+RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt 
 
 
 COPY ./backend ./backend 
 
-# copying frontend dist from frontend build stage
+# Copy frontend build to backend static directory
 COPY --from=frontend-build /app/dist ./frontend/dist
 
 EXPOSE 1234
 
-CMD [ "gunicorn", "--workers=2", "app:create_app()", "-b", "0.0.0.0:1234"]
+# Adjust the Gunicorn command to match your app factory location
+CMD ["python", "-m", "flask", "--app", "backend.app", "run", "--host", "0.0.0.0", "--port", "1234"]
+# CMD ["gunicorn", "backend.app:create_app()", "-b", "0.0.0.0:1234"]

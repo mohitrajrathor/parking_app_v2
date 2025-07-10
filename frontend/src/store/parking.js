@@ -23,13 +23,14 @@ const mutations = {
 
 
 const actions = {
-  async fetchParkings({ commit }, { page = 1, query = '', lat = null, long = null } = {}) {
+  async fetchParkings({ commit }, { page = 1, query = '', lat = null, long = null, per_page=8 } = {}) {
     try {
       let url = `/api_v1/parking?page=${page}`;
       const params = [];
       if (query && query !== '') params.push(`query=${encodeURIComponent(query)}`);
       if (lat !== null) params.push(`lat=${lat}`);
       if (long !== null) params.push(`long=${long}`);
+    if (per_page !== 10) params.push(`per_page=${per_page}`)
       if (params.length > 0) {
         url += '&' + params.join('&');
       }

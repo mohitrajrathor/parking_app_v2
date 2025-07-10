@@ -9,7 +9,7 @@ from ..extensions import db
 from ..models import Reservation, Parking, User, Review, Payment, Slot
 from ..exceptions import APIError
 from flask import current_app, request
-from ..utils import role_required
+from ..utils import role_required, calculate_hours
 from flask_jwt_extended import get_jwt_identity
 
 
@@ -23,8 +23,11 @@ reserve_bp = Blueprint(
 
 
 class ReservationSchema(Schema):
-    parking_id = fields.Int()
-    reservation_id = fields.Int()
+    parking_id = fields.Integer()
+    reservation_id = fields.Integer()
+    leave_time = fields.DateTime()
+    feedback = fields.Str()
+    rating = fields.Integer()
 
 
 @reserve_bp.route("", methods=["POST"])
@@ -35,7 +38,6 @@ def book_slot(args):
     to reserve a slot
     """
     try:
-        print(request.json)
         parking = Parking.query.get(args.get("parking_id"))
         user = User.query.get(get_jwt_identity())
 
@@ -90,3 +92,114 @@ def book_slot(args):
     except Exception as e:
         current_app.logger.error(e)
         return abort(500, message="Internal Server Error.")
+
+
+@reserve_bp.route("", methods=["PUT"])
+@reserve_bp.arguments(ReservationSchema)
+@role_required("user")
+def leave_slot(args):
+    """
+    to reserve a slot
+    """
+    try:
+        print(request.json)
+        reservation = Reservation.query.get(args.get("reservation_id"))
+        user = User.query.get(get_jwt_identity())
+        parking = Parking.query.get(args["parking_id"])
+        feedback = args.get("feedback", None)
+        rating = args.get("rating", None)
+
+        if not feedback or not rating:
+            raise APIError("Review is required !", 409)
+
+        if not parking:
+            raise APIError("Parking id is not valid !", 404)
+
+        if not reservation:
+            raise APIError("Reservation id is invalid!", 404)
+
+        slot = Slot.query.get(reservation.slot_id)
+
+        if not slot:
+            raise APIError("Slot is invalid conflict!", 409)
+
+        # Validate leave_time (handle ISO 8601 with/without Z)
+        leave_time_raw = args["leave_time"]
+        if isinstance(leave_time_raw, dt):
+            leave_time = leave_time_raw
+        else:
+            # Handle 'Z' (UTC) at the end of the string
+            if isinstance(leave_time_raw, str) and leave_time_raw.endswith("Z"):
+                leave_time = dt.fromisoformat(leave_time_raw.replace("Z", "+00:00"))
+            else:
+                leave_time = dt.fromisoformat(leave_time_raw)
+        # Convert leave_time to Asia/Kolkata timezone if it's not already
+        if leave_time.tzinfo is None:
+            leave_time = leave_time.replace(tzinfo=ZoneInfo("Asia/Kolkata"))
+        else:
+            leave_time = leave_time.astimezone(ZoneInfo("Asia/Kolkata"))
+        # Ensure reservation.start_time is also timezone-aware in Asia/Kolkata
+        start_time = reservation.start_time
+        if start_time.tzinfo is None:
+            start_time = start_time.replace(tzinfo=ZoneInfo("Asia/Kolkata"))
+        else:
+            start_time = start_time.astimezone(ZoneInfo("Asia/Kolkata"))
+        if leave_time < start_time:
+            raise APIError("Leave time cannot be before start time!", 400)
+
+        # Free slot and update reservation
+        slot.is_occupied = False
+        reservation.is_booked = False
+        reservation.leave_time = leave_time
+        db.session.commit()
+
+        # Use leave_time for hours calculation
+        hours_parked = calculate_hours(start=start_time, end=leave_time)
+        cost_amt = parking.hourly_fee * hours_parked
+
+        pay = Payment(
+            user_id=user.id,
+            parking_id=reservation.parking.id,
+            reserve_id=reservation.id,
+            fee=reservation.parking.booking_fee,
+            amount=cost_amt,
+            payment_time=dt.now(ZoneInfo("Asia/Kolkata")),
+            pay_for="leave",
+        )
+
+        db.session.add(pay)
+        db.session.commit()
+
+        review = Review(
+            user_id=user.id,
+            parking_id=parking.id,
+            reservation_id=reservation.id,
+            feedback=feedback,
+            rating=rating,
+        )
+        db.session.add(review)
+        db.session.commit()
+
+        return {
+            "message": "Slot left successfully.",
+            "reservation_id": reservation.id,
+            "payment_id": pay.id,
+            "payment_details": {
+                "payer": user.name,
+                "parking": parking.name,
+                "fee": parking.booking_fee,
+                "amount": cost_amt,
+                "slot_leaved": slot.serial_id,
+                "payment_time": pay.payment_time.strftime("%d-%m-%yT%H:%M%S"),
+            },
+        }, 200
+
+    except APIError as e:
+        current_app.logger.error(e.message)
+        return abort(e.status_code, message=str(e), additional_data=e.extra)
+
+    # except Exception as e:
+    #     import traceback
+
+    #     current_app.logger.error(traceback.format_exc())
+    #     return abort(500, message="Internal Server Error.")
