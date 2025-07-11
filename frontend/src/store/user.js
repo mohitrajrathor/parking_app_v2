@@ -31,14 +31,25 @@ const actions = {
         const data = await response.data;
         commit('SET_USER', data);
     },
+    
 
-    async fetchUsers({ commit }, page = 1, query = null) {
+    async fetchUserById({commit}, id) {
+        const response = await api.get(`/api_v1/user/by_id?id=${id}`, {
+            withCredentials: true,
+        });
+
+        const data = await response.data;
+        commit('SET_USER', data);
+    },
+
+
+    async fetchUsers({ commit }, {page =1, query = null, per_page=1} = {}) {
         try {
 
-            let url = `/api_v1/user?page=${page}`
+            let url = `/api_v1/user?page=${page}&per_page=${per_page}`
 
             if (query != null) {
-                url = `/api_v1/user?page=${page}&query=${query}`
+                url = `/api_v1/user?page=${page}&query=${query}&per_page=${per_page}`
             } 
             const response = await api.get(url, {
                 withCredentials: true,

@@ -18,6 +18,18 @@ class Config:
     OPENAPI_URL_PREFIX = "/docs"
     OPENAPI_SWAGGER_UI_PATH = "/swagger"
     OPENAPI_SWAGGER_UI_URL = "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"
+    API_SPEC_OPTIONS = {
+        "security": [{"bearerAuth": []}],
+        "components": {
+            "securitySchemes": {
+                "bearerAuth": {
+                    "type": "http",
+                    "scheme": "bearer",
+                    "bearerFormat": "JWT",
+                }
+            }
+        },
+    }
 
     #### CORS
     ORIGIN = "*"
@@ -32,13 +44,8 @@ class Config:
     MAIL_PORT = os.environ.get("mail_port") or 1025
     MAIL_USE_TLS = False
     MAIL_USE_SSL = False
-    MAIL_USERNAME = (
-        os.environ.get("mail_username") or None
-    )  # os.environ["mail_username"] to be uncommented on live server
-    MAIL_PASSWORD = (
-        os.environ.get("mail_password") or None
-    )  # os.environ["mail_password"] to be uncommented on live server
-
+    MAIL_USERNAME = os.environ.get("mail_username") or None
+    MAIL_PASSWORD = os.environ.get("mail_password") or None
     CELERY = {
         "broker_url": "redis://localhost:6379",
         "result_backend": "redis://localhost:6379",

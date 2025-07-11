@@ -11,13 +11,13 @@ import AdminDashboard from "../components/AdminDashboard.vue"
 import NotFound from "../components/NotFound.vue";
 import User from "../pages/User.vue";
 import UserDashboard from "../components/UserDashboard.vue";
-import UserProfile from "../components/UserProfile.vue";
+import UserProfile from "../pages/UserProfile.vue";
 import UserSupport from "../components/UserSupport.vue";
 import store from "../store";
 import AddParking from "../components/AddParking.vue";
 import Parking from "../pages/Parking.vue";
 import Payment from "../pages/Payment.vue";
-
+import Unauthorized from "../components/Unauthorized.vue";
 
 
 const routes = [
@@ -56,7 +56,7 @@ const routes = [
         redirect: "/admin/dashboard",
         meta: {
             authRequired: true,
-            role: "admin",
+            role: ["admin"],
         },
         children: [
             {
@@ -90,7 +90,7 @@ const routes = [
         redirect: "/user/dashboard",
         meta: {
             authRequired: true,
-            role: "user",
+            role: ["user"],
         },
         children: [
             {
@@ -111,6 +111,16 @@ const routes = [
         ]
     },
     {
+        path: '/profile',
+        name: "Profile",
+        component: UserProfile,
+        meta: {
+            authRequired: true,
+            role: ['user', 'admin'],
+            redirect_: "Unauthorized" 
+        }
+    },
+    {
         path: '/parking/:id',
         name: "Parking",
         component: Parking,
@@ -125,6 +135,12 @@ const routes = [
         path: '/:pathMatch(.*)*',
         name: "Notfound",
         component: NotFound,
+    },
+
+    {
+        path: '/unauthorized',
+        name: "Unauthorized",
+        component: Unauthorized,
     }
 ]
 
@@ -140,14 +156,15 @@ router.beforeEach((to, from, next) => {
 
     if (to.meta.authRequired) {
         if (!isAuthenticated) {
-            if (to.meta.role == 'admin') {
+            if (to.meta.redirect_) return next({name: to.meta.redirect_})
+            if (to.meta.role.includes("admin")) {
                 return next({ name: "AdminLogin" });
             }
             else return next({ name: "Login" });
         }
 
-        if (to.meta.role && to.meta.role !== userRole) {
-            return next({ name: "Home" });
+        if (to.meta.role && !to.meta.role.includes(userRole)) {
+            return next({ name: "Unauthorized" });
         }
 
         return next();

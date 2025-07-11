@@ -1,6 +1,7 @@
 import { createStore } from "vuex";
 import parking from "./parking";
 import user from "./user";
+import reservation from "./reservation";
 
 
 const store = createStore({
@@ -106,6 +107,7 @@ const store = createStore({
   modules: {
     parking,
     user,
+    reservation
   }
 
 });

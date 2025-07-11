@@ -11,7 +11,7 @@ from ..exceptions import APIError
 from flask import current_app, request
 from ..utils import role_required, calculate_hours
 from flask_jwt_extended import get_jwt_identity
-
+from ..schema import QuerySchema, IdSchema
 
 # blueprint
 reserve_bp = Blueprint(
@@ -28,6 +28,61 @@ class ReservationSchema(Schema):
     leave_time = fields.DateTime()
     feedback = fields.Str()
     rating = fields.Integer()
+
+
+@reserve_bp.route("/by_id", methods=["GET"])
+@reserve_bp.arguments(IdSchema, location="query")
+# @role_required("user", "admin")
+def get_by_id(args):
+    """
+    to get
+    """
+    try:
+        id = args.get("id", None)
+        if not id:
+            raise APIError("No reservation found", 404)
+
+        reservation = Reservation.query.get(int(id))
+        return reservation.to_dict()
+
+    except APIError as e:
+        current_app.logger.error(e.message)
+        return abort(e.status_code, message=str(e), additional_data=e.extra)
+
+    except Exception as e:
+        current_app.logger.error(e)
+        return abort(500, message="Internal Server Error.")
+
+
+@reserve_bp.route("", methods=["GET"])
+@reserve_bp.arguments(QuerySchema, location="query")
+# @role_required("user", "admin")
+def get(args):
+    """
+    to get bulk reservations
+    """
+    try:
+        page = args.get("page", 1)
+        per_page = args.get("per_page", 3)
+
+        reservations = Reservation.query.paginate(page=page, per_page=per_page)
+
+        return {
+            "total": reservations.total,
+            "page": reservations.page,
+            "pages": reservations.pages,
+            "has_next": reservations.has_next,
+            "has_prev": reservations.has_prev,
+            "reservations": [rsvsn.to_dict() for rsvsn in reservations],
+        }
+
+    except APIError as e:
+        current_app.logger.error(e.message)
+        return abort(e.status_code, message=str(e), additional_data=e.extra)
+
+    except Exception as e:
+        current_app.logger.error(e)
+        return abort(500, message="Internal Server Error.")
 
 
 @reserve_bp.route("", methods=["POST"])

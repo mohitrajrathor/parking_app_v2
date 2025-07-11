@@ -66,6 +66,7 @@ def add_test_user():
         user.address = "test address"
         user.pincode = "654321"
         user.phone = "9876543210"
+        user.email_confirmed = True
 
         db.session.add(user)
         db.session.commit()

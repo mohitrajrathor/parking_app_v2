@@ -20,6 +20,7 @@ parking_bp = Blueprint(
     "parking", __name__, url_prefix="/parking", description="parking related routes"
 )
 
+
 @parking_bp.route("/by_id", methods=["GET"])
 @parking_bp.arguments(IdSchema, location="query")
 @parking_bp.response(200, ParkingWithSlothSchema)
@@ -45,6 +46,7 @@ def get_parking_id(args):
     except Exception as e:
         current_app.logger.error(e)
         return abort(500, message="Internal Server Error.")
+
 
 @parking_bp.route("", methods=["GET"])
 @parking_bp.arguments(QuerySchema, location="query")
@@ -77,7 +79,9 @@ def get_parking(args):
             all_parkings = Parking.query.all()
             parkings_with_distance = []
             for parking in all_parkings:
-                distance = haversine_distance(user_lat, user_long, parking.lat, parking.long)
+                distance = haversine_distance(
+                    user_lat, user_long, parking.lat, parking.long
+                )
                 parkings_with_distance.append((parking, distance))
             parkings_with_distance.sort(key=lambda x: x[1])
             # Paginate manually
@@ -90,7 +94,9 @@ def get_parking(args):
                 "pages": (len(parkings_with_distance) + per_page - 1) // per_page,
                 "has_next": end < len(parkings_with_distance),
                 "has_prev": start > 0,
-                "parkings": [p[0].to_dict() | {"distance_km": round(p[1], 2)} for p in paginated],
+                "parkings": [
+                    p[0].to_dict() | {"distance_km": round(p[1], 2)} for p in paginated
+                ],
             }
 
         parkings = Parking.query.paginate(page=page, per_page=per_page)
@@ -111,6 +117,7 @@ def get_parking(args):
     except Exception as e:
         current_app.logger.error(e)
         return abort(500, message="Internal Server Error.")
+
 
 @parking_bp.route("", methods=["POST"])
 @parking_bp.arguments(ParkingSchema, location="json")
@@ -175,6 +182,7 @@ def create_parking(args):
         current_app.logger.error(e)
         return abort(500, message="Internal Server Error.")
 
+
 @parking_bp.route("", methods=["PUT"])
 @parking_bp.arguments(ParkingSchema, location="json")
 @role_required("admin")
@@ -217,9 +225,7 @@ def update_parking(args):
             while add_slots_num > 0:
                 serial_id = f"PR{parking.id}SL{i}"
                 if not Slot.query.filter_by(serial_id=serial_id).first():
-                    db.session.add(
-                        Slot(parking_id=parking.id, serial_id=serial_id)
-                    )
+                    db.session.add(Slot(parking_id=parking.id, serial_id=serial_id))
                     add_slots_num -= 1
                 i += 1
 
@@ -269,7 +275,9 @@ def update_parking(args):
         current_app.logger.error(e)
         return abort(500, message="Internal Server Error.")
 
+
 # TODO: check update parking after booking slots
+
 
 @parking_bp.route("", methods=["DELETE"])
 @parking_bp.arguments(IdSchema, location="query")
@@ -289,7 +297,9 @@ def delete_parking(args):
             raise APIError("parking is not found!", status_code=404)
 
         # Only delete if no slots are occupied for this parking
-        occupied_slots = Slot.query.filter_by(parking_id=parking.id, is_occupied=True).all()
+        occupied_slots = Slot.query.filter_by(
+            parking_id=parking.id, is_occupied=True
+        ).all()
         if not occupied_slots:
             db.session.delete(parking)
             db.session.commit()
@@ -306,6 +316,7 @@ def delete_parking(args):
     except Exception as e:
         current_app.logger.error(e)
         return abort(500, message="Internal Server Error.")
+
 
 @parking_bp.route("/slot")
 @parking_bp.arguments(SlotQuerySchema, location="query")

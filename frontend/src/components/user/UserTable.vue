@@ -9,10 +9,7 @@
               <th>#</th>
               <th>Name</th>
               <th>Email</th>
-              <th>Phone</th>
               <th>Profession</th>
-              <th>Address</th>
-              <th>Pincode</th>
               <th>DOB</th>
               <th>Joined</th>
               <th>Bookings</th>
@@ -20,11 +17,20 @@
               <th>Email Confirmed</th>
               <th>Active Bookings</th>
               <th>Total Bookings</th>
-              <th>Total Reviews</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
-            <UserRow v-for="u in users" :key="u.id" :user="u" />
+            <tr v-if="isLoading">
+              <td :colspan="15" class="text-center py-5">
+                <div class="d-flex justify-content-center align-items-center" style="height: 100px;">
+                  <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <UserRow v-for="u in users" :key="u.id" :user="u" v-else />
           </tbody>
         </table>
       </div>
@@ -48,6 +54,10 @@ export default {
     users: Array,
     page: Number,
     pages: Number,
+    isLoading: {
+      type: Boolean,
+      default: false
+    }
   },
   components: { UserRow, Pagination },
   emits: ['update:page'],

@@ -23,7 +23,7 @@
 
         <!-- user -->
         <div class="my-3">
-            <UserTable :users="users" :page="page" :pages="pages" @update:page="fetchUsers" />
+            <UserTable :isLoading="isLoading" :users="users" :page="page" :pages="pages" @update:page="changePage" />
 
         </div>
     </div>
@@ -33,7 +33,6 @@ import UserAgeDistChart from './UserAgeDistChart.vue';
 import UserProfessionDist from './UserProfessionDist.vue';
 import UserGrowthChart from './UserGrowthChart.vue';
 import UserTable from './user/UserTable.vue';
-import api from '../api';
 import {
     mapGetters, mapActions
 } from "vuex";
@@ -49,33 +48,23 @@ export default {
     computed: {
         ...mapGetters("user", ["users", "pages", "page"]),
     },
+    data() {
+        return {
+            isLoading: false
+        };
+    },
     methods: {
         ...mapActions("user", ["fetchUsers"]),
-        changePage(newPage) {
-            this.fetchUsers(newPage);
+        async changePage(newPage) {
+            this.isLoading = true;
+            await this.fetchUsers({page: newPage});
+            this.isLoading = false;
         },
-
-        // async fetchUsers(page = 1, query = null) {
-        //     try {
-
-        //         let url = `/api_v1/user?page=${page}`
-
-        //         if (query != null) {
-        //             url = `/api_v1/user?page=${page}&query=${query}`
-        //         }
-        //         const response = await api.get(url, {
-        //             withCredentials: true,
-        //         });
-        //         const data = await response.data;
-
-        //         console.log(data);
-        //     } catch (error) {
-        //         console.error('Failed to fetch user data:', error);
-        //     }
-        // },
     },
-    mounted() {
-        this.fetchUsers();
+    async mounted() {
+        this.isLoading = true;
+        await this.fetchUsers();
+        this.isLoading = false;
     }
 }
 </script>

@@ -3,12 +3,9 @@
     <th scope="row">{{ user.id }}</th>
     <td>{{ user.name }}</td>
     <td>{{ user.email }}</td>
-    <td>{{ user.phone }}</td>
     <td>{{ user.profession }}</td>
-    <td>{{ user.address }}</td>
-    <td>{{ user.pincode }}</td>
     <td>{{ user.dob }}</td>
-    <td>{{ user.join_time }}</td>
+    <td>{{ formatJoinTime(user.join_time) }}</td>
     <td>{{ user.total_bookings }}</td>
     <td>{{ user.total_reviews }}</td>
     <td>
@@ -18,7 +15,14 @@
     </td>
     <td>{{ user.active_bookings }}</td>
     <td>{{ user.total_bookings }}</td>
-    <td>{{ user.total_reviews }}</td>
+    <td>
+      <router-link
+        :to="`/profile?user_id=${user.id}`"
+        class="btn btn-sm btn-primary"
+      >
+        View
+      </router-link>
+    </td>
   </tr>
 </template>
 
@@ -27,6 +31,13 @@ export default {
   name: "UserRow",
   props: {
     user: Object
+  },
+  methods: {
+    formatJoinTime(joinTime) {
+      if (!joinTime) return '';
+      const date = new Date(joinTime);
+      return date.toLocaleDateString();
+    }
   }
 };
 </script> 

@@ -68,13 +68,12 @@ class User(db.Model):
             "pincode": self.pincode,
             "phone": self.phone,
             "email_confirmed": self.email_confirmed,
-            "join_time": (
-                self.join_time.strftime("%d-%m-%yT%H:%M%S") if self.join_time else None
-            ),
+            "join_time": (self.join_time.isoformat() if self.join_time else None),
             "history": [
                 res.to_dict() for res in self.reservations if not res.is_booked
             ],
             "total_bookings": Reservation.query.filter_by(user_id=self.id).count(),
+            "total_reviews": Review.query.filter_by(user_id=self.id).count(),
             "active_bookings": Reservation.query.filter_by(
                 user_id=self.id, is_booked=True
             ).count(),
@@ -196,6 +195,13 @@ class Reservation(db.Model):
         return f"<Reservation {self.id} - User {self.user_id}, Slot {self.slot_id}>"
 
     def to_dict(self):
+        if self.leave_time:
+            delta = self.leave_time - self.start_time
+            hours_used = delta.total_seconds() / 3600
+            hours_used = max((hours_used // 0.5) * 0.5, 0)
+        else:
+            hours_used = None
+
         return {
             "id": self.id,
             "is_booked": self.is_booked,
@@ -262,6 +268,7 @@ class Reservation(db.Model):
             ),
             "start_time": (self.start_time.isoformat() if self.start_time else None),
             "leave_time": (self.leave_time.isoformat() if self.leave_time else None),
+            "hours_used": hours_used,
         }
 
 

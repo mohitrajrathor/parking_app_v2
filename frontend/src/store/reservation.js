@@ -1,31 +1,30 @@
-// store/modules/parking.js
+// store/modules/reservation.js
 import api from '../api';
 
 const state = {
-  parking: null,
-  parkings: [],
+  reservation: null,
+  reservations: [],
   total: 0,
   page: 1,
   pages: 1,
 };
 
 const mutations = {
-  SET_PARKINGS(state, payload) {
-    state.parkings = payload.parkings;
+  SET_RESERVATIONS(state, payload) {
+    state.reservations = payload.reservations;
     state.total = payload.total;
     state.page = payload.page;
     state.pages = payload.pages;
   },
-  SET_PARKING(state, payload) {
-    state.parking = payload;
+  SET_RESERVATION(state, payload) {
+    state.reservation = payload;
   }
 };
 
-
 const actions = {
-  async fetchParkings({ commit }, { page = 1, query = '', lat = null, long = null, per_page=1 } = {}) {
+  async fetchReservations({ commit }, { page = 1, query = '', lat = null, long = null, per_page=10 } = {}) {
     try {
-      let url = `/api_v1/parking?page=${page}`;
+      let url = `/api_v1/reservation?page=${page}`;
       const params = [];
       if (query && query !== '') params.push(`query=${encodeURIComponent(query)}`);
       if (lat !== null) params.push(`lat=${lat}`);
@@ -40,43 +39,43 @@ const actions = {
       });
       const data = response.data;
 
-      commit('SET_PARKINGS', {
-        parkings: data.parkings,
+      commit('SET_RESERVATIONS', {
+        reservations: data.reservations || data.parkings || [],
         total: data.total,
         page: data.page,
         pages: data.pages,
       });
     } catch (error) {
-      console.error('Failed to fetch parking data:', error);
+      console.error('Failed to fetch reservations data:', error);
     }
   },
 
 
-  async fetchParkingById({ commit }, id = 1) {
+  async fetchReservationById({ commit }, id = 1) {
     try {
 
-      const response = await api.get(`/api_v1/parking/by_id?id=${id}`, {
+      const response = await api.get(`/api_v1/reservation/by_id?id=${id}`, {
         withCredentials: true,
       });
       const data = response.data;
 
-      commit('SET_PARKING', {
+      commit('SET_RESERVATION', {
         ...data
       });
 
 
     } catch (err) {
-
+        console.error(err);
     }
   }
 };
 
 const getters = {
-  parking: (state) => state.parking,
-  parkings: (state) => state.parkings,
-  total: (state) => state.total,
-  page: (state) => state.page,
-  pages: (state) => state.pages,
+  reservation: (state) => state.reservation,
+  reservations: (state) => state.reservations,
+  rtotal: (state) => state.total,
+  rpage: (state) => state.page,
+  rpages: (state) => state.pages,
 };
 
 export default {

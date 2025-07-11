@@ -4,7 +4,7 @@
 from flask_smorest import Blueprint, abort
 from sqlalchemy.sql.functions import user
 from ..models import User
-from ..schema import IdSchema
+from ..schema import IdSchema, QuerySchema
 from ..exceptions import APIError
 from flask import current_app
 from ..utils import role_required
@@ -44,7 +44,7 @@ def get_user_by_id(args):
 
 
 @user_bp.route("", methods=["GET"])
-@user_bp.arguments(IdSchema, location="query")
+@user_bp.arguments(QuerySchema, location="query")
 @role_required("admin")
 def get_users(args):
     """
@@ -54,6 +54,8 @@ def get_users(args):
         page = args.get("page", 1)
         per_page = args.get("per_page", 10)
         query = args.get("query", "")
+
+        print(per_page)
 
         if query:
             users_paginated = User.query.filter(User.name.ilike(f"%{query}%")).paginate(
