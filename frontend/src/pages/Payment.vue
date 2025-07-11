@@ -56,7 +56,7 @@
                   <span class="fw-bold text-capitalize">{{ totalAmount }}</span>
                 </li>
               </ul>
-              <div class="d-grid gap-3 mb-3">
+              <div v-if="paymentFor==='leave_parking'" class="d-grid gap-3 mb-3">
                 <div>
                   <label for="feedback" class="form-label fw-semibold text-primary">Feedback</label>
                   <textarea id="feedback" class="form-control rounded-3 bg-primary-subtle border-0 shadow-sm" rows="2" v-model="feedback" placeholder="Share your experience..."></textarea>

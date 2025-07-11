@@ -64,7 +64,8 @@
                         </div>
                         <div class="row" v-if="role === 'user'">
                             <div class="col">
-                                <button @click="goToPayment(parking.id)" class="btn btn-dark bg-gradient w-100 py-2 fs-5 rounded-pill">
+                                <button @click="goToPayment(parking.id)"
+                                    class="btn btn-dark bg-gradient w-100 py-2 fs-5 rounded-pill">
                                     <i class="bi bi-credit-card me-2"></i>Book Parking
                                 </button>
                             </div>
@@ -91,9 +92,24 @@
                 </div>
                 <hr>
                 <div id="tab" class="p-4 bg-white rounded-4">
-                    <div v-if="currentTab === 'slots'" class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6 g-3">
+                    <div v-if="currentTab === 'slots'"
+                        class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6 g-3">
                         <div v-for="slot in parking.slots" :key="slot.id" class="col">
-                            <div
+                            <div v-if="role === 'admin'">
+                                <div v-if="slot.is_occupied"
+                                    class="p-2 fw-bold text-center rounded border bg-danger-subtle text-danger border-danger">
+                                    {{ slot.serial_id }}
+                                </div>
+                                <div v-else
+                                    class="p-2 fw-bold text-center rounded border bg-success-subtle text-success border-success">
+                                    {{ slot.serial_id }}
+                                    <div>
+                                        <button @click="delete_slot(slot.serial_id)"
+                                            class="custom-dlt-btn">Delete</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div v-else
                                 :class="['p-2 fw-bold text-center rounded border', slot.is_occupied ? 'bg-danger-subtle text-danger border-danger' : 'bg-success-subtle text-success border-success']">
                                 {{ slot.serial_id }}
                             </div>
@@ -109,7 +125,8 @@
                             <div v-for="review in parking.reviews" :key="review.id" class="mb-3">
                                 <div class="card h-100 border-0">
                                     <div class="card-body">
-                                        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start mb-2 gap-2">
+                                        <div
+                                            class="d-flex flex-column flex-sm-row justify-content-between align-items-start mb-2 gap-2">
                                             <h6 class="card-subtitle mb-1 text-muted">
                                                 {{ review.user.name || 'Anonymous' }}
                                             </h6>
@@ -126,7 +143,8 @@
                                             </small>
                                         </div>
                                         <p class="card-text">{{ review.feedback }}</p>
-                                        <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center">
+                                        <div
+                                            class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center">
                                             <div class="me-0 me-sm-2 mb-1 mb-sm-0">
                                                 <span v-for="i in 5" :key="i" :class="[
                                                     'star',
@@ -154,9 +172,11 @@
                                     <div class="card-body text-center">
                                         <h5 class="card-title">Occupancy Rate</h5>
                                         <div class="display-4 text-primary">
-                                            {{ parking.slots_num > 0 ? Math.round((parking.booked / parking.slots_num) * 100) : 0 }}%
+                                            {{ parking.slots_num > 0 ? Math.round((parking.booked / parking.slots_num) *
+                                            100) : 0 }}%
                                         </div>
-                                        <p class="card-text">{{ parking.booked }} of {{ parking.slots_num }} slots occupied</p>
+                                        <p class="card-text">{{ parking.booked }} of {{ parking.slots_num }} slots
+                                            occupied</p>
                                     </div>
                                 </div>
                             </div>
@@ -169,7 +189,8 @@
                                                 (parking.reviews.reduce((sum, review) => sum + (review.rating || 5), 0) /
                                                     parking.reviews.length).toFixed(1) : 'N/A'}}
                                         </div>
-                                        <p class="card-text">Based on {{ parking.reviews ? parking.reviews.length : 0 }} reviews</p>
+                                        <p class="card-text">Based on {{ parking.reviews ? parking.reviews.length : 0 }}
+                                            reviews</p>
                                     </div>
                                 </div>
                             </div>
@@ -188,6 +209,7 @@ import Footer from '../components/Footer.vue';
 import LeafletMap from '../components/LeafletMap.vue';
 import { mapGetters, mapActions } from 'vuex';
 import parking from '../store/parking';
+import api from '../api';
 
 export default {
     name: "Parking",
@@ -209,6 +231,7 @@ export default {
             return this.$route.params.id;
         }
     },
+    inject: ['notify'],
     methods: {
         ...mapActions("parking", ["fetchParkingById"]),
         switchTab(tab) {
@@ -217,6 +240,32 @@ export default {
         goToPayment(parking_id) {
             this.$router.push({ path: `/payment/booking`, query: { parking_id: parking_id } });
         },
+
+        async delete_slot(serial_id) {
+            try {
+                if (!confirm("Are you sure to delete this slot ?")) {
+
+                }
+
+                const response = await api.delete(`/api_v1/parking/slot?serial_id=${serial_id}`)
+
+                const data = await response.data;
+                this.notify({
+                    message: data?.message || "Slot deleted !"
+                })
+            } catch (err) {
+                const data = await err.response.data;
+                this.notify({
+                    message: data?.message || "Some error occured!"
+                })
+
+                console.error(err.message);
+            } finally {
+                this.isLoading = true;
+                await this.fetchParkingById(this.parking_id);
+                this.isLoading = false;
+            }
+        }
     },
     async created() {
         this.isLoading = true;
@@ -230,19 +279,41 @@ export default {
 .vh-50 {
     min-height: 50vh;
 }
+
 .min-vh-50 {
     min-height: 50vh;
 }
+
 .bg-primary-subtle {
     background-color: #e7f1ff !important;
 }
+
 .bg-success-subtle {
     background-color: #e6f4ea !important;
 }
+
 .bg-warning-subtle {
     background-color: #fff8e1 !important;
 }
+
 .bg-danger-subtle {
     background-color: #fbeaea !important;
+}
+
+
+.custom-dlt-btn {
+    background-color: #fbeaea;
+    color: #dc3545;
+    font-weight: bold;
+    border: 2px solid #dc3545;
+    border-radius: 50rem;
+    padding: 0.1rem 0.5rem;
+    font-size: 0.85rem;
+    transition: background 0.2s, color 0.2s;
+
+    &:hover {
+        background-color: #dc3545;
+        color: #fff;
+    }
 }
 </style>

@@ -388,3 +388,36 @@ def get_slot(args: dict):
     except Exception as e:
         current_app.logger.error(e)
         return abort(500, message="Internal Server Error.")
+
+
+@parking_bp.route("/slot", methods=["DELETE"])
+@parking_bp.arguments(SlotQuerySchema, location="query")
+@role_required("admin")
+def delete_slot(args):
+    """
+    Delete slot if it's free
+    """
+    try:
+        serial_id = args.get("serial_id", None)
+        if not serial_id:
+            raise APIError("Serial id is required to delete a slot.", 404)
+
+        slot = Slot.query.filter_by(serial_id=serial_id).first()
+        if not slot:
+            raise APIError("Invalid Serial id.", 404)
+
+        parking = slot.parking
+        parking.slots_num -= 1
+
+        db.session.delete(slot)
+        db.session.commit()
+
+        return {"message": "Slot with serial number deleted successfully"}, 200
+
+    except APIError as e:
+        current_app.logger.error(e.message)
+        return abort(e.status_code, message=str(e), additional_data=e.extra)
+
+    except Exception as e:
+        current_app.logger.error(e)
+        return abort(500, message="Internal Server Error.")
