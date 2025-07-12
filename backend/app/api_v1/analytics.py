@@ -111,6 +111,8 @@ def dashboard_analytics():
             ),
             top_parkinsg=get_top_parkings(),
             daily_revenue=get_last_30_days_revenue(),
+            total_slots=Slot.query.count(),
+            booked_slots=Slot.query.filter_by(is_occupied=True).count(),
         )
 
     except APIError as e:

@@ -20,6 +20,10 @@ const props = defineProps({
   dailyRevenue: {
     type: Object,
     required: true
+  },
+  themeColor: {
+    type: String,
+    default: '#0d6efd'
   }
 })
 
@@ -43,11 +47,11 @@ const renderChart = () => {
           label: 'Revenue (₹)',
           data,
           fill: true,
-          borderColor: 'rgba(59, 130, 246, 1)',
-          backgroundColor: 'rgba(59, 130, 246, 0.2)',
+          borderColor: props.themeColor,
+          backgroundColor: props.themeColor + '33', // 20% opacity
           tension: 0.3,
           pointRadius: 3,
-          pointBackgroundColor: 'rgba(59, 130, 246, 1)'
+          pointBackgroundColor: props.themeColor
         }
       ]
     },
@@ -96,5 +100,7 @@ watch(() => props.dailyRevenue, renderChart, { deep: true })
 canvas {
   width: 100%;
   height: 100%;
+  background: #fff;
+  border-radius: 1rem;
 }
 </style>

@@ -2,7 +2,8 @@
   <tr>
     <th scope="row">{{ reservation.id }}</th>
     <td class="text-capitalize">{{ reservation.parking.name }}</td>
-    <td>{{ reservation.slot.serial_id }}</td>
+    <td v-if="reservation.slot">{{ reservation.slot.serial_id }}</td>
+    <td v-else><span class="badge bg-danger-subtle text-danger">Deleted</span></td>
     <td>{{ formatDate(reservation.start_time) }}</td>
     <td>{{ formatDate(reservation.leave_time) }}</td>
     <td>{{ reservation.hours_used ? reservation.hours_used : '-' }}</td>
