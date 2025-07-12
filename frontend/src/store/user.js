@@ -43,7 +43,7 @@ const actions = {
     },
 
 
-    async fetchUsers({ commit }, {page =1, query = null, per_page=1} = {}) {
+    async fetchUsers({ commit }, {page =1, query = null, per_page=10} = {}) {
         try {
 
             let url = `/api_v1/user?page=${page}&per_page=${per_page}`

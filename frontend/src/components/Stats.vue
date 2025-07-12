@@ -1,7 +1,7 @@
 <template>
     <div id="Stats" class="m-4">
         <div class="p-4 bg-light rounded-4">
-            <div class="row column-gap-4 row-gap-4">
+            <div class="row px-4 column-gap-4 row-gap-4">
                 <template v-for="(item, idx) in statItems" :key="item.key">
                     <div
                         class="col p-3 rounded-4 stat-card d-flex flex-column align-items-center justify-content-center mb-3"
