@@ -99,6 +99,7 @@ const store = createStore({
   getters: {
     role: (state) => state.role,
     getToken: (state) => state.token,
+    position: (state) => state.position,
     getRefreshToken: (state) => state.refreshToken,
     isAuthenticated: (state) => !!state.token,
     getPosition: (state) => state.position,

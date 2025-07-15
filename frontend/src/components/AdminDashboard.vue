@@ -117,8 +117,6 @@
 import Stats from './Stats.vue';
 import LeafletMap from '../components/LeafletMap.vue';
 import RevenueChart from './analytics/RevenueChart.vue';
-import UserAgeDistChart from './UserAgeDistChart.vue';
-import UserGrowthChart from './UserGrowthChart.vue';
 import { mapActions, mapGetters } from 'vuex/dist/vuex.cjs.js';
 import RevenueBreakdownChart from './analytics/RevenueBreakdownChart.vue';
 import SlotUtilizationChart from './analytics/SlotUtilizationChart.vue';
@@ -128,8 +126,6 @@ export default {
     components: {
         Stats,
         LeafletMap,
-        UserAgeDistChart,
-        UserGrowthChart,
         RevenueChart,
         RevenueBreakdownChart,
         SlotUtilizationChart

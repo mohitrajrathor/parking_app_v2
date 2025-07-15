@@ -7,6 +7,7 @@ const state = {
     total: 0,
     page: 1,
     pages: 1,
+    userAnalytics: null,
 };
 
 const mutations = {
@@ -19,9 +20,28 @@ const mutations = {
     SET_USER(state, payload){
         state.user = payload;
     },
+    SET_USER_ANALYTICS(state, payload) {
+        state.userAnalytics = payload;
+    }
 };
 
 const actions = {
+
+    async fetchUserAnalytics({ commit }) {
+    try {
+      const response = await api.get("/api_v1/analytics/user_analytics", {
+        withCredentials: true,
+      });
+      const data = response.data;
+      commit('SET_USER_ANALYTICS', { ...data });
+    } catch (err) {
+      console.error(err.message || "Unable to fetch user analytics data.");
+      if (err.response && err.response.data) {
+        console.error(err.response.data.message || "Unable to fetch user analytics data");
+      }
+    }
+    },
+
 
     async fetchCurrentUser({commit}) {
         const response = await api.get(`/api_v1/user/me`, {
@@ -56,7 +76,6 @@ const actions = {
             });
             const data = await response.data;
 
-            console.log(data);
 
             commit('SET_USERS', {
                 users: data.users,
@@ -76,6 +95,7 @@ const getters = {
     total: (state) => state.total,
     page: (state) => state.page,
     pages: (state) => state.pages,
+    userAnalyticsData: (state) => state.userAnalytics,
 };
 
 export default {

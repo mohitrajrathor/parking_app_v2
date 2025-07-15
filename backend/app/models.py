@@ -9,6 +9,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime as dt
 from zoneinfo import ZoneInfo
 from uuid import uuid4
+from sqlalchemy import func
+from sqlalchemy import cast, DateTime
 
 
 class Admin(db.Model):
@@ -55,9 +57,9 @@ class User(db.Model):
     def check_password(self, password: str) -> bool:
         return check_password_hash(self.password, password)
 
-    def to_dict(self):
+    def to_dict(self, for_dashboard=False):
 
-        return {
+        user_info = {
             "id": self.id,
             "unique_id": self.unique_id,
             "email": self.email,
@@ -87,6 +89,92 @@ class User(db.Model):
             .filter(Payment.user_id == self.id)
             .scalar(),
         }
+
+        if for_dashboard:
+            # Calculate total booking hours in Asia/Kolkata timezone
+
+            total_seconds = (
+                db.session.query(
+                    db.func.sum(
+                        db.func.strftime("%s", Reservation.leave_time)
+                        - db.func.strftime("%s", Reservation.start_time)
+                    )
+                )
+                .filter(
+                    Reservation.user_id == self.id, Reservation.leave_time.isnot(None)
+                )
+                .scalar()
+                or 0
+            )
+            user_info["total_booking_hours"] = round(total_seconds / 3600, 2)
+
+            user_info["booking_revenue"] = (
+                db.session.query(db.func.sum(Payment.amount))
+                .filter(Payment.user_id == self.id, Payment.pay_for == "booking")
+                .scalar()
+                or 0
+            )
+
+            user_info["leave_revenue"] = (
+                db.session.query(db.func.sum(Payment.amount))
+                .filter(Payment.user_id == self.id, Payment.pay_for == "leave")
+                .scalar()
+                or 0
+            )
+
+            daily_revenue_rows = (
+                db.session.query(
+                    db.func.sum(Payment.amount),
+                    func.date(Payment.payment_time).label("date"),
+                )
+                .filter(Payment.user_id == self.id)
+                .group_by(func.date(Payment.payment_time))
+                .all()
+            )
+            user_info["daily_spendings"] = [
+                {"amount": row[0], "date": row[1]} for row in daily_revenue_rows
+            ]
+
+            favorite_rows = (
+                db.session.query(
+                    Parking.id,
+                    Parking.name,
+                    db.func.count(Reservation.id).label("reservation_count"),
+                )
+                .join(Reservation, Reservation.parking_id == Parking.id)
+                .filter(Reservation.user_id == self.id)
+                .group_by(Parking.id, Parking.name)
+                .order_by(db.desc("reservation_count"))
+                .limit(5)
+                .all()
+            )
+            user_info["favorite_parking_locations"] = [
+                {"id": row[0], "name": row[1], "reservation_count": row[2]}
+                for row in favorite_rows
+            ]
+
+            review_summary_row = (
+                db.session.query(
+                    db.func.avg(Review.rating).label("average_rating"),
+                    db.func.count(Review.id).label("total_reviews"),
+                    db.func.sum(db.case((Review.rating >= 4, 1), else_=0)).label(
+                        "positive_reviews"
+                    ),
+                    db.func.sum(db.case((Review.rating <= 2, 1), else_=0)).label(
+                        "negative_reviews"
+                    ),
+                )
+                .filter(Review.user_id == self.id)
+                .one_or_none()
+            )
+            if review_summary_row:
+                user_info["review_sentiment_summary"] = dict(
+                    review_summary_row._mapping
+                )
+            else:
+                user_info["review_sentiment_summary"] = None
+
+        return user_info
 
 
 class Parking(db.Model):

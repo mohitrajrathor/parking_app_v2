@@ -161,7 +161,15 @@ export default {
 					});
 				}
 			} catch (err) {
-				console.error(err);
+				const data = await err.response.data;
+				this.notify({
+						message: data?.message || "Can not delete parking!",
+						title: "Unable to Delete",
+						icon: "https://cdn-icons-png.flaticon.com/512/190/190406.png",
+						duration: 5000,
+					});
+
+					console.error(err);
 			} finally {
 				this.isLoading = false;
 				this.mode = 'normal';

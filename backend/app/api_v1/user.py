@@ -94,7 +94,7 @@ def get_current_user():
             raise APIError("No user id found in token!", 401)
         user = User.query.get(user_id)
         if user:
-            return user.to_dict()
+            return user.to_dict(for_dashboard=True)
         return {"message": "No user found!"}, 404
     except APIError as e:
         current_app.logger.error(e.message)

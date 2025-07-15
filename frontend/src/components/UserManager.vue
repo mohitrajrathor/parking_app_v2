@@ -1,71 +1,72 @@
 <template>
-    <div id="userManager">
-        <!-- analytics -->
-        <div id="userAnalytics">
-            <div class="p-3 m-1 bg-light rounded-4">
-                <div class="p-3">
-                    <UserGrowthChart />
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="p-3">
-                            <UserProfessionDist />
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="p-3">
-                            <UserAgeDistChart />
-                        </div>
-                    </div>
-                </div>
-            </div>
+  <div id="userManager">
+    <!-- analytics -->
+    <div id="userAnalytics" class="rounded-4">
+      <div class="p-3 bg-white rounded-4">
+        <div class="row g-4">
+          <div class="col-md-12">
+            <UserGrowthChart :monthlyGrowth="userAnalyticsData?.monthly_user_growth || {}" />
+          </div>
+          <div class="col-md-6">
+            <UserProfessionDistChart :professionDist="userAnalyticsData?.profession_dist || {}" />
+          </div>
+          <div class="col-md-6">
+            <UserAgeDistChart :ageDist="userAnalyticsData?.age_dist || {}" />
+          </div>
         </div>
-
-        <!-- user -->
-        <div class="my-3">
-            <UserTable :isLoading="isLoading" :users="users" :page="page" :pages="pages" @update:page="changePage" />
-
-        </div>
+      </div>
     </div>
+    <!-- user -->
+    <div class="my-3">
+      <UserTable :isLoading="isLoading" :users="users" :page="page" :pages="pages" @update:page="changePage" />
+    </div>
+  </div>
 </template>
 <script>
-import UserAgeDistChart from './UserAgeDistChart.vue';
-import UserProfessionDist from './UserProfessionDist.vue';
-import UserGrowthChart from './UserGrowthChart.vue';
+import UserGrowthChart from './analytics/UserGrowthChart.vue';
+import UserProfessionDistChart from './analytics/UserProfessionDistChart.vue';
+import UserAgeDistChart from './analytics/UserAgeDistChart.vue';
 import UserTable from './user/UserTable.vue';
-import {
-    mapGetters, mapActions
-} from "vuex";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
-    name: "UserManager",
-    components: {
-        UserGrowthChart,
-        UserProfessionDist,
-        UserAgeDistChart,
-        UserTable,
-    },
-    computed: {
-        ...mapGetters("user", ["users", "pages", "page"]),
-    },
-    data() {
-        return {
-            isLoading: false
-        };
-    },
-    methods: {
-        ...mapActions("user", ["fetchUsers"]),
-        async changePage(newPage) {
-            this.isLoading = true;
-            await this.fetchUsers({page: newPage});
-            this.isLoading = false;
-        },
-    },
-    async mounted() {
+  name: "UserManager",
+  components: {
+    UserGrowthChart,
+    UserProfessionDistChart,
+    UserAgeDistChart,
+    UserTable,
+  },
+  computed: Object.assign({},
+    mapGetters("user", ["users", "pages", "page", "userAnalyticsData"])
+  ),
+  data() {
+    return {
+      isLoading: false
+    };
+  },
+  methods: Object.assign({},
+    mapActions("user", ["fetchUsers", "fetchUserAnalytics"]),
+    {
+      async changePage(newPage) {
         this.isLoading = true;
-        await this.fetchUsers();
+        await this.fetchUsers({ page: newPage });
         this.isLoading = false;
+      }
     }
+  ),
+  async mounted() {
+    this.isLoading = true;
+    await Promise.all([
+      this.fetchUsers(),
+      this.fetchUserAnalytics()
+    ]);
+    this.isLoading = false;
+  }
 }
 </script>
-<style scoped></style>
+<style scoped>
+#userAnalytics {
+  background: #fff;
+}
+</style>

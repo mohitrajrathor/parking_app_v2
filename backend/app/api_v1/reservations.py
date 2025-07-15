@@ -32,7 +32,7 @@ class ReservationSchema(Schema):
 
 @reserve_bp.route("/by_id", methods=["GET"])
 @reserve_bp.arguments(IdSchema, location="query")
-# @role_required("user", "admin")
+@role_required("user", "admin")
 def get_by_id(args):
     """
     to get
@@ -56,14 +56,14 @@ def get_by_id(args):
 
 @reserve_bp.route("", methods=["GET"])
 @reserve_bp.arguments(QuerySchema, location="query")
-# @role_required("user", "admin")
+@role_required("user", "admin")
 def get(args):
     """
     to get bulk reservations
     """
     try:
         page = args.get("page", 1)
-        per_page = args.get("per_page", 3)
+        per_page = args.get("per_page", 10)
 
         reservations = Reservation.query.paginate(page=page, per_page=per_page)
 

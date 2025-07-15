@@ -1,126 +1,129 @@
 <template>
-    <div id="userDashboard">
-        <div class=" container">
-            <div class="my-3 text-light p-md-5 p-3 bg-primary rounded-5">
-                <p class="mb-2 fs-5 fw-bold">Choose parking lots</p>
-                <div class=" d-flex justify-content-start align-items-center">
-                    <button class="mx-2 fw-bold btn btn-sm text-dark lime-green rounded-pill">
-                        Nearby
-                    </button>
-                    <button class="fw-bold btn btn-sm btn-outline-light rounded-pill">
-                        Popular
-                    </button>
-                </div>
-                <div class=" mt-3 row">
-                    <div class="col-md-4">
-                        <div class=" mt-3 rounded-5">
-                            <LeafletMap />
-                        </div>
-                    </div>
-
-                    <div class="col-md-8 row row-gap-2 ">
-                        <div class="mt-3">
-                            <div class=" text-dark rounded-5 bg-success-subtle p-4">
-                                <p class="fs-5 fw-bold">
-                                    <span class="me-4"><i class="bi bi-pin-map-fill"></i></span>
-                                    Parking Slots
-                                </p>
-                                <div style="height: 150px;" class=" overflow-x-auto">
-                                    <table class="table table-success overflow-auto">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">ID</th>
-                                                <th scope="col">Parking</th>
-                                                <th scope="col">Available Slots</th>
-                                                <th scope="col">Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class=" overflow-auto">
-                                            <tr>
-                                                <th scope="row">1</th>
-                                                <td class="">
-                                                    XYZ
-                                                </td>
-                                                <td>4</td>
-                                                <td>
-                                                    <button class="btn btn-dark rounded-pill">
-                                                        Book
-                                                    </button>
-                                                </td>
-
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">2</th>
-                                                <td>ABC</td>
-                                                <td>8</td>
-                                                <td>
-                                                    <button class="btn btn-dark rounded-pill">
-                                                        Book
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+    <div id="userDashboard" class="container py-4">
+        <!-- Welcome Header -->
+        <div class="mb-4">
+            <h2 class="fw-bold">Welcome back, <span class="fw-bold text-primary text-capitalize">{{ user?.name || 'User' }}</span>!</h2>
+            <p class="fs-5">Here's
+                an overview of your parking activity:</p>
+        </div>
+        <!-- Quick Stats -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-12">
+                <div class="card shadow-sm border-0 rounded-4 bg-white">
+                    <div class="card-body p-4">
+                        <h4 class="card-title fw-bold mb-3 text-black">🔍 Quick Stats</h4>
+                        <div class="row row-cols-1 row-cols-md-3 g-3">
+                            <div class="col">
+                                <div class="card bg-light border-0 h-100">
+                                    <div class="card-body text-center">
+                                        <div class="fs-2 mb-2">🎫</div>
+                                        <div class="fw-bold text-black">Active Bookings</div>
+                                        <div class="fs-4 fw-bold text-primary">{{ user?.active_bookings ?? 0 }}</div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-
-                        <div>
-                            <div class=" text-light rounded-5 bg-danger overflow-auto">
-                                <div style="height: 150px;" class="my-2 p-4">
-                                    <div class="mx-3 d-flex justify-content-between align-items-center">
-                                        <div class="fw-bold fs-5">
-                                            <span class=""><i class="bi bi-bookmark-check"></i></span>
-                                            Booked Slots
-                                        </div>
-                                        <div class="fs-5">
-                                            4
-                                        </div>
-                                    </div>
-                                    <div class="mx-3 mt-3 d-flex justify-content-between align-items-center">
-                                        <div class="fw-bold fs-5">
-                                            <span class=""><i class="bi bi-bookmark-check"></i></span>
-                                            Booked Slots
-                                        </div>
-                                        <div class="fs-5">
-                                            4
+                            <div class="col">
+                                <div class="card bg-light border-0 h-100">
+                                    <div class="card-body text-center">
+                                        <div class="fs-2 mb-2">⭐</div>
+                                        <div class="fw-bold text-black">Average Rating</div>
+                                        <div class="fs-4 fw-bold text-primary">{{ user?.average_rating ?? '-' }} / 5
                                         </div>
                                     </div>
                                 </div>
-                                <div class="text-dark bg-light p-4">
-                                    <div class=" d-flex justify-content-around align-items-center">
-                                        <h4>Manage Booking</h4>
-                                        <button class="px-4 btn btn-primary rounded-pill">
-                                            >
-                                        </button>
+                            </div>
+                            <div class="col">
+                                <div class="card bg-light border-0 h-100">
+                                    <div class="card-body text-center">
+                                        <div class="fs-2 mb-2">💵</div>
+                                        <div class="fw-bold text-black">Total Spend</div>
+                                        <div class="fs-4 fw-bold text-primary">₹ {{ user?.amount_spended ?? 0 }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card bg-light border-0 h-100">
+                                    <div class="card-body text-center">
+                                        <div class="fs-2 mb-2">📅</div>
+                                        <div class="fw-bold text-black">Total Reservations</div>
+                                        <div class="fs-4 fw-bold text-primary">{{ user?.total_bookings ?? 0 }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card bg-light border-0 h-100">
+                                    <div class="card-body text-center">
+                                        <div class="fs-2 mb-2">📝</div>
+                                        <div class="fw-bold text-black">Reviews Given</div>
+                                        <div class="fs-4 fw-bold text-primary">{{ user?.total_reviews ?? 0 }}</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
+            </div>
+        </div>
+        <!-- Charts Row -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-6">
+                <div class="bg-white rounded-4 p-4 shadow-sm h-100">
+                    <UserRevenueChart :dailySpendings="user?.daily_spendings ?? []" />
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="bg-white rounded-4 p-4 shadow-sm h-100">
+                    <UserReservationChart :history="user?.history ?? []" />
+                </div>
+            </div>
+        </div>
+        <!-- Donut Charts Row -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-6">
+                <div class="bg-white rounded-4 p-4 shadow-sm h-100">
+                    <RevenueBreakdownChart :bookingRevenue="user?.booking_revenue ?? 0"
+                        :leaveRevenue="user?.leave_revenue ?? 0" />
+                </div>
             </div>
 
-            <div id="parkings">
-                <ParkingCardContainer />
-            </div>
-
-            <div class="row row-gap-2 my-3">
-                <div class="col-md-6">
-                    <div class=" bg-light p-4 rounded-4">
-                        <h3>
-                            Copyright &copy; 2025
-                        </h3>
-                        <p>All right reserved</p>
+            <!-- Top 3 Parkings -->
+            <div class="col-md-6 g-4 mb-4">
+                <div class="col-md-12">
+                    <div class="bg-white rounded-4 p-4 shadow-sm">
+                        <h5 class="fw-bold mb-3 text-black">Top Used Parkings (By Reservations)</h5>
+                        <div class="table-responsive">
+                            <table class="table table-borderless align-middle mb-0">
+                                <thead>
+                                    <tr class="text-black">
+                                        <th>Parking Name</th>
+                                        <th>Reservations</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(parking, idx) in topParkings" :key="parking.id || idx">
+                                        <td>{{ parking?.name || '—' }}</td>
+                                        <td>{{ parking?.reservation_count ?? '—' }}</td>
+                                    </tr>
+                                    <tr v-if="topParkings.length < 3">
+                                        <td>—</td>
+                                        <td>—</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class=" bg-light p-4 rounded-4">
-                        <h3>
-                            <i class="bi bi-person-check"></i> Terms & Conditions
-                        </h3>
-                        <p><i class="bi bi-shield-exclamation"></i> Privacy Policy</p>
+            </div>
+
+
+            <ParkingCardContainer />
+
+            <!-- Help Section -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-12">
+                    <div class="bg-light rounded-4 p-4 shadow-sm text-center">
+                        <h5 class="fw-bold mb-2">🧾 Need Help?</h5>
+                        <p>Contact support or visit our <a href="#" class="text-primary fw-bold">Help Center</a>.</p>
                     </div>
                 </div>
             </div>
@@ -128,16 +131,38 @@
     </div>
 </template>
 <script>
-import { mapActions } from "vuex";
-import LeafletMap from './LeafletMap.vue';
+import { mapGetters, mapActions } from "vuex";
+import UserRevenueChart from './analytics/UserRevenueChart.vue';
+import UserReservationChart from './analytics/UserReservationChart.vue';
+import RevenueBreakdownChart from './analytics/RevenueBreakdownChart.vue';
+import SlotUtilizationChart from './analytics/SlotUtilizationChart.vue';
+import UserAgeDistChart from './analytics/UserAgeDistChart.vue';
 import ParkingCardContainer from './user/ParkingCardContainer.vue';
+import Parking from "../pages/Parking.vue";
 
 export default {
     name: "UserDashboard",
     components: {
-        LeafletMap, 
-        ParkingCardContainer
-    }, 
+        UserRevenueChart,
+        UserReservationChart,
+        RevenueBreakdownChart,
+        SlotUtilizationChart,
+        UserAgeDistChart,
+        ParkingCardContainer,
+    },
+    computed: {
+        ...mapGetters('user', ['user']),
+        topParkings() {
+            // Top 3 parkings by reservation_count
+            const parkings = this.user?.favorite_parking_locations ?? [];
+            return parkings.slice(0, 3);
+        },
+        userAgeDist() {
+            // Example: group history by age (if available)
+            // Replace with actual age distribution logic if available
+            return {};
+        }
+    },
     methods: {
         ...mapActions('user', ['fetchCurrentUser']),
     },
@@ -146,4 +171,9 @@ export default {
     }
 }
 </script>
-<style scoped></style>
+<style scoped>
+.table th,
+.table td {
+    color: #000;
+}
+</style>

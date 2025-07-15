@@ -22,7 +22,7 @@ const mutations = {
 };
 
 const actions = {
-  async fetchReservations({ commit }, { page = 1, query = '', lat = null, long = null, per_page=10 } = {}) {
+  async fetchReservations({ commit }, { page = 1, query = '', lat = null, long = null, per_page=5 } = {}) {
     try {
       let url = `/api_v1/reservation?page=${page}`;
       const params = [];

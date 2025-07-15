@@ -9,7 +9,9 @@
     </div>
 
 
-    <ParkingAnalytics />
+    <div class="p-4 bg-white rounded-4">
+      <ReservationTrendChart :dailyReservations="parkingAnalyticsData?.daily_reservations" />
+    </div>
 
     <div class="my-4">
       <LeafletMap />
@@ -21,21 +23,20 @@
 </template>
 
 <script>
-import ParkingAnalytics from './ParkingAnalytics.vue';
 import ParkingTable from './ParkingTable.vue';
 import LeafletMap from './LeafletMap.vue';
 import { mapGetters, mapActions } from 'vuex';
 import ReservationTable from './reservation/ReservationTable.vue';
-
+import ReservationTrendChart from './analytics/ReservationTrendChart.vue';
 
 
 export default {
   name: "ParkingManager",
   components: {
-    ParkingAnalytics,
     ParkingTable,
     LeafletMap,
-    ReservationTable
+    ReservationTable,
+    ReservationTrendChart
   },
   data() {
     return {
@@ -46,6 +47,10 @@ export default {
   computed: {
     ...mapGetters("parking", ['parkings', 'page', 'pages']),
     ...mapGetters("reservation", ['reservations', 'rpage', 'rpages']),
+    ...mapGetters('analytics', ['parkingAnalyticsData']),
+    
+    
+    
     parkingPage() { return this.page; },
     parkingPages() { return this.pages; },
     reservationPage() { return this.rpage; },
@@ -54,6 +59,9 @@ export default {
   methods: {
     ...mapActions("parking", ['fetchParkings']),
     ...mapActions("reservation", ['fetchReservations']),
+    ...mapActions('analytics', ['fetchParkingAnalytics']),
+
+
     async fetchParkingsPage(newPage) {
       this.isParkingLoading = true;
       await this.fetchParkings({ page: newPage });
@@ -72,6 +80,8 @@ export default {
     this.isReservationLoading = true;
     await this.fetchReservations();
     this.isReservationLoading = false;
+    this.fetchParkingAnalytics();    
+
   }
 };
 </script>

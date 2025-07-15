@@ -3,42 +3,36 @@
         <div class="container-fluid">
             <div class="row">
                 <!-- Sidebar (visible on lg and up) -->
-                <nav class="col-lg-2 d-none d-lg-flex flex-column vh-100 pt-2 px-2">
-                    <div class="mt-1 mx-2 d-lg-flex flex-column vh-100 side-bg-custom rounded-top-5 p-3">
-
-                        <h4 class="text-center text-light fw-bold my-3">Admin Dashboard</h4>
-
-
-                        <ul class="nav nav-pills flex-column">
-                            <li class="nav-item">
-                                <router-link to="/admin/dashboard" class="nav-link text-light fw-bold fs-6" href="#">
-                                    <span class="nav-icon"><i class="bi bi-speedometer2"></i></span>
+                <nav class="col-lg-2 d-none d-lg-block bg-warning bg-gradient border-end vh-100 p-0">
+                    <div class="d-flex flex-column h-100 p-3">
+                        <h4 class="text-center text-white fw-bold my-3">Admin Dashboard</h4>
+                        <ul class="nav nav-pills flex-column mb-4">
+                            <li class="nav-item mb-2">
+                                <router-link to="/admin/dashboard" class="nav-link text-white fw-bold fs-6 px-3 py-2">
+                                    <span class="nav-icon me-2"><i class="bi bi-speedometer2"></i></span>
                                     Dashboard
                                 </router-link>
                             </li>
-                            <li class="nav-item">
-                                <router-link to="/admin/user-manager" class="nav-link text-light fw-bold fs-6" href="#">
-                                    <span class="nav-icon"><i class="bi bi-people-fill"></i></span>
+                            <li class="nav-item mb-2">
+                                <router-link to="/admin/user-manager" class="nav-link text-white fw-bold fs-6 px-3 py-2">
+                                    <span class="nav-icon me-2"><i class="bi bi-people-fill"></i></span>
                                     User
                                 </router-link>
                             </li>
-                            <li class="nav-item">
-                                <router-link to="/admin/parkings" class="nav-link text-light fw-bold fs-6" href="#">
-                                    <span class="nav-icon"><i class="bi bi-car-front-fill"></i></span>
+                            <li class="nav-item mb-2">
+                                <router-link to="/admin/parkings" class="nav-link text-white fw-bold fs-6 px-3 py-2">
+                                    <span class="nav-icon me-2"><i class="bi bi-car-front-fill"></i></span>
                                     Parkings
                                 </router-link>
                             </li>
                         </ul>
-
-                        <div class="p-3 mt-auto bg-light text-black rounded-4">
-                            <h5 class="text-center">
-                                Quick Action
-                            </h5>
+                        <div class="mt-auto bg-light text-dark rounded-4 p-3">
+                            <h5 class="text-center mb-2">Quick Action</h5>
                             <hr>
-                            <ul class="nav nav-pills flex-column text-black">
+                            <ul class="nav nav-pills flex-column">
                                 <li class="nav-item">
-                                    <router-link to="/admin/add-parking" class="nav-link fw-bold" href="#">
-                                        <span class="nav-icon"><i class="bi bi-plus-circle"></i></span>
+                                    <router-link to="/admin/add-parking" class="nav-link fw-bold text-primary px-3 py-2">
+                                        <span class="nav-icon me-2"><i class="bi bi-plus-circle"></i></span>
                                         Add Parking
                                     </router-link>
                                 </li>
@@ -90,7 +84,4 @@ export default {
 </script>
 
 <style scoped>
-.side-bg-custom {
-    background-image: linear-gradient(to bottom, #ff9000, #ffa600, #febc00, #f9d200, #f2e700);
-}
 </style>

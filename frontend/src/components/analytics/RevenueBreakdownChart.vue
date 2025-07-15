@@ -1,30 +1,32 @@
 <template>
-  <div class="p-4 bg-white rounded-xl">
-    <h4 class="text-xl font-semibold mb-4">Revenue Breakdown</h4>
-    <canvas ref="donutChartCanvas"></canvas>
+  <div class="card border-0 rounded-4 bg-white">
+    <div class="card-body">
+      <h4 class="card-title fw-bold mb-3 text-black">Spending Breakdown</h4>
+      <div class="d-flex justify-content-center align-items-center">
+        <canvas ref="donutChartCanvas"></canvas>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
-import { Chart, ArcElement, Tooltip, Legend } from 'chart.js'
-
-Chart.register(ArcElement, Tooltip, Legend)
+import { ref, onMounted, watch } from 'vue';
+import { Chart, ArcElement, Tooltip, Legend, Title } from 'chart.js';
+Chart.register(ArcElement, Tooltip, Legend, Title);
 
 const props = defineProps({
   bookingRevenue: { type: Number, required: true },
-  totalRevenue: { type: Number, required: true },
+  leaveRevenue: { type: Number, required: true },
   themeColor: { type: String, default: '#0d6efd' }
-})
+});
 
-const donutChartCanvas = ref(null)
-let chartInstance = null
+const donutChartCanvas = ref(null);
+let chartInstance = null;
 
 const createDonutChart = () => {
-  const leavingRevenue = props.totalRevenue - props.bookingRevenue
-
-  if (chartInstance) chartInstance.destroy()
-
+  const booking = props.bookingRevenue ?? 0;
+  const leaving = props.leaveRevenue ?? 0;
+  if (chartInstance) chartInstance.destroy();
   chartInstance = new Chart(donutChartCanvas.value, {
     type: 'doughnut',
     data: {
@@ -32,21 +34,27 @@ const createDonutChart = () => {
       datasets: [
         {
           label: 'Revenue',
-          data: [props.bookingRevenue, leavingRevenue],
-          backgroundColor: [props.themeColor, '#ffc107'], // Theme and yellow
+          data: [booking, leaving],
+          backgroundColor: [props.themeColor, '#ffc107'],
           borderWidth: 0
         }
       ]
     },
     options: {
       responsive: true,
-      rotation: -90,           // Start from top
-      circumference: 180,      // Half circle
-      cutout: '70%',           // Inner radius for donut
+      rotation: -90,
+      circumference: 180,
+      cutout: '70%',
       plugins: {
         legend: {
           position: 'bottom',
-          labels: { color: '#374151' }
+          labels: { color: '#000', font: { weight: 'bold' } }
+        },
+        title: {
+          display: false,
+          text: 'Revenue Breakdown',
+          color: '#000',
+          font: { size: 18, weight: 'bold' }
         },
         tooltip: {
           callbacks: {
@@ -55,17 +63,17 @@ const createDonutChart = () => {
         }
       }
     }
-  })
-}
+  });
+};
 
-onMounted(createDonutChart)
-watch(() => [props.bookingRevenue, props.totalRevenue], createDonutChart)
+onMounted(createDonutChart);
+watch(() => [props.bookingRevenue, props.leaveRevenue], createDonutChart);
 </script>
 
 <style scoped>
 canvas {
   width: 100%;
-  max-height: 250px;
+  max-height: 220px;
   background: #fff;
   border-radius: 1rem;
 }
