@@ -4,7 +4,7 @@
 from flask import Flask, render_template, send_from_directory
 import os
 from .configs import Config
-from .extensions import db, migrate, jwt, mail, cors, celery_init_app, api
+from .extensions import db, migrate, jwt, mail, cors, celery_init_app, api, cache
 
 
 def create_app():
@@ -28,6 +28,7 @@ def create_app():
         resources={r"/api_v1/*": {"origins": ["http://localhost:5173", "*"]}},
         supports_credentials=True,
     )
+    cache.init_app(app)
 
     celery_init_app(app)
 
@@ -45,10 +46,12 @@ def create_app():
 
     ####### Basic routes #######
     @app.route("/")
+    @cache.cached(timeout=60 * 60 * 24)
     def index():
         return render_template("index.html")
 
     @app.route("/<path:path>")
+    @cache.cached(timeout=60 * 60 * 24)
     def static_path(path):
         file_path = os.path.join(app.static_folder or "", path)
         if os.path.isfile(file_path):
@@ -57,6 +60,7 @@ def create_app():
             return render_template("index.html")
 
     @app.errorhandler(500)
+    @cache.cached(timeout=60 * 60 * 24)
     def internal_error(error):
         return {"message": "Internal Server Error"}, 500
 

@@ -5,7 +5,7 @@ from flask_smorest import Blueprint, abort
 from marshmallow import Schema, fields
 from datetime import datetime as dt
 from zoneinfo import ZoneInfo
-from ..extensions import db
+from ..extensions import db, cache
 from ..models import Reservation, Parking, User, Review, Payment, Slot
 from ..exceptions import APIError
 from flask import current_app, request
@@ -31,6 +31,7 @@ class ReservationSchema(Schema):
 
 
 @reserve_bp.route("/by_id", methods=["GET"])
+@cache.cached(timeout=60, query_string=True)
 @reserve_bp.arguments(IdSchema, location="query")
 @role_required("user", "admin")
 def get_by_id(args):
@@ -55,6 +56,7 @@ def get_by_id(args):
 
 
 @reserve_bp.route("", methods=["GET"])
+@cache.cached(timeout=60, query_string=True)
 @reserve_bp.arguments(QuerySchema, location="query")
 @role_required("user", "admin")
 def get(args):
@@ -253,8 +255,6 @@ def leave_slot(args):
         current_app.logger.error(e.message)
         return abort(e.status_code, message=str(e), additional_data=e.extra)
 
-    # except Exception as e:
-    #     import traceback
-
-    #     current_app.logger.error(traceback.format_exc())
-    #     return abort(500, message="Internal Server Error.")
+    except Exception as e:
+        current_app.logger.error(e)
+        return abort(500, message="Internal Server Error.")

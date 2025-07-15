@@ -9,6 +9,7 @@ from ..exceptions import APIError
 from flask import current_app
 from ..utils import role_required
 from flask_jwt_extended import get_jwt_identity
+from ..extensions import db, cache
 
 
 user_bp = Blueprint(
@@ -17,6 +18,7 @@ user_bp = Blueprint(
 
 
 @user_bp.route("/by_id", methods=["GET"])
+@cache.cached(timeout=60, query_string=True)
 @user_bp.arguments(IdSchema, location="query")
 @role_required("admin", "user")
 def get_user_by_id(args):
@@ -44,6 +46,7 @@ def get_user_by_id(args):
 
 
 @user_bp.route("", methods=["GET"])
+@cache.cached(timeout=60, query_string=True)
 @user_bp.arguments(QuerySchema, location="query")
 @role_required("admin")
 def get_users(args):
@@ -99,6 +102,6 @@ def get_current_user():
     except APIError as e:
         current_app.logger.error(e.message)
         return abort(e.status_code, message=str(e), additional_data=e.extra)
-    # except Exception as e:
-    #     current_app.logger.error(e)
-    #     return abort(500, message="Internal Server Error.")
+    except Exception as e:
+        current_app.logger.error(e)
+        return abort(500, message="Internal Server Error.")

@@ -10,7 +10,7 @@ from ..schema import (
     IdSchema,
     SlotQuerySchema,
 )
-from ..extensions import db
+from ..extensions import db, cache
 from ..models import Parking, Slot
 from ..exceptions import APIError
 from flask import current_app
@@ -22,6 +22,7 @@ parking_bp = Blueprint(
 
 
 @parking_bp.route("/by_id", methods=["GET"])
+@cache.cached(timeout=60, query_string=True)
 @parking_bp.arguments(IdSchema, location="query")
 @parking_bp.response(200, ParkingWithSlothSchema)
 def get_parking_id(args):
@@ -49,6 +50,7 @@ def get_parking_id(args):
 
 
 @parking_bp.route("", methods=["GET"])
+@cache.cached(timeout=60, query_string=True)
 @parking_bp.arguments(QuerySchema, location="query")
 @parking_bp.response(200, ParkingResponseSchema)
 def get_parking(args):
@@ -64,6 +66,18 @@ def get_parking(args):
                 Parking.name.ilike(f"%{args.get('query')}%")
             ).paginate(page=page, per_page=per_page)
 
+            # Return empty result for pages with no items, not 404
+            if not parkings.items:
+                return {
+                    "total": parkings.total,
+                    "page": parkings.page,
+                    "pages": parkings.pages,
+                    "has_next": parkings.has_next,
+                    "has_prev": parkings.has_prev,
+                    "parkings": [],
+                    "message": "No parkings found with this query on this page.",
+                }, 200
+
             return {
                 "total": parkings.total,
                 "page": parkings.page,
@@ -71,7 +85,7 @@ def get_parking(args):
                 "has_next": parkings.has_next,
                 "has_prev": parkings.has_prev,
                 "parkings": [parking.to_dict() for parking in parkings],
-            }
+            }, 200
 
         if args.get("lat") and args.get("long"):
             user_lat = float(args.get("lat"))
@@ -88,6 +102,17 @@ def get_parking(args):
             start = (page - 1) * per_page
             end = start + per_page
             paginated = parkings_with_distance[start:end]
+
+            if not paginated:
+                return {
+                    "total": len(parkings_with_distance),
+                    "page": page,
+                    "pages": (len(parkings_with_distance) + per_page - 1) // per_page,
+                    "has_next": end < len(parkings_with_distance),
+                    "has_prev": start > 0,
+                    "parkings": [],
+                    "message": "No parkings found near you on this page.",
+                }, 200
             return {
                 "total": len(parkings_with_distance),
                 "page": page,
@@ -97,9 +122,19 @@ def get_parking(args):
                 "parkings": [
                     p[0].to_dict() | {"distance_km": round(p[1], 2)} for p in paginated
                 ],
-            }
+            }, 200
 
         parkings = Parking.query.paginate(page=page, per_page=per_page)
+        if not parkings.items:
+            return {
+                "total": parkings.total,
+                "page": parkings.page,
+                "pages": parkings.pages,
+                "has_next": parkings.has_next,
+                "has_prev": parkings.has_prev,
+                "parkings": [],
+                "message": "No parkings found on this page.",
+            }, 200
 
         return {
             "total": parkings.total,
@@ -108,7 +143,7 @@ def get_parking(args):
             "has_next": parkings.has_next,
             "has_prev": parkings.has_prev,
             "parkings": [parking.to_dict() for parking in parkings],
-        }
+        }, 200
 
     except APIError as e:
         current_app.logger.error(e.message)
@@ -319,6 +354,7 @@ def delete_parking(args):
 
 
 @parking_bp.route("/slot")
+@cache.cached(timeout=60, query_string=True)
 @parking_bp.arguments(SlotQuerySchema, location="query")
 def get_slot(args: dict):
     """

@@ -11,11 +11,10 @@ from flask_jwt_extended import (
     jwt_required,
     get_jwt_identity,
 )
-from ..extensions import db
+from ..extensions import db, mail, cache
 from ..models import Admin, User
 from ..schema import UserLoginSchema, TokenSchema, AdminLoginSchema, UserSignupSchema
 from ..exceptions import APIError
-from ..extensions import mail
 from flask_mail import Message
 from datetime import datetime as dt
 import os
