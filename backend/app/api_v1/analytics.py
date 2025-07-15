@@ -2,7 +2,7 @@
 
 # imports
 from flask_smorest import Blueprint, abort
-from ..extensions import db
+from ..extensions import db, cache
 from ..models import Parking, Slot, User, Reservation, Review, Payment
 from ..exceptions import APIError
 from flask import current_app, jsonify, request
@@ -23,6 +23,7 @@ analytics_bp = Blueprint(
 
 
 ##### analytics functions ######
+@cache.cached(timeout=60)
 def get_top_parkings():
     top_parkings = (
         db.session.query(
@@ -46,6 +47,7 @@ def get_top_parkings():
     return top_parkings
 
 
+@cache.cached(timeout=60)
 def get_last_30_days_revenue():
     today = datetime.now()
     start_date = today - timedelta(days=29)
@@ -73,6 +75,7 @@ def get_last_30_days_revenue():
     return daily_revenue
 
 
+@cache.cached(timeout=60)
 def get_profession_wise_user():
     """
     Return profession-wise user distribution data as a dict:
@@ -93,6 +96,7 @@ def get_profession_wise_user():
     return profession_dist
 
 
+@cache.cached(timeout=60)
 def get_last_12_months_monthly_users():
     """
     Returns a dict of user signups per month for the last 12 months.
@@ -132,6 +136,7 @@ def get_last_12_months_monthly_users():
     return monthly_counts
 
 
+@cache.cached(timeout=60)
 def get_last_30_days_daily_reservations():
     today = datetime.now()
     start_date = today - timedelta(days=29)
@@ -161,6 +166,7 @@ def get_last_30_days_daily_reservations():
     return daily_reservations
 
 
+@cache.cached(timeout=60)
 def get_user_age_distribution():
     """
     Compute user age distribution
@@ -188,6 +194,7 @@ def get_user_age_distribution():
 
 
 @analytics_bp.route("/quick_stats", methods=["GET"])
+@cache.cached(timeout=60)
 @role_required("admin")
 def quick_stats():
     """
@@ -212,6 +219,7 @@ def quick_stats():
 
 
 @analytics_bp.route("/databoard_analytics")
+@cache.cached(timeout=60)
 @role_required("admin")
 def dashboard_analytics():
     """
@@ -246,6 +254,7 @@ def dashboard_analytics():
 
 
 @analytics_bp.route("/parking_analytics")
+@cache.cached(timeout=60)
 def parking_analytics():
     """
     Return parking analytics data
@@ -263,6 +272,8 @@ def parking_analytics():
 
 
 @analytics_bp.route("/user_analytics")
+@cache.cached(timeout=60)
+@role_required("user", "admin")
 def user_analytics():
     """
     Return parking analytics data
@@ -287,6 +298,7 @@ def user_analytics():
 
 
 @analytics_bp.route("/reverse_geocode", methods=["GET"])
+@cache.cached(timeout=60, query_string=True)
 @analytics_bp.arguments(QuerySchema, location="query")
 def reverse_geocode():
     """
