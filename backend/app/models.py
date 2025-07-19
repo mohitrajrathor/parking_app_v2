@@ -6,7 +6,7 @@ from curses import ALL_MOUSE_EVENTS
 from sqlalchemy import true
 from .extensions import db
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime as dt
+from datetime import datetime as dt, timedelta
 from zoneinfo import ZoneInfo
 from uuid import uuid4
 from sqlalchemy import func
@@ -175,6 +175,160 @@ class User(db.Model):
                 user_info["review_sentiment_summary"] = None
 
         return user_info
+
+    def monthly_report(self):
+        """
+        Generate a monthly report for the user.
+        This method gives:
+        - total_spendings : float -> totals spendings in past 30 days
+        - bookings: list -> bookings details in past 30 days
+        """
+
+        now = dt.now(ZoneInfo("Asia/Kolkata"))
+        thirty_days_ago = now - timedelta(days=30)
+
+        # Total spendings
+        total_spendings = (
+            db.session.query(db.func.sum(Payment.amount))
+            .filter(
+                Payment.user_id == self.id,
+                Payment.payment_time >= thirty_days_ago,
+            )
+            .scalar()
+            or 0.0
+        )
+
+        # Recent bookings
+        recent_bookings = (
+            db.session.query(Reservation)
+            .filter(
+                Reservation.user_id == self.id,
+                Reservation.start_time >= thirty_days_ago,
+            )
+            .order_by(Reservation.start_time.desc())
+            .all()
+        )
+
+        booking_list = []
+        for booking in recent_bookings:
+            hours_used = None
+            if booking.leave_time:
+                delta = booking.leave_time - booking.start_time
+                hours_used = round(delta.total_seconds() / 3600, 2)
+
+            payments = (
+                [
+                    {
+                        "amount": p.amount,
+                        "pay_for": p.pay_for,
+                        "paid_at": p.payment_time.strftime("%Y-%m-%d %H:%M"),
+                    }
+                    for p in booking.payment
+                ]
+                if booking.payment
+                else []
+            )
+
+            booking_list.append(
+                {
+                    "reservation_id": booking.id,
+                    "parking_name": booking.parking.name if booking.parking else None,
+                    "slot_serial": booking.slot.serial_id if booking.slot else None,
+                    "start_time": booking.start_time.strftime("%Y-%m-%d %H:%M"),
+                    "leave_time": (
+                        booking.leave_time.strftime("%Y-%m-%d %H:%M")
+                        if booking.leave_time
+                        else None
+                    ),
+                    "hours_used": hours_used,
+                    "is_booked": booking.is_booked,
+                    "payments": payments,
+                }
+            )
+
+        return {
+            "user_id": self.id,
+            "user_name": self.name,
+            "report_generated_at": now.strftime("%Y-%m-%d %H:%M"),
+            "total_spendings": round(total_spendings, 2),
+            "bookings": booking_list,
+        }
+
+    def all_time_report(self):
+        """
+        Generate a monthly report for the user.
+        This method gives:
+        - total_spendings : float -> totals spendings in past 30 days
+        - bookings: list -> bookings details in past 30 days
+        """
+
+        now = dt.now(ZoneInfo("Asia/Kolkata"))
+        thirty_days_ago = now - timedelta(days=30)
+
+        # Total spendings
+        total_spendings = (
+            db.session.query(db.func.sum(Payment.amount))
+            .filter(
+                Payment.user_id == self.id,
+            )
+            .scalar()
+            or 0.0
+        )
+
+        # Recent bookings
+        recent_bookings = (
+            db.session.query(Reservation)
+            .filter(
+                Reservation.user_id == self.id,
+            )
+            .order_by(Reservation.start_time.desc())
+            .all()
+        )
+
+        booking_list = []
+        for booking in recent_bookings:
+            hours_used = None
+            if booking.leave_time:
+                delta = booking.leave_time - booking.start_time
+                hours_used = round(delta.total_seconds() / 3600, 2)
+
+            payments = (
+                [
+                    {
+                        "amount": p.amount,
+                        "pay_for": p.pay_for,
+                        "paid_at": p.payment_time.strftime("%Y-%m-%d %H:%M"),
+                    }
+                    for p in booking.payment
+                ]
+                if booking.payment
+                else []
+            )
+
+            booking_list.append(
+                {
+                    "reservation_id": booking.id,
+                    "parking_name": booking.parking.name if booking.parking else None,
+                    "slot_serial": booking.slot.serial_id if booking.slot else None,
+                    "start_time": booking.start_time.strftime("%Y-%m-%d %H:%M"),
+                    "leave_time": (
+                        booking.leave_time.strftime("%Y-%m-%d %H:%M")
+                        if booking.leave_time
+                        else None
+                    ),
+                    "hours_used": hours_used,
+                    "is_booked": booking.is_booked,
+                    "payments": payments,
+                }
+            )
+
+        return {
+            "user_id": self.id,
+            "user_name": self.name,
+            "report_generated_at": now.strftime("%Y-%m-%d %H:%M"),
+            "total_spendings": round(total_spendings, 2),
+            "bookings": booking_list,
+        }
 
 
 class Parking(db.Model):

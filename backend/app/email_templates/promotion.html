@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>New Parking Lot Available - Parkly</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f7f9fc;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      color: #333;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .header img {
+      width: 120px;
+    }
+    .title {
+      font-size: 22px;
+      font-weight: bold;
+      color: #1a73e8;
+    }
+    .content {
+      font-size: 16px;
+      line-height: 1.6;
+    }
+    .lot-card {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #f1f5fb;
+      border-left: 4px solid #1a73e8;
+      border-radius: 6px;
+    }
+    .cta-button {
+      display: inline-block;
+      padding: 12px 20px;
+      margin: 25px auto;
+      background-color: #1a73e8;
+      color: #ffffff !important;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      color: #888;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <img src="https://i.imgur.com/kG7Yx6v.png" alt="Parkly Logo">
+      <div class="title">🎉 New Parking Lot Available!</div>
+    </div>
+
+    <div class="content">
+      Hey {{ user.name | default('there') }},<br><br>
+
+      We're excited to let you know that we've just added a new parking lot near you!<br><br>
+
+      Check out the details below and be the first to grab a spot:
+      
+      <div class="lot-card">
+        <strong>{{ lot.prime_location_name }}</strong><br>
+        📍 {{ lot.address }}, {{ lot.pin_code }}<br>
+        💰 Price: ₹{{ lot.price }} / hour<br>
+        🚗 Total Spots: {{ lot.number_of_spots }}
+      </div>
+
+      <div style="text-align: center;">
+        <a class="cta-button" href="https://parkly.com/dashboard">Book Now</a>
+      </div>
+
+      Thanks for using <strong>Parkly.com</strong> 🙌<br>
+      Happy Parking!
+    </div>
+
+    <div class="footer">
+      Sent by Parkly Admin | admin@parkly.com<br>
+      You received this email because you're registered on Parkly.com<br>
+      © 2025 Parkly — All rights reserved.
+    </div>
+  </div>
+</body>
+</html>

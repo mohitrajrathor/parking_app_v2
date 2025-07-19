@@ -202,6 +202,18 @@ def create_parking(args):
         )
         db.session.commit()
 
+        from ..tasks import parking_promotion
+
+        task = parking_promotion.delay(
+            lot={
+                "prime_location_name": parking.name,
+                "address": parking.address,
+                "pin_code": parking.pincode,
+                "price": parking.booking_fee,
+                "number_of_spots": parking.slots_num,
+            }
+        )
+
         return {
             "message": "parking created successfully",
             "parking": parking.to_dict(),

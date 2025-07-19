@@ -54,17 +54,24 @@ class Config:
     }
 
     CELERY_BEAT_SCHEDULE = {
-        "run-demo-every-minute": {
-            "task": "app.tasks.demo",  # fully qualified task name
-            "schedule": 60.0,  # in seconds (every 60 seconds)
-            # OR use crontab
-            # "schedule": crontab(minute="*/1"),  # every 1 minute
-            "args": (),  # optional
-        },
+        # "run-demo-every-minute": {
+        #     "task": "app.tasks.demo",  # fully qualified task name
+        #     "schedule": 60.0,  # in seconds (every 60 seconds)
+        #     # OR use crontab
+        #     # "schedule": crontab(minute="*/1"),  # every 1 minute
+        #     "args": (),  # optional
+        # },
         "send-daily-reminders": {
             "task": "app.tasks.daily_remainders",
             "schedule": crontab(hour=8, minute=0),  # every day at 8:00 AM
-            "args": (),  # optional
+            "args": (),
+        },
+        "send-monthly-reports": {
+            "task": "app.tasks.monthly_reports",
+            "schedule": crontab(
+                day_of_month=1, hour=0, minute=0
+            ),  # every 1st day of month
+            "args": (),
         },
     }
 

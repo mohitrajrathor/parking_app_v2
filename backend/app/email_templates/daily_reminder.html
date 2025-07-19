@@ -2,30 +2,30 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Daily Parking Reminder - Parkly</title>
+  <title>Daily Reminder - Parkly</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
+      background-color: #f4f7fa;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #f7f9fc;
-      font-family: Arial, sans-serif;
       color: #333;
     }
-    .container {
-      width: 100%;
+    .email-container {
       max-width: 600px;
       margin: auto;
       background-color: #ffffff;
+      border-radius: 8px;
       padding: 20px;
-      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
     .header {
       text-align: center;
-      padding-bottom: 10px;
+      margin-bottom: 20px;
     }
     .header img {
-      width: 120px;
+      width: 100px;
     }
     .title {
       font-size: 20px;
@@ -34,54 +34,54 @@
       margin-top: 10px;
     }
     .content {
-      margin: 20px 0;
       font-size: 16px;
       line-height: 1.6;
+      margin-top: 10px;
+    }
+    .cta {
+      text-align: center;
+      margin-top: 25px;
     }
     .cta-button {
       display: inline-block;
-      padding: 12px 20px;
-      margin: 20px auto;
       background-color: #1a73e8;
       color: #ffffff !important;
-      text-decoration: none;
+      padding: 12px 20px;
       border-radius: 6px;
       font-weight: bold;
+      text-decoration: none;
     }
     .footer {
       text-align: center;
       font-size: 12px;
       color: #888;
-      margin-top: 20px;
-    }
-    @media (max-width: 600px) {
-      .container {
-        padding: 15px;
-      }
+      margin-top: 30px;
     }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="email-container">
     <div class="header">
-      <img src="https://png.pngtree.com/element_our/png/20190103/vector-parking-sign-icon-png_308946.jpg" alt="Parkly Logo" />
-      <div class="title">Parkly Daily Reminder</div>
+      <img src="https://i.imgur.com/kG7Yx6v.png" alt="Parkly Logo">
+      <div class="title">⏰ Daily Parking Reminder</div>
     </div>
 
     <div class="content">
-      Hi <strong>{USER_NAME}</strong>,<br><br>
+      Hi <strong>{{ user.name | default('there') }}</strong>,<br><br>
 
-      Just a quick reminder from <strong>Parkly.com</strong> 🚗<br>
-      You haven’t booked a parking spot today. Plan ahead and reserve your space in your preferred lot before it fills up!
+      This is a friendly reminder from <strong>Parkly.com</strong> to reserve your parking spot today. Don’t wait till the last minute – popular spots get filled fast!<br><br>
+
+      Need a place to park? Click below and book in seconds.
     </div>
 
-    <div style="text-align: center;">
-      <a class="cta-button" href="https://parkly.com/dashboard">Book a Spot Now</a>
+    <div class="cta">
+      <a href="{{ dashboard_url }}" class="cta-button">Reserve a Spot Now</a>
     </div>
 
     <div class="footer">
-      Sent by <strong>Parkly Admin</strong><br>
-      © 2025 Parkly.com — All rights reserved.
+      Sent by Parkly Admin (admin@parkly.com)<br>
+      Automated daily reminder at 8:00 AM IST<br>
+      © 2025 Parkly.com
     </div>
   </div>
 </body>
