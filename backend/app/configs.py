@@ -3,6 +3,7 @@
 # imports
 import os
 from dotenv import load_dotenv
+from celery.schedules import crontab
 
 
 class Config:
@@ -46,15 +47,30 @@ class Config:
     MAIL_USE_SSL = False
     MAIL_USERNAME = os.environ.get("mail_username") or None
     MAIL_PASSWORD = os.environ.get("mail_password") or None
+
     CELERY = {
         "broker_url": "redis://localhost:6379",
         "result_backend": "redis://localhost:6379",
     }
 
+    CELERY_BEAT_SCHEDULE = {
+        "run-demo-every-minute": {
+            "task": "app.tasks.demo",  # fully qualified task name
+            "schedule": 60.0,  # in seconds (every 60 seconds)
+            # OR use crontab
+            # "schedule": crontab(minute="*/1"),  # every 1 minute
+            "args": (),  # optional
+        },
+        "send-daily-reminders": {
+            "task": "app.tasks.daily_remainders",
+            "schedule": crontab(hour=8, minute=0),  # every day at 8:00 AM
+            "args": (),  # optional
+        },
+    }
+
     ##### Cache
     CACHE_TYPE = "RedisCache"
-    CACHE_DEFAULT_TIMEOUT = 300
-    CACHE_REDIS_HOST = "localhost"
+    CACHE_REDIS_HOST = os.environ.get("CACHE_REDIS_HOST", "localhost")
     CACHE_REDIS_PORT = 6379
     CACHE_REDIS_DB = 0
-    CACHE_REDIS_URL = "redis://localhost:6379/0"
+    CACHE_REDIS_URL = f"redis://{CACHE_REDIS_HOST}:{CACHE_REDIS_PORT}/{CACHE_REDIS_DB}"

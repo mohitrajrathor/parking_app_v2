@@ -5,8 +5,6 @@ from flask_smorest import Blueprint
 from flask_mail import Message
 from flask_jwt_extended import jwt_required
 from ..extensions import mail
-from flask import render_template, current_app
-import os
 
 
 test_bp = Blueprint("test", __name__, url_prefix="/test")
@@ -22,10 +20,14 @@ def test():
 def test_email():
     msg = Message("Test Subject", recipients=["test@example.com"])
     msg.body = "This is a test email sent to the local aiosmtpd server."
-    msg.html = render_template(
-        "mail_templates/confirmation_mail.html",
-        confirmation_link="link",
-    )
+    msg.html = """
+    <h1>Test Email</h1>
+    <p>This is a test email sent to the local aiosmtpd server.</p>
+    <p>To test the email functionality, please check your local SMTP server logs.</p>
+    <p>Thank you!</p>
+    <p>Best regards,</p>
+    <p>Parkly Team</p>
+    """
     msg.sender = "admin@parkly.com"
     mail.send(msg)
     return "Email sent to local SMTP server!"
@@ -61,7 +63,7 @@ def get_result(task_id):
 
 @test_bp.route("/demo-task")
 def start_demo():
-    from ..tasks.demo_tasks import demo
+    from ..tasks import demo
 
     result = demo.delay()
     return {"task_id": result.id}
@@ -69,7 +71,7 @@ def start_demo():
 
 @test_bp.route("/result/demo/<task_id>")
 def get_demo_result(task_id):
-    from ..tasks.demo_tasks import demo
+    from ..tasks import demo
 
     result = demo.AsyncResult(task_id)
     if result.ready():

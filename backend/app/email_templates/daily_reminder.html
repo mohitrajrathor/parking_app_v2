@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Parking Reminder - Parkly</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f7f9fc;
+      font-family: Arial, sans-serif;
+      color: #333;
+    }
+    .container {
+      width: 100%;
+      max-width: 600px;
+      margin: auto;
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    .header {
+      text-align: center;
+      padding-bottom: 10px;
+    }
+    .header img {
+      width: 120px;
+    }
+    .title {
+      font-size: 20px;
+      font-weight: bold;
+      color: #1a73e8;
+      margin-top: 10px;
+    }
+    .content {
+      margin: 20px 0;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+    .cta-button {
+      display: inline-block;
+      padding: 12px 20px;
+      margin: 20px auto;
+      background-color: #1a73e8;
+      color: #ffffff !important;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      color: #888;
+      margin-top: 20px;
+    }
+    @media (max-width: 600px) {
+      .container {
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <img src="https://png.pngtree.com/element_our/png/20190103/vector-parking-sign-icon-png_308946.jpg" alt="Parkly Logo" />
+      <div class="title">Parkly Daily Reminder</div>
+    </div>
+
+    <div class="content">
+      Hi <strong>{USER_NAME}</strong>,<br><br>
+
+      Just a quick reminder from <strong>Parkly.com</strong> 🚗<br>
+      You haven’t booked a parking spot today. Plan ahead and reserve your space in your preferred lot before it fills up!
+    </div>
+
+    <div style="text-align: center;">
+      <a class="cta-button" href="https://parkly.com/dashboard">Book a Spot Now</a>
+    </div>
+
+    <div class="footer">
+      Sent by <strong>Parkly Admin</strong><br>
+      © 2025 Parkly.com — All rights reserved.
+    </div>
+  </div>
+</body>
+</html>

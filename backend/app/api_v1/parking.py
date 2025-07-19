@@ -22,7 +22,6 @@ parking_bp = Blueprint(
 
 
 @parking_bp.route("/by_id", methods=["GET"])
-@cache.cached(timeout=60, query_string=True)
 @parking_bp.arguments(IdSchema, location="query")
 @parking_bp.response(200, ParkingWithSlothSchema)
 def get_parking_id(args):
@@ -50,7 +49,6 @@ def get_parking_id(args):
 
 
 @parking_bp.route("", methods=["GET"])
-@cache.cached(timeout=60, query_string=True)
 @parking_bp.arguments(QuerySchema, location="query")
 @parking_bp.response(200, ParkingResponseSchema)
 def get_parking(args):
@@ -354,7 +352,6 @@ def delete_parking(args):
 
 
 @parking_bp.route("/slot")
-@cache.cached(timeout=60, query_string=True)
 @parking_bp.arguments(SlotQuerySchema, location="query")
 def get_slot(args: dict):
     """

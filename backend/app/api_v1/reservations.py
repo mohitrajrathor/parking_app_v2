@@ -31,7 +31,6 @@ class ReservationSchema(Schema):
 
 
 @reserve_bp.route("/by_id", methods=["GET"])
-@cache.cached(timeout=60, query_string=True)
 @reserve_bp.arguments(IdSchema, location="query")
 @role_required("user", "admin")
 def get_by_id(args):
@@ -56,7 +55,6 @@ def get_by_id(args):
 
 
 @reserve_bp.route("", methods=["GET"])
-@cache.cached(timeout=60, query_string=True)
 @reserve_bp.arguments(QuerySchema, location="query")
 @role_required("user", "admin")
 def get(args):

@@ -12,6 +12,7 @@ def create_app():
         __name__,
         static_folder="../../frontend/dist/",
         template_folder="../../frontend/dist/",
+        static_url_path="/",
     )
 
     ####### configs ########
@@ -46,21 +47,35 @@ def create_app():
 
     ####### Basic routes #######
     @app.route("/")
-    @cache.cached(timeout=60 * 60 * 24)
+    @cache.cached(24 * 60 * 60)
     def index():
-        return render_template("index.html")
+        try:
+            return render_template("index.html")
+        except Exception as e:
+            app.logger.error(f"Error: {str(e)}")
+            raise e
 
     @app.route("/<path:path>")
-    @cache.cached(timeout=60 * 60 * 24)
-    def static_path(path):
-        file_path = os.path.join(app.static_folder or "", path)
-        if os.path.isfile(file_path):
-            return send_from_directory(app.static_folder or "", path)
-        else:
+    @cache.cached(24 * 60 * 60)
+    def static_files(path):
+        try:
+            # Check if the requested file exists in the static folder
+            file_path = os.path.join(app.static_folder, path)
+            if os.path.isfile(file_path):
+                return send_from_directory(app.static_folder, path)
+            # If the file doesn't exist, serve index.html for Vue routing
             return render_template("index.html")
+        except Exception as e:
+            app.logger.error(f"Error: {str(e)}")
+            raise e
+
+    @app.errorhandler(404)
+    @cache.cached(24 * 60 * 60)
+    def not_found(error):
+        return render_template("index.html")
 
     @app.errorhandler(500)
-    @cache.cached(timeout=60 * 60 * 24)
+    @cache.cached(24 * 60 * 60)
     def internal_error(error):
         return {"message": "Internal Server Error"}, 500
 

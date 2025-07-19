@@ -1,41 +1,60 @@
 services:
-  # parkly:
-  #   build: .
-  #   container_name: parkly
-  #   command: python -m flask --app backend.app run --host 0.0.0.0 --port 1234
-  #   ports:
-  #     - "1234:1234"
-  #   depends_on:
-  #     - redis
-  #     - mailhog
-  #   environment:
-  #     - CELERY_BROKER_URL=redis://redis:6379/0
-  #     - CELERY_RESULT_BACKEND=redis://redis:6379/0
-  #     - mail_server=${mail_server}
-  #     - mail_port=${mail_port}
-  #     - mail_username=${mail_username}
-  #     # - mail_password=${mail_password}
-  #     - secret_key=${secret_key}
+  parkly:
+    build: .
+    container_name: parkly
+    volumes:
+      - parkly_volume:/app
+    command: python -m flask --app backend.app run --host 0.0.0.0 --port 1234
+    ports:
+      - "1234:1234"
+    depends_on:
+      - redis
+      - mailhog
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - mail_server=${mail_server}
+      - mail_port=${mail_port}
+      - mail_username=${mail_username}
+      # - mail_password=${mail_password}
+      - secret_key=${secret_key}
+      - CACHE_REDIS_HOST=redis
 
-  # celery_worker:
-  #   build: .
-  #   container_name: parkly_celery_worker
-  #   command: celery -A backend.celery_worker worker --loglevel=info
-  #   depends_on:
-  #     - redis
-  #   environment:
-  #     - CELERY_BROKER_URL=redis://redis:6379/0
-  #     - CELERY_RESULT_BACKEND=redis://redis:6379/0
+  celery_worker:
+    build: .
+    container_name: parkly_celery_worker
+    volumes:
+      - parkly_volume:/app
+    command: sh -c "cd backend && celery -A celery_worker worker --loglevel=info"
+    depends_on:
+      - redis
+      - parkly
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - mail_server=${mail_server}
+      - mail_port=${mail_port}
+      - mail_username=${mail_username}
+      # - mail_password=${mail_password}
+      - secret_key=${secret_key}
 
-  # celery_beat:
-  #   build: .
-  #   container_name: parkly_celery_beat
-  #   command: celery -A backend.celery_worker beat --loglevel=info
-  #   depends_on:
-  #     - redis
-  #   environment:
-  #     - CELERY_BROKER_URL=redis://redis:6379/0
-  #     - CELERY_RESULT_BACKEND=redis://redis:6379/0
+  celery_beat:
+    build: .
+    container_name: parkly_celery_beat
+    volumes:
+      - parkly_volume:/app
+    command: sh -c "cd backend && celery -A celery_worker beat --loglevel=info"
+    depends_on:
+      - redis
+      - parkly
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - mail_server=${mail_server}
+      - mail_port=${mail_port}
+      - mail_username=${mail_username}
+      # - mail_password=${mail_password}
+      - secret_key=${secret_key}
 
   redis:
     image: redis:7-alpine
@@ -49,3 +68,6 @@ services:
     ports:
       - "8025:8025"   # Web UI
       - "1025:1025"   # SMTP
+
+volumes:
+  parkly_volume:

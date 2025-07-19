@@ -18,7 +18,6 @@ user_bp = Blueprint(
 
 
 @user_bp.route("/by_id", methods=["GET"])
-@cache.cached(timeout=60, query_string=True)
 @user_bp.arguments(IdSchema, location="query")
 @role_required("admin", "user")
 def get_user_by_id(args):
@@ -46,7 +45,6 @@ def get_user_by_id(args):
 
 
 @user_bp.route("", methods=["GET"])
-@cache.cached(timeout=60, query_string=True)
 @user_bp.arguments(QuerySchema, location="query")
 @role_required("admin")
 def get_users(args):
