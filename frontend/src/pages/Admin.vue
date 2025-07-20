@@ -44,7 +44,7 @@
                 <!-- Main content -->
                 <main class="col-lg-10 overflow-auto vh-100">
                     <NavBar />
-                    <div class="container">
+                    <div class="container pt-5" style="margin-bottom: 75px;">
                         <router-view></router-view>
                     </div>
                 </main>
@@ -65,6 +65,10 @@
                 <router-link to="/admin/parkings" class="nav-link">
                     <div class="nav-icon"><i class="bi bi-car-front-fill"></i></div>
                     <small>Parkings</small>
+                </router-link>
+                <router-link to="/admin/add-parking" class="nav-link">
+                    <div class="nav-icon"><i class="bi bi-plus-circle"></i></div>
+                    <small>Add Parking</small>
                 </router-link>
             </div>
         </nav>

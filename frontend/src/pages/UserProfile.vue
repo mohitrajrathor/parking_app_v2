@@ -1,7 +1,5 @@
 <template>
-    <div class=" bg-body-secondary">
-        <NavBar />
-
+    <div class="">
         <div v-if="user" class="container">
             <div class="custom-padding">
                 <div v-if="!isLoading" id="userProfile" class="">
@@ -75,7 +73,7 @@
                                                 <div class="card-body py-3 px-2">
                                                     <div class="fs-3 fw-bold text-success mb-1">{{ user?.total_bookings
                                                         ?? 0
-                                                    }}</div>
+                                                        }}</div>
                                                     <div class="small text-muted">Total Bookings</div>
                                                 </div>
                                             </div>
@@ -85,7 +83,7 @@
                                                 <div class="card-body py-3 px-2">
                                                     <div class="fs-3 fw-bold text-info mb-1">{{ user?.active_bookings ??
                                                         0
-                                                    }}</div>
+                                                        }}</div>
                                                     <div class="small text-muted">Active Bookings</div>
                                                 </div>
                                             </div>
@@ -138,7 +136,7 @@
                                             class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 gap-2">
                                             <div>
                                                 <span class="fw-bold text-primary fs-5">{{ booking.parking?.name
-                                                }}</span>
+                                                    }}</span>
                                                 <span class="badge bg-success bg-opacity-75 ms-2">Active</span>
                                             </div>
                                             <div class="text-muted small">Start: {{ formatDate(booking.start_time) }}
@@ -166,7 +164,7 @@
                                                             </td>
                                                             <td class="fw-bold text-success">₹{{ charge.amount }}</td>
                                                             <td class="text-muted small">{{ formatDate(charge.paid_at)
-                                                            }}
+                                                                }}
                                                             </td>
                                                         </tr>
                                                     </tbody>
@@ -204,13 +202,13 @@
                                             class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 gap-2">
                                             <div>
                                                 <span class="fw-bold text-primary fs-5">{{ history.parking?.name
-                                                }}</span>
+                                                    }}</span>
                                                 <span class="badge bg-secondary bg-opacity-75 ms-2">Past</span>
                                             </div>
                                             <div class="text-muted small">Start: {{ formatDate(history.start_time)
-                                            }}<span v-if="history.leave_time"> | End: {{
+                                                }}<span v-if="history.leave_time"> | End: {{
                                                     formatDate(history.leave_time)
-                                                }}</span></div>
+                                                    }}</span></div>
                                         </div>
                                         <div class="mb-2">
                                             <span
@@ -240,7 +238,7 @@
                                                             </td>
                                                             <td class="fw-bold text-success">₹{{ charge.amount }}</td>
                                                             <td class="text-muted small">{{ formatDate(charge.paid_at)
-                                                            }}
+                                                                }}
                                                             </td>
                                                         </tr>
                                                     </tbody>
@@ -338,15 +336,13 @@
             </div>
         </div>
 
-        <Footer />
     </div>
 </template>
 <script>
 import { mapGetters, mapActions } from "vuex";
 import user from "../store/user";
 import UserLogo from "../components/user/UserLogo.vue";
-import NavBar from "../components/NavBar.vue";
-import Footer from "../components/Footer.vue";
+
 
 
 export default {
@@ -365,8 +361,6 @@ export default {
     },
     components: {
         UserLogo,
-        NavBar,
-        Footer
     },
     computed: {
         ...mapGetters("user", ['user']),

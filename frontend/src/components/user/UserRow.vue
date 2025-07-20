@@ -17,7 +17,7 @@
     <td>{{ user.total_bookings }}</td>
     <td>
       <router-link
-        :to="`/profile?user_id=${user.id}`"
+        :to="`/admin/user-profile?user_id=${user.id}`"
         class="btn btn-sm btn-primary"
       >
         View

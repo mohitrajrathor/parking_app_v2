@@ -80,6 +80,11 @@ const routes = [
                 name: "AddParking",
                 component: AddParking,
             },
+            {
+                path: 'user-profile',
+                name: "UserProfile",
+                component: UserProfile,
+            },
 
         ]
     },
@@ -111,16 +116,6 @@ const routes = [
         ]
     },
     {
-        path: '/profile',
-        name: "Profile",
-        component: UserProfile,
-        meta: {
-            authRequired: true,
-            role: ['user', 'admin'],
-            redirect_: "Unauthorized" 
-        }
-    },
-    {
         path: '/parking/:id',
         name: "Parking",
         component: Parking,
@@ -130,7 +125,7 @@ const routes = [
         name: "Payment",
         component: Payment,
     },
-    
+
     {
         path: '/:pathMatch(.*)*',
         name: "Notfound",
@@ -156,7 +151,7 @@ router.beforeEach((to, from, next) => {
 
     if (to.meta.authRequired) {
         if (!isAuthenticated) {
-            if (to.meta.redirect_) return next({name: to.meta.redirect_})
+            if (to.meta.redirect_) return next({ name: to.meta.redirect_ })
             if (to.meta.role.includes("admin")) {
                 return next({ name: "AdminLogin" });
             }

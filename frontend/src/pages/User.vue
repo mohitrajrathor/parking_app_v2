@@ -14,7 +14,7 @@
                                 </router-link>
                             </li>
                             <li class="nav-item mb-2">
-                                <router-link to="/profile" class="nav-link text-light fw-bold fs-6 px-3 py-2">
+                                <router-link to="/user/profile" class="nav-link text-light fw-bold fs-6 px-3 py-2">
                                     <span class="nav-icon me-2"><i class="bi bi-person-fill"></i></span>
                                     Profile
                                 </router-link>
@@ -32,7 +32,7 @@
                 <!-- Main content -->
                 <main class="col-lg-10 overflow-auto vh-100">
                     <NavBar />
-                    <div class="container">
+                    <div class="container pt-5" style="margin-bottom: 75px;">
                         <router-view></router-view>
                     </div>
                 </main>
@@ -46,7 +46,7 @@
                     <div class="nav-icon"><i class="bi bi-speedometer2"></i></div>
                     <small>Dashboard</small>
                 </router-link>
-                <router-link to="/profile" class="nav-link">
+                <router-link to="/user/profile" class="nav-link">
                     <div class="nav-icon"><i class="bi bi-person-fill"></i></div>
                     <small>Profile</small>
                 </router-link>

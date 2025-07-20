@@ -1,32 +1,27 @@
 <template>
-    <div id="navbar">
-        <div class="mx-md-5">
-            <div class="p-3 d-flex justify-content-between align-items-center">
-                <!-- brand -->
-                <div>
-                    <h4 class="fw-bold brand-font"><router-link to="/" class=" text-decoration-none text-black" >Parkly</router-link></h4>
-                </div>
-
-                <!-- auth links -->
-                <div v-if="isAuthenticated">
-                    <button @click="role === 'user' ? $router.push('/user') : $router.push('/admin')" class="btn btn-outline-primary rounded-pill btn-sm mx-1">
-                        Dashboard
-                    </button>
-                    <button @click="logout" class="btn btn-dark rounded-pill btn-sm mx-1">
-                        Logout
-                    </button>
-                </div>
-                <div v-else>
-                    <button @click="$router.push('/auth/login')" class="btn btn-outline-dark rounded-pill btn-sm mx-1">
-                        Login
-                    </button>
-                    <button @click="$router.push('/auth/signup')" class="btn btn-primary rounded-pill btn-sm mx-1">
-                        Signup
-                    </button>
-                </div>
-            </div>
-        </div>
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm rounded-bottom-4 px-2 px-md-5 py-2">
+  <div class="container-fluid">
+    <router-link to="/" class="navbar-brand fw-bold fs-3 text-dark brand-font">Parkly</router-link>
+    <div class="d-flex align-items-center ms-auto">
+      <template v-if="isAuthenticated">
+        <button @click="role === 'user' ? $router.push('/user') : $router.push('/admin')" class="btn btn-outline-primary rounded-pill btn-sm mx-1">
+          <i class="bi bi-speedometer2 me-1"></i> Dashboard
+        </button>
+        <button @click="logout" class="btn btn-dark rounded-pill btn-sm mx-1">
+          <i class="bi bi-box-arrow-right me-1"></i> Logout
+        </button>
+      </template>
+      <template v-else>
+        <button @click="$router.push('/auth/login')" class="btn btn-outline-dark rounded-pill btn-sm mx-1">
+          <i class="bi bi-box-arrow-in-right me-1"></i> Login
+        </button>
+        <button @click="$router.push('/auth/signup')" class="btn btn-primary rounded-pill btn-sm mx-1">
+          <i class="bi bi-person-plus me-1"></i> Signup
+        </button>
+      </template>
     </div>
+  </div>
+</nav>
 </template>
 <script>
 import { mapGetters } from 'vuex/dist/vuex.cjs.js';
@@ -56,4 +51,8 @@ export default {
     }
 }
 </script>
-<style></style>
+<style>
+.brand-font {
+  letter-spacing: 1px;
+}
+</style>
