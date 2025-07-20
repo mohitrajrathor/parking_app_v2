@@ -1,5 +1,5 @@
 <template>
-  <div class="p-2 bg-primary-subtle rounded-4 min-vh-50">
+  <div class="p-2 bg-primary-subtle rounded-4 ">
     <div class="container py-4">
 
       <div class="row g-2 align-items-center mb-4 flex-column flex-md-row">
@@ -11,47 +11,32 @@
         </div>
         <div class="col-12 col-md flex-grow-1">
           <form class="d-flex" @submit.prevent="onQuerySubmit">
-            <input
-              v-model="query"
-              type="text"
+            <input v-model="query" type="text"
               class="form-control rounded-start-pill border-primary border-end-0 shadow-sm"
-              placeholder="Search parkings by name, area..."
-              aria-label="Search parkings"
-            />
-            <button
-              class="btn btn-primary rounded-end-pill px-4 shadow-sm"
-              type="submit"
-              style="margin-left: -1px;"
-            >
+              placeholder="Search parkings by name, area..." aria-label="Search parkings" />
+            <button class="btn btn-primary rounded-end-pill px-4 shadow-sm" type="submit" style="margin-left: -1px;">
               <i class="bi bi-search"></i>
             </button>
           </form>
         </div>
       </div>
 
-      <div class="row g-4">
-        <div
-          class="col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3 d-flex"
-          v-for="parking in parkings"
-          :key="parking.id"
-        >
-          <ParkingCard
-            :id="parking.id"
-            :name="parking.name"
-            :bookingFee="parking.booking_fee"
-            :hourlyFee="parking.hourly_fee"
-            :availableSlots="parking.slots_num - (parking.booked || 0)"
-            @view="handleViewParking"
-            class="flex-fill"
-          />
+      <div v-if="parkings.length" class="row g-4 justify-content-center">
+        <div class="col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3 d-flex align-items-stretch" v-for="parking in parkings" :key="parking.id">
+          <ParkingCard :id="parking.id" :name="parking.name" :bookingFee="parking.booking_fee"
+            :hourlyFee="parking.hourly_fee" :availableSlots="parking.slots_num - (parking.booked || 0)"
+            @view="handleViewParking" class="card h-100 w-100 shadow-sm border-0" />
         </div>
       </div>
+      <div v-else style="min-height: 250px;" class="d-flex text-primary justify-content-center align-items-center">
+        <div>
+          <h2 class="text-center">Oops</h2>
+          <h3 class="text-center">No Parkings found !</h3>
+        </div>
+      </div>
+
       <div class="d-flex justify-content-center mt-4">
-        <Pagination
-          :page="page"
-          :pages="pages"
-          @update:page="changePage"
-        />
+        <Pagination :page="page" :pages="pages" @update:page="changePage" />
       </div>
     </div>
   </div>
@@ -85,7 +70,7 @@ export default {
     handleViewParking(id) {
       this.$router.push(`/parking/${id}`);
       return;
-    }, 
+    },
     onQuerySubmit() {
       this.fetchParkings({ page: 1, query: this.query, lat: this.lat, long: this.long });
     }

@@ -65,7 +65,12 @@ def get(args):
         page = args.get("page", 1)
         per_page = args.get("per_page", 10)
 
-        reservations = Reservation.query.paginate(page=page, per_page=per_page)
+        query_str = args.get("query", "")
+        reservations = (
+            Reservation.query.join(Parking, Reservation.parking_id == Parking.id)
+            .filter(Parking.name.ilike(f"%{query_str}%"))
+            .paginate(page=page, per_page=per_page)
+        )
 
         return {
             "total": reservations.total,

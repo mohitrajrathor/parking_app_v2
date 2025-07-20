@@ -18,7 +18,8 @@
     </div>
     <!-- user -->
     <div class="my-3">
-      <UserTable :isLoading="isLoading" :users="users" :page="page" :pages="pages" @update:page="changePage" />
+      <UserTable :isLoading="isLoading" :users="users" :page="page" :pages="pages" @update:page="changePage"
+        @search:query="queryResult" />
     </div>
   </div>
 </template>
@@ -42,7 +43,8 @@ export default {
   ),
   data() {
     return {
-      isLoading: false
+      isLoading: false,
+      query: ""
     };
   },
   methods: Object.assign({},
@@ -50,7 +52,13 @@ export default {
     {
       async changePage(newPage) {
         this.isLoading = true;
-        await this.fetchUsers({ page: newPage });
+        await this.fetchUsers({ page: newPage, query: this.query });
+        this.isLoading = false;
+      },
+      async queryResult(query) {
+        this.isLoading = true;
+        this.query = query;
+        await this.fetchUsers({ query: query });
         this.isLoading = false;
       }
     }

@@ -90,40 +90,7 @@ else
 fi
 
 
-# check if redis is installed
-if ! command -v redis-server &> /dev/null; then
-    echo "[redis] Redis server is not installed, installing Redis..."
-    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-        sudo apt-get update
-        sudo apt-get install redis-server -y
-    fi 
-    echo "[redis] Redis server installed."
-fi
+# run all searvices
+# ./run.sh production
 
-
-# Start redis in background
-if ! pgrep -x "redis-server" > /dev/null; then
-    echo "[redis] Starting Redis server..."
-    redis-server --daemonize yes &
-    echo "[redis] Redis server started."
-else
-    echo "[redis] Redis server is already running."
-fi
-
-# Start aiosmtpd in background
-if ! pgrep -f "aiosmtpd" > /dev/null; then
-    echo "[aiosmtpd] Starting aiosmtpd server..."
-    python -m aiosmtpd -n -l localhost:1025 --debug &
-    echo "[aiosmtpd] aiosmtpd server started on port 1025."
-else
-    echo "[aiosmtpd] aiosmtpd server is already running."
-fi
-
-# Start flask app in foreground (last, so script doesn't exit)
-echo "[backend] Starting the application..."
-cd backend
-(flask run --port 1234 --debug) & (celery -A celery_worker worker --loglevel=info) & (celery -A celery_worker beat --loglevel=info)
-echo "[backend] Application started on port 1234."
-
-
-
+echo "setup completed."

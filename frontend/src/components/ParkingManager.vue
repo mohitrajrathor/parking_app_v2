@@ -17,8 +17,8 @@
       <LeafletMap />
     </div>
 
-    <ParkingTable :isLoading="isParkingLoading" :parkings="parkings" :page="parkingPage" :pages="parkingPages" @update:page="fetchParkingsPage" />
-    <ReservationTable :isLoading="isReservationLoading" :reservations="reservations" :page="reservationPage" :pages="reservationPages" @update:page="fetchReservationsPage" />
+    <ParkingTable :isLoading="isParkingLoading" :parkings="parkings" :page="parkingPage" :pages="parkingPages" @update:page="fetchParkingsPage" @search:query="searchQuery" />
+    <ReservationTable :isLoading="isReservationLoading" :reservations="reservations" :page="reservationPage" :pages="reservationPages" @update:page="fetchReservationsPage" @search:query="searchRQuery" />
   </div>
 </template>
 
@@ -41,7 +41,9 @@ export default {
   data() {
     return {
       isParkingLoading: false,
-      isReservationLoading: false
+      isReservationLoading: false,
+      query: "",
+      rquery: "",
     };
   },
   computed: {
@@ -64,12 +66,25 @@ export default {
 
     async fetchParkingsPage(newPage) {
       this.isParkingLoading = true;
-      await this.fetchParkings({ page: newPage });
+      await this.fetchParkings({ page: newPage, query:this.query });
+      this.isParkingLoading = false;
+    },
+    async searchQuery(query){
+      this.isParkingLoading = true;
+      this.query = query;
+      await this.fetchParkings({query: query});
+      this.isParkingLoading = false;
+    },
+    async searchRQuery(query){
+      console.log("reservation query run")
+      this.isParkingLoading = true;
+      this.rquery = query;
+      await this.fetchReservations({query: query});
       this.isParkingLoading = false;
     },
     async fetchReservationsPage(newPage) {
       this.isReservationLoading = true;
-      await this.fetchReservations({ page: newPage });
+      await this.fetchReservations({ page: newPage, query: rquery });
       this.isReservationLoading = false;
     }
   },

@@ -2,7 +2,8 @@
     <div id="userDashboard" class="container py-4">
         <!-- Welcome Header -->
         <div class="mb-4">
-            <h2 class="fw-bold">Welcome back, <span class="fw-bold text-primary text-capitalize">{{ user?.name || 'User' }}</span>!</h2>
+            <h2 class="fw-bold">Welcome back, <span class="fw-bold text-primary text-capitalize">{{ user?.name || 'User'
+            }}</span>!</h2>
             <p class="fs-5">Here's
                 an overview of your parking activity:</p>
         </div>
@@ -58,6 +59,16 @@
                                         <div class="fs-4 fw-bold text-primary">{{ user?.total_reviews ?? 0 }}</div>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="col">
+                                <a href="#parkings" class=" text-decoration-none">
+                                    <div class="d-block card bg-primary-subtle shadow border-0 h-100">
+                                        <div class="card-body text-center">
+                                            <div class="fs-2 mb-2">🚘</div>
+                                            <div class="fw-bold text-primary">View Parkings</div>
+                                        </div>
+                                    </div>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -115,8 +126,9 @@
                 </div>
             </div>
 
-
-            <ParkingCardContainer />
+            <div id="parkings">
+                <ParkingCardContainer />
+            </div>
 
             <!-- Help Section -->
             <div class="row g-4 mb-4">

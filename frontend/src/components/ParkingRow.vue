@@ -50,22 +50,20 @@
 			{{ parking.reviews_count }}
 		</td>
 
-		<td>
-			<span>
-				<button v-if="mode === 'normal'" @click="redirectToParking(parking.id)"
-					class="me-1 btn btn-sm btn-primary rounded-pill"><i class="bi bi-box-arrow-up-right"></i></button>
-				<button v-if="mode === 'normal'" @click="mode = 'edit'"
-					class="me-1 btn btn-sm rounded-pill btn-success"><i class="bi bi-pencil-square"></i></button>
-				<button v-if="mode === 'edit'" @click="updateParking"
-					class="me-1 btn btn-sm rounded-pill btn-success"><i class="bi bi-check-lg"></i></button>
-
-				<button v-if="mode === 'edit'" @click="mode = 'normal'"
-					class="me-1 btn btn-sm rounded-pill btn-danger"><i class="bi bi-x-lg"></i></button>
-
-				<button v-if="mode === 'normal'" @click="deleteParking"
-					class="me-1 btn btn-sm rounded-pill btn-danger"><i class="bi bi-trash3-fill"></i></button>
-			</span>
-		</td>
+<td>
+  <div class="d-flex flex-row flex-nowrap align-items-center gap-1">
+	<button v-if="mode === 'normal'" @click="redirectToParking(parking.id)"
+	  class="btn btn-sm btn-primary rounded-pill"><i class="bi bi-box-arrow-up-right"></i></button>
+	<button v-if="mode === 'normal'" @click="mode = 'edit'"
+	  class="btn btn-sm rounded-pill btn-success"><i class="bi bi-pencil-square"></i></button>
+	<button v-if="mode === 'edit'" @click="updateParking"
+	  class="btn btn-sm rounded-pill btn-success"><i class="bi bi-check-lg"></i></button>
+	<button v-if="mode === 'edit'" @click="mode = 'normal'"
+	  class="btn btn-sm rounded-pill btn-danger"><i class="bi bi-x-lg"></i></button>
+	<button v-if="mode === 'normal'" @click="deleteParking"
+	  class="btn btn-sm rounded-pill btn-danger"><i class="bi bi-trash3-fill"></i></button>
+  </div>
+</td>
 	</tr>
 </template>
 

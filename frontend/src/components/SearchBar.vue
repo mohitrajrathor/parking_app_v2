@@ -11,7 +11,7 @@
             </form>
 
             <!-- Filter Button with Dropdown -->
-            <div class="dropdown">
+            <div class="dropdown" style="z-index: 9999;">
                 <button class="btn btn-outline-secondary dropdown-toggle rounded-pill btn-filter" type="button"
                     id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="fas fa-filter me-1"></i> Filter

@@ -1,6 +1,17 @@
 <template>
   <div class="text-light bg-primary p-3 rounded-4 mb-5">
     <h2 class="text-center">Parkings</h2>
+    <form class="row justify-content-center mb-3" @submit.prevent="onSearch">
+      <div class="col-md-6 col-12">
+        <div class="input-group">
+          <input v-model="searchQuery" type="text" class="form-control rounded-start-4"
+            placeholder="Search parking by name, address, or pincode...">
+          <button class="btn btn-warning rounded-end-4 fw-bold" type="submit">
+            <i class="bi bi-search"></i> Search
+          </button>
+        </div>
+      </div>
+    </form>
     <div class="bg-light rounded-3 p-1">
       <div class="table-responsive mb-3">
         <table class="table rounded-3 mb-0">
@@ -61,12 +72,19 @@ export default {
     pages: Number,
     isLoading: Boolean,
   },
+  data() {
+    return {
+      searchQuery: "",
+    }
+   },
   components: { ParkingRow, Pagination },
   emits: ['update:page'],
   methods: {
-
     changePage(newPage) {
       this.$emit('update:page', newPage);
+    },
+    onSearch(query) {
+      this.$emit("search:query", this.searchQuery);
     }
   }
 };

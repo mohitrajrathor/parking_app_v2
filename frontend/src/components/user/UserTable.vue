@@ -1,6 +1,19 @@
 <template>
   <div class="text-light bg-primary p-3 rounded-4 mb-5">
-    <h2 class="text-center">Users</h2>
+    <div>
+      <h2 class="text-center mb-3">Users</h2>
+      <form class="row justify-content-center mb-3" @submit.prevent="onSearch">
+        <div class="col-md-6 col-12">
+          <div class="input-group">
+            <input v-model="searchQuery" type="text" class="form-control rounded-start-4" placeholder="Search users by name, email, or profession...">
+            <button class="btn btn-warning rounded-end-4 fw-bold" type="submit">
+              <i class="bi bi-search"></i> Search
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+
     <div class="bg-light rounded-3 p-1">
       <div class="table-responsive mb-3">
         <table class="table rounded-3 mb-0">
@@ -45,6 +58,7 @@
 </template>
 
 <script>
+
 import UserRow from './UserRow.vue';
 import Pagination from '../Pagination.vue';
 
@@ -59,11 +73,19 @@ export default {
       default: false
     }
   },
+  data() {
+    return {
+      searchQuery: ''
+    };
+  },
   components: { UserRow, Pagination },
-  emits: ['update:page'],
+  emits: ['update:page', 'search:query'],
   methods: {
     changePage(newPage) {
       this.$emit('update:page', newPage);
+    },
+    onSearch() {
+      this.$emit('search:query', this.searchQuery.trim());
     }
   }
 };
