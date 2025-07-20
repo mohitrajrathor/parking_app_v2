@@ -1,5 +1,7 @@
-# MAD 2 project
+# Parkly: A Parking Facility Management Application
+## Modern Application Development 2 Project
 
-### Milestone 0 completed
-### Milestone 1 completed
-### Milestone 2 completed
+**Author : Mohit Raj Rathor**
+
+### Descripttion
+---
