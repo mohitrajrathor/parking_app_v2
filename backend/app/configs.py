@@ -41,12 +41,12 @@ class Config:
     JWT_REFRESH_TOKEN_EXPIRES = 60 * 60 * 24 * 7  # in 7 days
 
     #### Mail
-    MAIL_SERVER = os.environ.get("mail_server") or "localhost"
-    MAIL_PORT = os.environ.get("mail_port") or 1025
+    MAIL_SERVER = os.environ.get("mail_server", "localhost")
+    MAIL_PORT = os.environ.get("mail_port", 1025)
     MAIL_USE_TLS = False
     MAIL_USE_SSL = False
-    MAIL_USERNAME = os.environ.get("mail_username") or None
-    MAIL_PASSWORD = os.environ.get("mail_password") or None
+    MAIL_USERNAME = os.environ.get("mail_username")
+    MAIL_PASSWORD = os.environ.get("mail_password")
 
     CELERY = {
         "broker_url": "redis://localhost:6379",

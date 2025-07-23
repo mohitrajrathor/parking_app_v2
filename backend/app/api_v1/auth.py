@@ -177,17 +177,17 @@ def signup(args):
 @role_required("user")
 def send_confirm_mail():
     try:
-        identity = get_jwt_identity()
-        id = identity.get("id")
+        id = get_jwt_identity()
 
         user = User.query.get(id)
 
-        if not identity or not user:
+        if not id or not user:
             raise APIError("bad token", 404)
 
         msg = Message(
             subject="Confirm you email",
             recipients=[user.email],
+            sender="admin@parkly.com",
             body=f"welcome to parkly.com, to confirm mail follow this link {url_for("api_v1.auth.confirm_mail", token=create_refresh_token(identity=user.email))}",
             html=generate_confirmation_email(
                 link=url_for(
@@ -199,6 +199,11 @@ def send_confirm_mail():
         )
 
         mail.send(msg)
+
+        return {
+            "message": f"Confirmation mail sent to {user.email}, please check your inbox!",
+            "status": "ok",
+        }
 
     except APIError as e:
         current_app.logger.error(e.message)

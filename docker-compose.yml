@@ -29,13 +29,14 @@ services:
     depends_on:
       - redis
       - parkly
+      - mailhog
     environment:
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
       - mail_server=${mail_server}
       - mail_port=${mail_port}
-      # - mail_username=${mail_username}
-      # - mail_password=${mail_password}
+      - mail_username=${mail_username}
+      - mail_password=${mail_password}
       - secret_key=${secret_key}
 
   celery_beat:
@@ -47,13 +48,14 @@ services:
     depends_on:
       - redis
       - parkly
+      - mailhog
     environment:
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
       - mail_server=${mail_server}
       - mail_port=${mail_port}
-      # - mail_username=${mail_username}
-      # - mail_password=${mail_password}
+      - mail_username=${mail_username}
+      - mail_password=${mail_password}
       - secret_key=${secret_key}
 
   redis:
