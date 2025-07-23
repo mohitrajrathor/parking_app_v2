@@ -10,7 +10,6 @@ from .extensions import db, mail
 from flask_mail import Message
 from .models import User
 from flask import current_app
-from . import create_app
 from jinja2 import Environment, FileSystemLoader
 
 
@@ -129,11 +128,23 @@ def user_monthly_report(user_id: int):
     monthly_reports_data = user.monthly_report()
     rendered_template = template.render(**monthly_reports_data)
 
+    # Generate CSV file in memory
+    from .utils import monthly_report_to_csv
+
+    csv_file = monthly_report_to_csv(monthly_reports_data)
+    csv_file.seek(0)
+
     msg = Message(
         subject="Monthly Report",
         sender="admin@parkly.com",
         recipients=[user.email],
         html=rendered_template,
+    )
+    # Attach CSV
+    msg.attach(
+        filename=f"monthly_report_{user.email}.csv",
+        content_type="text/csv",
+        data=csv_file.read(),
     )
 
     mail.send(msg)
@@ -167,11 +178,23 @@ def user_all_time_report(user_id: int):
     all_data = user.all_time_report()
     rendered_template = template.render(**all_data)
 
+    # Generate CSV file in memory
+    from .utils import all_time_report_to_csv
+
+    csv_file = all_time_report_to_csv(all_data)
+    csv_file.seek(0)
+
     msg = Message(
         subject="All Time Report",
         sender="admin@parkly.com",
         recipients=[user.email],
         html=rendered_template,
+    )
+    # Attach CSV
+    msg.attach(
+        filename=f"all_time_report_{user.email}.csv",
+        content_type="text/csv",
+        data=csv_file.read(),
     )
 
     mail.send(msg)

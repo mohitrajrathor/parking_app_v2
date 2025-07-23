@@ -1,3 +1,64 @@
+# CSV report makers for user monthly and all-time reports
+import io
+import csv
+
+
+def monthly_report_to_csv(report_data):
+    """
+    Takes the dict output of User.monthly_report(), validates, and returns an in-memory CSV file object.
+    """
+    if not report_data or "bookings" not in report_data:
+        raise ValueError("Invalid report data: missing bookings list")
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+
+    # Write header
+    writer.writerow(
+        [
+            "Reservation ID",
+            "Parking Name",
+            "Slot Serial",
+            "Start Time",
+            "Leave Time",
+            "Hours Used",
+            "Is Booked",
+            "Payments",
+        ]
+    )
+
+    for booking in report_data["bookings"]:
+        payments_str = "; ".join(
+            [
+                f"{p['pay_for']} {p['amount']} at {p['paid_at']}"
+                for p in booking.get("payments", [])
+            ]
+        )
+        writer.writerow(
+            [
+                booking.get("reservation_id"),
+                booking.get("parking_name"),
+                booking.get("slot_serial"),
+                booking.get("start_time"),
+                booking.get("leave_time"),
+                booking.get("hours_used"),
+                booking.get("is_booked"),
+                payments_str,
+            ]
+        )
+
+    output.seek(0)
+    return output
+
+
+def all_time_report_to_csv(report_data):
+    """
+    Takes the dict output of User.all_time_report(), validates, and returns an in-memory CSV file object.
+    """
+    # Structure is the same as monthly_report, so we can reuse logic
+    return monthly_report_to_csv(report_data)
+
+
 # utility logic
 
 # imports
