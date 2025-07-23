@@ -32,7 +32,7 @@
                 <!-- Main content -->
                 <main class="col-lg-10 overflow-auto vh-100">
                     <NavBar />
-                    <div class="container" style="margin-bottom: 75px;">
+                    <div class="container pt-3" style="margin-bottom: 75px;">
                         <router-view></router-view>
                     </div>
                 </main>

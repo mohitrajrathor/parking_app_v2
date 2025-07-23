@@ -39,7 +39,7 @@
                                                     <i class="bi bi-envelope-at me-1"></i>{{ user?.email }}
                                                 </a> 
                                                 <button v-if="!user?.email_confirmed" @click="requestConfirmEmail" class="ms-2 badge bg-primary  btn">
-                                                    Confirm Email
+                                                    Verify Email
                                                 </button>
                                             </p>
                                         </div>

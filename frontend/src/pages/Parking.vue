@@ -63,10 +63,16 @@
                             </div>
                         </div>
                         <div class="row" v-if="role === 'user'">
-                            <div class="col">
+                            <div class="col" v-if="user?.email_confirmed">
                                 <button @click="goToPayment(parking.id)"
-                                    class="btn btn-dark bg-gradient w-100 py-2 fs-5 rounded-pill">
+                                    class="btn btn-dark w-100 py-2 fs-5">
                                     <i class="bi bi-credit-card me-2"></i>Book Parking
+                                </button>
+                            </div>
+                            <div class="col" v-else>
+                                <button
+                                    class="btn btn-dark w-100 py-2 fs-5" disabled>
+                                    You need to <strong>Verify</strong> your email first
                                 </button>
                             </div>
                         </div>
@@ -173,7 +179,7 @@
                                         <h5 class="card-title">Occupancy Rate</h5>
                                         <div class="display-4 text-primary">
                                             {{ parking.slots_num > 0 ? Math.round((parking.booked / parking.slots_num) *
-                                            100) : 0 }}%
+                                                100) : 0 }}%
                                         </div>
                                         <p class="card-text">{{ parking.booked }} of {{ parking.slots_num }} slots
                                             occupied</p>
@@ -210,6 +216,7 @@ import LeafletMap from '../components/LeafletMap.vue';
 import { mapGetters, mapActions } from 'vuex';
 import parking from '../store/parking';
 import api from '../api';
+import user from '../store/user';
 
 export default {
     name: "Parking",
@@ -226,6 +233,7 @@ export default {
     },
     computed: {
         ...mapGetters("parking", ["parking"]),
+        ...mapGetters("user", ["user"]),
         ...mapGetters(['role', 'isAuthenticated']),
         parking_id() {
             return this.$route.params.id;
@@ -234,6 +242,7 @@ export default {
     inject: ['notify'],
     methods: {
         ...mapActions("parking", ["fetchParkingById"]),
+        ...mapActions("user", ["fetchCurrentUser"]),
         switchTab(tab) {
             this.currentTab = tab;
         },
@@ -269,6 +278,9 @@ export default {
     },
     async created() {
         this.isLoading = true;
+        if (this.role === 'user') {
+            await this.fetchCurrentUser();
+        }
         await this.fetchParkingById(this.parking_id);
         this.isLoading = false;
     }
@@ -276,9 +288,6 @@ export default {
 </script>
 
 <style>
-.vh-50 {
-    min-height: 50vh;
-}
 
 .min-vh-50 {
     min-height: 50vh;

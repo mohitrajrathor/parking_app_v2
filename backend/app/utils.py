@@ -96,9 +96,9 @@ def haversine_distance(lat1, lon1, lat2, lon2):
 
 def calculate_hours(start: dt.datetime, end: dt.datetime) -> float:
     """
-    Calculate time difference in hours, rounded down to nearest 0.5 hour, minimum 0.5 hour.
+    Calculate time difference in hours, rounded down to nearest 1 hour, minimum 1 hour.
     """
     delta = end - start
     hours = delta.total_seconds() / 3600
-    rounded = max((hours // 0.5) * 0.5, 0)
+    rounded = round(hours)
     return rounded

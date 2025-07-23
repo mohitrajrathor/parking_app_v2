@@ -149,7 +149,7 @@ export default {
     },
     booking_data() {
       if (!this.booking_id || !this.user || !this.user.bookings) return null;
-      // booking_id may be string, so use == for comparison
+      // booking_id may be string,so == is used for comparison instead ===
       return this.user.bookings.find(bk => bk.id == this.booking_id) || null;
     },
     hourUsed() {
@@ -158,7 +158,8 @@ export default {
       const start = new Date(booking.start_time);
       const end = booking.leave_time ? new Date(booking.leave_time) : this.leave_time;
       const diffMs = end - start;
-      const hours = Math.ceil(diffMs / (1000 * 60 * 60));
+      // const diffMs = 1000 * 60 * 60;
+      const hours = Math.floor(diffMs / (1000 * 60 * 60));
       return hours > 0 ? hours : 0;
     },
     totalAmount() {
