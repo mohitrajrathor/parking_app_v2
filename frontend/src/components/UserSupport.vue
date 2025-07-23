@@ -21,7 +21,7 @@
                                 </button>
                             </div>
                             <div class="col-md-4 col-12">
-                                <button type="button" class="btn btn-outline-primary w-100 py-4 rounded-5 shadow-sm d-flex flex-column align-items-center justify-content-center gap-2 fw-bold">
+                                <button @click="$router.push({name: 'Contact'})" type="button" class="btn btn-outline-primary w-100 py-4 rounded-5 shadow-sm d-flex flex-column align-items-center justify-content-center gap-2 fw-bold">
                                     <span class="fs-1"><i class="bi bi-headset"></i></span>
                                     Contact
                                 </button>

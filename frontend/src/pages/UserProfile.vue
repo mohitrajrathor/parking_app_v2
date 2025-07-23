@@ -38,7 +38,7 @@
                                                     :href="`mailto:${user?.email}`">
                                                     <i class="bi bi-envelope-at me-1"></i>{{ user?.email }}
                                                 </a> 
-                                                <button v-if="!user?.email_confirmed" @click="requestConfirmEmail" class="ms-2 badge bg-primary  btn">
+                                                <button v-if="!user?.email_confirmed && role=='user'" @click="requestConfirmEmail" class="ms-2 badge bg-primary  btn">
                                                     Verify Email
                                                 </button>
                                             </p>
@@ -369,6 +369,7 @@ export default {
     inject: ['notify'],
     computed: {
         ...mapGetters("user", ['user']),
+        ...mapGetters(['role']),
         user_id() {
             return this.$route.query.user_id || null;
         }

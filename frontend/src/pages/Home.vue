@@ -59,7 +59,6 @@
 
                             <!-- map section -->
                             <div class=" col-lg-8">
-                                <SearchBar />
                                 <LeafletMap />
                             </div>
                         </div>
@@ -85,8 +84,6 @@ import NavBar from '../components/NavBar.vue';
 import Perks from '../components/Perks.vue';
 import SideParkView from '../components/SideParkView.vue';
 import Footer from '../components/Footer.vue';
-import SearchBar from '../components/SearchBar.vue';
-import { isAxiosError } from 'axios';
 
 export default {
     name: "Home",
@@ -97,7 +94,6 @@ export default {
         LeafletMap,
         SideParkView,
         Footer,
-        SearchBar
     }, 
 }
 </script>

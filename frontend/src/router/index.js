@@ -18,6 +18,7 @@ import AddParking from "../components/AddParking.vue";
 import Parking from "../pages/Parking.vue";
 import Payment from "../pages/Payment.vue";
 import Unauthorized from "../components/Unauthorized.vue";
+import Contact from "../pages/contact.vue";
 
 
 const routes = [
@@ -124,6 +125,12 @@ const routes = [
         path: '/payment/:payment_for',
         name: "Payment",
         component: Payment,
+    },
+
+    {
+        path: '/contact',
+        name: "Contact",
+        component: Contact,
     },
 
     {
