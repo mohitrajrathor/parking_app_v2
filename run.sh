@@ -60,9 +60,7 @@ if [[ "$1" == "dev" ]]; then
     PID5=$!
     (cd ../backend && flask run --port 1234 --debug) &
     PID6=$!
-    celery -A celery_worker flower &
-    PID7=$!
-    wait $PID1 $PID2 $PID3 $PID4 $PID5 $PID6 $PID7
+    wait $PID1 $PID2 $PID3 $PID4 $PID5 $PID6
 else
     PID5=0
     flask run --port 1234 --debug &

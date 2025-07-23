@@ -19,12 +19,11 @@ COPY backend/requirements.txt .
 RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt 
 
 
-COPY ./backend ./backend 
+COPY ./backend ./backend
 
 # Copy frontend build to backend static directory
 COPY --from=frontend-build /app/dist ./frontend/dist
 
-VOLUME ["/app"]
 EXPOSE 1234
 
-CMD ["python", "-m", "flask", "--app", "backend.app", "run", "--host", "0.0.0.0", "--port", "1234"]
+CMD ["python", "-m", "flask","--app", "backend.app", "run", "--host", "0.0.0.0", "--port", "1234"]

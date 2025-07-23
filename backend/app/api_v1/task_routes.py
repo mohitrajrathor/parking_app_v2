@@ -7,6 +7,7 @@ from flask import current_app
 from ..utils import role_required
 from flask_jwt_extended import get_jwt_identity
 
+
 # blueprint
 task_bp = Blueprint(
     "tasks",
@@ -23,7 +24,7 @@ def send_daily_remainders():
     Endpoint to trigger the daily reminders task.
     """
     try:
-        from app.tasks import daily_remainders
+        from ..tasks import daily_remainders
 
         task_id = daily_remainders.delay()
         return {
@@ -49,7 +50,7 @@ def send_monthly_report():
     try:
         identity = get_jwt_identity()
 
-        from app.tasks import user_monthly_report
+        from ..tasks import user_monthly_report
 
         task_id = user_monthly_report.delay(user_id=identity)
         return {
@@ -74,7 +75,7 @@ def send_all_data():
     try:
         identity = get_jwt_identity()
 
-        from app.tasks import user_all_time_report
+        from ..tasks import user_all_time_report
 
         task_id = user_all_time_report.delay(user_id=identity)
         return {
