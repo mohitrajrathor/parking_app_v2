@@ -177,4 +177,4 @@ cython_debug/
 
 instance/
 .env
-*dump.rdb
+dump.rdb
