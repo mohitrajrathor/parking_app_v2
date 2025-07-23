@@ -22,7 +22,9 @@ user_bp = Blueprint(
 @role_required("admin", "user")
 def get_user_by_id(args):
     """
-    Get user by id
+    Retrieve a user's details by their ID.
+
+    Requires 'admin' or 'user' role. Accepts the user ID as a query parameter and returns the user's information if found, otherwise returns a 404 error.
     """
     try:
         id = args.get("id")
@@ -49,7 +51,10 @@ def get_user_by_id(args):
 @role_required("admin")
 def get_users(args):
     """
-    Get all users with pagination
+    Retrieve a paginated list of users, optionally filtered by a search query.
+
+    Requires admin role. Supports pagination and query parameters for filtering users by name.
+    Returns user data along with pagination metadata.
     """
     try:
         page = args.get("page", 1)
@@ -87,7 +92,11 @@ def get_users(args):
 @role_required("user")
 def get_current_user():
     """
-    Get current user details from token
+    Retrieve the current authenticated user's details using the JWT token.
+
+    Returns:
+        dict: User details for dashboard view if found.
+        tuple: Error message and status code if user not found or on error.
     """
     try:
         user_id = get_jwt_identity()

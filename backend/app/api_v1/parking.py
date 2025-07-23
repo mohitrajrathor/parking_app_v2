@@ -26,7 +26,11 @@ parking_bp = Blueprint(
 @parking_bp.response(200, ParkingWithSlothSchema)
 def get_parking_id(args):
     """
-    get parking by id
+    Retrieve parking details by ID.
+
+    Accepts a parking ID as a query parameter and returns the corresponding parking information,
+    including slots and reviews, if found. Returns a 404 error if the ID is missing or no parking is found.
+    Handles API and internal server errors with appropriate responses.
     """
     try:
         id = args.get("id")
@@ -53,7 +57,10 @@ def get_parking_id(args):
 @parking_bp.response(200, ParkingResponseSchema)
 def get_parking(args):
     """
-    get parkings by query or latitude or longitude
+    Retrieve a paginated list of parkings based on search query, latitude/longitude, or all parkings.
+
+    Supports filtering by name (query), proximity (lat/long), and pagination (page, per_page).
+    Returns parking data with pagination metadata and handles empty results gracefully.
     """
     try:
         page = args.get("page") or 1
@@ -157,7 +164,11 @@ def get_parking(args):
 @role_required("admin")
 def create_parking(args):
     """
-    routes to create parkings
+    Create a new parking lot with the provided details.
+
+    Validates input, ensures unique name and address, creates parking and associated slots,
+    and triggers a promotional email task. Only accessible to admin users.
+    Returns the created parking data on success.
     """
     try:
         slots_num = args.get("slots_num")
@@ -233,7 +244,12 @@ def create_parking(args):
 @role_required("admin")
 def update_parking(args):
     """
-    routes to update parkings
+    Update an existing parking entry.
+
+    Requires admin role. Accepts parking details in JSON, updates the parking record,
+    and manages the number of slots (adding or removing as needed within allowed limits).
+    Returns a success message and the updated parking data, or an error if the parking does not exist
+    or if slot constraints are violated.
     """
     try:
         parking_id = args.get("id")
@@ -329,7 +345,9 @@ def update_parking(args):
 @role_required("admin")
 def delete_parking(args):
     """
-    get parking by id
+    Deletes a parking entry by its ID if none of its slots are occupied.
+
+    Requires admin role. Expects the parking ID as a query parameter. Returns a success message upon deletion, or raises an APIError if the parking is not found, the ID is missing, or any slots are occupied.
     """
     try:
         id = args.get("id")
@@ -367,7 +385,10 @@ def delete_parking(args):
 @parking_bp.arguments(SlotQuerySchema, location="query")
 def get_slot(args: dict):
     """
-    query slots
+    Retrieve parking slot information based on query parameters.
+
+    Supports filtering by slot ID, serial ID, parking ID, and occupancy status.
+    Returns slot details or paginated lists of slots. Handles errors for invalid queries or missing slots.
     """
     try:
         page = args.get("page") or 1
@@ -440,7 +461,10 @@ def get_slot(args: dict):
 @role_required("admin")
 def delete_slot(args):
     """
-    Delete slot if it's free
+    Deletes a parking slot by serial ID if it is free.
+
+    Requires admin role. Returns a success message if the slot is deleted,
+    or an error if the serial ID is missing or invalid.
     """
     try:
         serial_id = args.get("serial_id", None)

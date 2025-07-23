@@ -24,6 +24,12 @@ analytics_bp = Blueprint(
 
 ##### analytics functions ######
 def get_top_parkings():
+    """
+    Retrieve the top 3 parkings with the highest number of reservations.
+
+    Returns:
+        list: A list of dictionaries, each containing the parking ID, name, and reservation count.
+    """
     top_parkings = (
         db.session.query(
             Parking.id.label("parking_id"),
@@ -47,6 +53,12 @@ def get_top_parkings():
 
 
 def get_last_30_days_revenue():
+    """
+    Calculates and returns a dictionary of daily revenue totals for the last 30 days.
+
+    Returns:
+        dict: Keys are date strings in 'YYYY-MM-DD' format, values are total revenue (float) for each day.
+    """
     today = datetime.now()
     start_date = today - timedelta(days=29)
 
@@ -75,12 +87,10 @@ def get_last_30_days_revenue():
 
 def get_profession_wise_user():
     """
-    Return profession-wise user distribution data as a dict:
-    {
-        "Student": 120,
-        "Engineer": 80,
-        ...
-    }
+    Retrieve a dictionary representing the distribution of users by profession.
+
+    Returns:
+        dict: Keys are profession names (or "Unknown" if not specified), values are user counts.
     """
     results = (
         db.session.query(User.profession, func.count(User.id))
@@ -95,14 +105,10 @@ def get_profession_wise_user():
 
 def get_last_12_months_monthly_users():
     """
-    Returns a dict of user signups per month for the last 12 months.
-    Example:
-    {
-      "2024-08": 10,
-      "2024-09": 15,
-      ...
-      "2025-07": 22
-    }
+    Retrieve the number of user signups for each of the last 12 months.
+
+    Returns:
+        dict: A dictionary mapping each month (YYYY-MM) to the count of users who joined in that month.
     """
     today = datetime.now().replace(day=1)
     months = [
@@ -133,6 +139,16 @@ def get_last_12_months_monthly_users():
 
 
 def get_last_30_days_daily_reservations():
+    """
+    Returns a dictionary of daily reservation counts for the last 30 days.
+
+    Queries the Reservation table to count the number of reservations for each day,
+    starting from 29 days ago up to today. Dates with no reservations are included
+    with a count of zero.
+
+    Returns:
+        dict: Keys are date strings in 'YYYY-MM-DD' format, values are reservation counts.
+    """
     today = datetime.now()
     start_date = today - timedelta(days=29)
 
@@ -163,7 +179,10 @@ def get_last_30_days_daily_reservations():
 
 def get_user_age_distribution():
     """
-    Compute user age distribution
+    Calculate and return the distribution of users across predefined age groups.
+
+    Returns:
+        dict: A dictionary mapping age group labels to the number of users in each group.
     """
     age_bins = {
         "18-24": (18, 24),
@@ -191,7 +210,14 @@ def get_user_age_distribution():
 @role_required("admin")
 def quick_stats():
     """
-    Get quick stats for the admin dashboard
+    Retrieve quick statistics for the admin dashboard, including total parkings, total slots, occupied slots, and total users.
+
+    Returns:
+        dict: A dictionary containing counts for parkings, slots, occupied slots, and users.
+
+    Raises:
+        APIError: If a custom API error occurs.
+        500 error: For any other unexpected exceptions.
     """
     try:
         # get total number of parking lots
@@ -215,7 +241,10 @@ def quick_stats():
 @role_required("admin")
 def dashboard_analytics():
     """
-    Get Dashboard analytics data.
+    Returns aggregated dashboard analytics data for admins, including average rating, active bookings, total reservations, total revenue, total reviews, booking revenue, top parkings, daily revenue for the last 30 days, total slots, and booked slots.
+
+    Returns:
+        Response: JSON object containing dashboard analytics metrics.
     """
     try:
         return jsonify(
@@ -248,7 +277,10 @@ def dashboard_analytics():
 @analytics_bp.route("/parking_analytics")
 def parking_analytics():
     """
-    Return parking analytics data
+    Handles the /parking_analytics route and returns daily parking reservation analytics for the last 30 days as JSON.
+
+    Returns:
+        Response: JSON object with daily reservation counts and HTTP status code.
     """
     try:
         return jsonify(daily_reservations=get_last_30_days_daily_reservations()), 200
@@ -266,7 +298,10 @@ def parking_analytics():
 @role_required("user", "admin")
 def user_analytics():
     """
-    Return parking analytics data
+    Retrieve aggregated parking analytics data for users, including age distribution, monthly user growth, and profession distribution.
+
+    Returns:
+        Response: JSON object containing analytics data with HTTP status 200 on success, or an error response on failure.
     """
     try:
         return (
@@ -291,8 +326,11 @@ def user_analytics():
 @cache.cached(timeout=60, query_string=True)
 def reverse_geocode():
     """
-    Proxy endpoint for reverse geocoding using Nominatim OpenStreetMap API.
-    Accepts lat and long as query params.
+    Handles GET requests to proxy reverse geocoding using the Nominatim OSM API.
+
+    Accepts 'lat' and 'lon' as query parameters and returns the resolved address.
+    Caches responses for 60 seconds based on query string.
+    Returns 400 if required parameters are missing, and 500 on unexpected errors.
     """
     lat = request.args.get("lat")
     lon = request.args.get("lon")

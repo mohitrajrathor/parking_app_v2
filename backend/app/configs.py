@@ -7,6 +7,12 @@ from celery.schedules import crontab
 
 
 class Config:
+    """
+    Configuration class for application settings, including environment variables, database URI,
+    API documentation, CORS, JWT, mail server, Celery task scheduling,
+    and Redis cache. Loads environment variables using dotenv and sets up schedules for daily and monthly Celery tasks.
+    """
+
     load_dotenv()
 
     SECRET_KEY = os.environ["secret_key"]

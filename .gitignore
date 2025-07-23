@@ -178,3 +178,4 @@ cython_debug/
 instance/
 .env
 dump.rdb
+.qodo

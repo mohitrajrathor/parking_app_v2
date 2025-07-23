@@ -25,6 +25,19 @@ cache = Cache()
 
 # celery setup
 def celery_init_app(app: Flask) -> Celery:
+    """
+    Initializes and configures a Celery application with Flask context integration.
+
+    Sets up Celery to use Flask's application context for tasks, applies configuration from the Flask app,
+    registers the Celery instance as an extension, and enables task autodiscovery.
+
+    Args:
+        app (Flask): The Flask application instance.
+
+    Returns:
+        Celery: The configured Celery application.
+    """
+
     class FlaskTask(Task):
         def __call__(self, *args: object, **kwargs: object) -> object:
             with app.app_context():

@@ -23,6 +23,10 @@ reserve_bp = Blueprint(
 
 
 class ReservationSchema(Schema):
+    """
+    Schema for serializing and deserializing reservation data, including parking, reservation IDs, leave time, feedback, and rating.
+    """
+
     parking_id = fields.Integer()
     reservation_id = fields.Integer()
     leave_time = fields.DateTime()
@@ -35,7 +39,10 @@ class ReservationSchema(Schema):
 @role_required("user", "admin")
 def get_by_id(args):
     """
-    to get
+    Retrieve reservation details by reservation ID.
+
+    Requires 'user' or 'admin' role. Returns reservation data as a dictionary if found,
+    otherwise raises an APIError. Handles errors and logs exceptions.
     """
     try:
         id = args.get("id", None)
@@ -59,7 +66,17 @@ def get_by_id(args):
 @role_required("user", "admin")
 def get(args):
     """
-    to get bulk reservations
+    Retrieve a paginated list of reservations filtered by parking name.
+
+    Args:
+        args (dict): Query parameters including 'page', 'per_page', and optional 'query' for filtering.
+
+    Returns:
+        dict: Paginated reservation data with metadata and serialized reservation details.
+
+    Raises:
+        APIError: If a custom API error occurs.
+        500 error: For unexpected server errors.
     """
     try:
         page = args.get("page", 1)
@@ -95,7 +112,12 @@ def get(args):
 @role_required("user")
 def book_slot(args):
     """
-    to reserve a slot
+    Handle POST request to reserve a parking slot for a user.
+
+    Checks for available slots in the specified parking,
+    creates a reservation and payment record,
+    and returns booking and payment details.
+    Handles errors for invalid parking IDs, unavailable slots, and internal exceptions.
     """
     try:
         parking = Parking.query.get(args.get("parking_id"))
@@ -159,7 +181,9 @@ def book_slot(args):
 @role_required("user")
 def leave_slot(args):
     """
-    to reserve a slot
+    Handles the process for a user to leave a reserved parking slot.
+    Updates reservation and slot status, records payment for parking duration, and creates a review.
+    Validates input, manages timezones, and returns payment and reservation details on success.
     """
     try:
         print(request.json)

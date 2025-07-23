@@ -8,7 +8,6 @@ from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
     decode_token,
-    jwt_required,
     get_jwt_identity,
 )
 from ..extensions import db, mail, cache
@@ -29,6 +28,11 @@ auth_bp = Blueprint(
 ##### routes #####
 @auth_bp.route("/test")
 def auth_test():
+    """
+    Test route for the auth blueprint.
+
+    Returns a simple string to verify the authentication routes are working.
+    """
     return "testing -> auth test route"
 
 
@@ -37,7 +41,18 @@ def auth_test():
 @auth_bp.response(200, TokenSchema)
 def admin_login(args):
     """
-    admin login
+    Handles admin login by validating credentials and returning JWT access and refresh tokens upon successful authentication.
+
+    Args:
+        args (dict): JSON payload containing 'username' and 'password'.
+
+    Returns:
+        dict: Contains 'role', 'token', and 'refresh_token' on success.
+
+    Raises:
+        APIError: If admin is not found or password is incorrect.
+        ValidationError: If input validation fails.
+        500 error: For unexpected server errors.
     """
     try:
         admin = Admin.query.filter_by(username=args["username"]).first()
@@ -77,7 +92,10 @@ def admin_login(args):
 @auth_bp.response(200, TokenSchema)
 def user_login(args):
     """
-    user login
+    Authenticate a user with email and password.
+
+    Accepts user credentials in JSON format, verifies the user, and returns access and refresh tokens on successful login.
+    Returns an error if authentication fails.
     """
     try:
 
@@ -114,7 +132,10 @@ def user_login(args):
 @auth_bp.response(200, TokenSchema)
 def signup(args):
     """
-    user signup route
+    Handle user signup by creating a new user account, sending an email confirmation, and returning authentication tokens.
+
+    Accepts user details in JSON format, validates input, checks for existing users, hashes the password, and sends a confirmation email.
+    Returns access and refresh tokens upon successful registration.
     """
 
     try:
@@ -176,6 +197,11 @@ def signup(args):
 @auth_bp.route("/send-confirm-mail", methods=["POST"])
 @role_required("user")
 def send_confirm_mail():
+    """
+    Send a confirmation email to the authenticated user for email verification.
+
+    Requires the user role. Retrieves the current user from the JWT, generates a confirmation link, and sends an email with the verification link. Handles errors with appropriate responses.
+    """
     try:
         id = get_jwt_identity()
 
@@ -216,6 +242,13 @@ def send_confirm_mail():
 
 @auth_bp.route("/confirm-mail")
 def confirm_mail():
+    """
+    Endpoint to confirm a user's email address using a token.
+
+    Retrieves the token from the request, decodes it to get the user's email,
+    verifies the user exists, marks the email as confirmed, and commits the change.
+    Returns a success message and decoded email on success, or an error response on failure.
+    """
     try:
         token = request.args.get("token")
         if not token:

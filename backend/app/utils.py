@@ -5,7 +5,7 @@ import csv
 
 def monthly_report_to_csv(report_data):
     """
-    Takes the dict output of User.monthly_report(), validates, and returns an in-memory CSV file object.
+    Takes the dict output of User.monthly_report, validates, and returns an in-memory CSV file object.
     """
     if not report_data or "bookings" not in report_data:
         raise ValueError("Invalid report data: missing bookings list")

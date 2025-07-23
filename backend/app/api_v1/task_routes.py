@@ -21,7 +21,10 @@ task_bp = Blueprint(
 @role_required("admin")
 def send_daily_remainders():
     """
-    Endpoint to trigger the daily reminders task.
+    Triggers the daily reminders background task.
+
+    This endpoint is restricted to admin users and returns a task ID upon successful initiation.
+    Handles APIError and general exceptions with appropriate logging and error responses.
     """
     try:
         from ..tasks import daily_remainders
@@ -45,7 +48,10 @@ def send_daily_remainders():
 @role_required("user")
 def send_monthly_report():
     """
-    Endpoint to trigger the monthly report task.
+    Endpoint to trigger the asynchronous sending of a monthly report email to the authenticated user.
+
+    Requires the user role. Returns a message and task ID upon successful task initiation.
+    Handles APIError and general exceptions with appropriate logging and error responses.
     """
     try:
         identity = get_jwt_identity()
@@ -70,7 +76,10 @@ def send_monthly_report():
 @role_required("user")
 def send_all_data():
     """
-    Endpoint to send all data to a user
+    Endpoint to initiate sending a user's all-time data report via email.
+
+    Requires the user role. Triggers an asynchronous task to generate and send the report,
+    and returns a message with the task ID. Handles API and general exceptions.
     """
     try:
         identity = get_jwt_identity()
