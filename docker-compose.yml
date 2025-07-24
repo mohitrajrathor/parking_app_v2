@@ -11,6 +11,8 @@ services:
       - redis
       - mailhog
     environment:
+      - host="0.0.0.0"
+      - port=1234
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
       - mail_server=mailhog
@@ -19,6 +21,7 @@ services:
       # - mail_password=${mail_password}
       - secret_key=${secret_key}
       - CACHE_REDIS_HOST=redis
+      - VITE_BASE_URL=http://localhost:1234
 
   celery_worker:
     build: .

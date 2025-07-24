@@ -71,12 +71,13 @@ export default {
                     })
                 }
 
-                const response = await fetch(`http://127.0.0.1:1234/api_v1/auth/login`, {
+                const baseUrl = import.meta.env.VITE_BASE_URL;
+                const response = await fetch(`${baseUrl}/api_v1/auth/login`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'withCredentials': true,
                     },
+                    credentials: 'include',
                     body: JSON.stringify({
                         email: this.email,
                         password: this.password,

@@ -4,7 +4,7 @@ import store from '../store'
 import router from '../router'
 
 const api = axios.create({
-  baseURL: 'http://localhost:1234',
+  baseURL: import.meta.env.VITE_BASE_URL,
   withCredentials: true,
 })
 
