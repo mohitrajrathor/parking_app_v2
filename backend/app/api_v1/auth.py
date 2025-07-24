@@ -18,7 +18,10 @@ from flask_mail import Message
 from datetime import datetime as dt
 import os
 from ..utils import generate_confirmation_email, role_required
+from dotenv import load_dotenv
 
+
+load_dotenv()
 
 auth_bp = Blueprint(
     "auth", __name__, url_prefix="/auth", description="Authorization apis."
@@ -153,19 +156,16 @@ def signup(args):
         )
 
         user.set_password(args["password"])
+        email_token = create_refresh_token(identity=user.email)
 
         # sending email confirmation mail.
         msg = Message(
             sender="admin@parkly.com",
             subject="Confirm you email",
             recipients=[user.email],
-            body=f"welcome to parkly.com, to confirm mail follow this link {url_for("api_v1.auth.confirm_mail", token=create_refresh_token(identity=user.email), _external=True)}",
+            body=f"welcome to parkly.com, to confirm mail follow this link {url_for("api_v1.auth.confirm_mail", token=email_token, _external=True)}",
             html=generate_confirmation_email(
-                link=url_for(
-                    "api_v1.auth.confirm_mail",
-                    token=create_refresh_token(identity=user.email),
-                    _external=True,
-                )
+                link=f"{os.environ.get("VITE_BASE_URL")}/verify-mail?token={email_token}"
             ),
         )
 
@@ -210,17 +210,16 @@ def send_confirm_mail():
         if not id or not user:
             raise APIError("bad token", 404)
 
+        email_token = create_refresh_token(identity=user.email)
+
+        # sending email confirmation mail.
         msg = Message(
+            sender="admin@parkly.com",
             subject="Confirm you email",
             recipients=[user.email],
-            sender="admin@parkly.com",
-            body=f"welcome to parkly.com, to confirm mail follow this link {url_for("api_v1.auth.confirm_mail", token=create_refresh_token(identity=user.email))}",
+            body=f"welcome to parkly.com, to confirm mail follow this link {url_for("api_v1.auth.confirm_mail", token=email_token, _external=True)}",
             html=generate_confirmation_email(
-                link=url_for(
-                    "api_v1.auth.confirm_mail",
-                    token=create_refresh_token(identity=user.email),
-                    _external=True,
-                )
+                link=f"{os.environ.get("VITE_BASE_URL")}/verify-mail?token={email_token}"
             ),
         )
 
@@ -252,25 +251,34 @@ def confirm_mail():
     try:
         token = request.args.get("token")
         if not token:
-            raise APIError("invalid token or token not found!", status_code=404)
+            raise APIError("Invalid token or token not found!", status_code=404)
 
-        email = decode_token(token)["sub"]
+        email = decode_token(token).get("sub")
+        if not email:
+            raise APIError("Invalid token payload!", status_code=400)
 
         user = User.query.filter_by(email=email).first()
-
         if not user:
-            raise APIError("no such email exist!", 404)
+            return {"message": "User with this email not found!"}, 404
 
-        user.email_confirmed = True
+        if not user.email_confirmed:
+            user.email_confirmed = True
+            db.session.commit()
 
-        db.session.commit()
-
-        return {"message": "email confirmed", "decoded_data": email}, 200
+        return {
+            "message": "Email confirmed!",
+            "role": "user",
+            "token": create_access_token(
+                identity=user.id, additional_claims={"role": "user"}
+            ),
+            "refresh_token": create_refresh_token(
+                identity=user.id, additional_claims={"role": "user"}
+            ),
+        }, 200
 
     except APIError as e:
         current_app.logger.error(e.message)
         return abort(e.status_code, message=str(e), additional_data=e.extra)
-
     except Exception as e:
         current_app.logger.error(e)
         return abort(500, message="Internal Server Error.")

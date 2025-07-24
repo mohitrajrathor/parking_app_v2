@@ -31,7 +31,7 @@
                                     <div class="card-body text-center">
                                         <div class="fs-2 mb-2">⭐</div>
                                         <div class="fw-bold text-black">Average Rating</div>
-                                        <div class="fs-4 fw-bold text-primary">{{ user?.average_rating.toFixed(2) ?? '-' }} / 5
+                                        <div class="fs-4 fw-bold text-primary">{{ user?.average_rating?.toFixed(2) ?? '-' }} / 5
                                         </div>
                                     </div>
                                 </div>

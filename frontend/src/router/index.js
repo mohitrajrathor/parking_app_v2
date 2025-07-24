@@ -19,6 +19,7 @@ import Parking from "../pages/Parking.vue";
 import Payment from "../pages/Payment.vue";
 import Unauthorized from "../components/Unauthorized.vue";
 import Contact from "../pages/contact.vue";
+import VerifyMail from "../pages/VerifyMail.vue";
 
 
 const routes = [
@@ -125,6 +126,11 @@ const routes = [
         path: '/payment/:payment_for',
         name: "Payment",
         component: Payment,
+    },
+    {
+        path: '/verify-mail',
+        name: "VerifyMail",
+        component: VerifyMail,
     },
 
     {
