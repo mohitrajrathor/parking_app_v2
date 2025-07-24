@@ -11,15 +11,15 @@ services:
       - redis
       - mailhog
     environment:
-      - host="0.0.0.0"
-      - port=1234
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
-      - mail_server=mailhog
-      - mail_port=1025
-      - secret_key=${secret_key}
-      - CACHE_REDIS_HOST=redis
-      - VITE_BASE_URL=http://localhost:1234
+      host: "0.0.0.0"
+      port: "1234"
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+      mail_server: mailhog
+      mail_port: "1025"
+      secret_key: ${secret_key}
+      CACHE_REDIS_HOST: redis
+      VITE_BASE_URL: http://localhost:1234
 
   celery_worker:
     build: .
@@ -32,12 +32,12 @@ services:
       - parkly
       - mailhog
     environment:
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
-      - mail_server=mailhog
-      - mail_port=1025
-      - secret_key=${secret_key}
-      - VITE_BASE_URL=http://localhost:1234
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+      mail_server: mailhog
+      mail_port: "1025"
+      secret_key: ${secret_key}
+      VITE_BASE_URL: http://localhost:1234
 
 
   celery_beat:
@@ -51,12 +51,12 @@ services:
       - parkly
       - mailhog
     environment:
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
-      - mail_server=mailhog
-      - mail_port=1025
-      - secret_key=${secret_key}
-      - VITE_BASE_URL=http://localhost:1234
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+      mail_server: mailhog
+      mail_port: "1025"
+      secret_key: ${secret_key}
+      VITE_BASE_URL: http://localhost:1234
 
 
   redis:
