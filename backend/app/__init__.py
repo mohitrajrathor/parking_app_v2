@@ -79,6 +79,4 @@ def create_app():
     def internal_error(error):
         return {"message": "Internal Server Error"}, 500
 
-    print(app.config["MAIL_SERVER"], app.config["MAIL_PORT"])
-
     return app
