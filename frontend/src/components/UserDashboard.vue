@@ -3,7 +3,7 @@
         <!-- Welcome Header -->
         <div class="mb-4">
             <h2 class="fw-bold">Welcome back, <span class="fw-bold text-primary text-capitalize">{{ user?.name || 'User'
-            }}</span>!</h2>
+                    }}</span>!</h2>
             <p class="fs-5">Here's
                 an overview of your parking activity:</p>
         </div>
@@ -15,20 +15,23 @@
                         <h4 class="card-title fw-bold mb-3 text-black">🔍 Quick Stats</h4>
                         <div class="row row-cols-1 row-cols-md-3 g-3">
                             <div class="col">
-                                <div class="card bg-light border-0 h-100">
-                                    <div class="card-body text-center">
-                                        <div class="fs-2 mb-2">🎫</div>
-                                        <div class="fw-bold text-black">Active Bookings</div>
-                                        <div class="fs-4 fw-bold text-primary">{{ user?.active_bookings ?? 0 }}</div>
+                                <router-link to="/user/profile" class=" text-decoration-none">
+                                    <div class="card bg-primary-subtle shadow border-0 h-100">
+                                        <div class="card-body text-center">
+                                            <div class="fs-2 mb-2">🎫</div>
+                                            <div class="fw-bold text-black">Active Bookings</div>
+                                            <div class="fs-4 fw-bold text-primary">{{ user?.active_bookings ?? 0 }}
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
+                                </router-link>
                             </div>
                             <div class="col">
                                 <div class="card bg-light border-0 h-100">
                                     <div class="card-body text-center">
                                         <div class="fs-2 mb-2">⭐</div>
                                         <div class="fw-bold text-black">Average Rating</div>
-                                        <div class="fs-4 fw-bold text-primary">{{ user?.average_rating ?? '-' }} / 5
+                                        <div class="fs-4 fw-bold text-primary">{{ user?.average_rating.toFixed(2) ?? '-' }} / 5
                                         </div>
                                     </div>
                                 </div>
@@ -112,7 +115,8 @@
                                 </thead>
                                 <tbody>
                                     <tr v-for="(parking, idx) in topParkings" :key="parking.id || idx">
-                                        <td>{{ parking?.name || '—' }}</td>
+                                        <td v-if="!parking?.name">—</td>
+                                        <td v-else class=" text-decoration-none fw-bold text-primary"><router-link :to="`/parking/${parking.id}`">{{ parking?.name }}</router-link></td>
                                         <td>{{ parking?.reservation_count ?? '—' }}</td>
                                     </tr>
                                     <tr v-if="topParkings.length < 3">
