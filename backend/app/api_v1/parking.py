@@ -55,6 +55,7 @@ def get_parking_id(args):
 @parking_bp.route("", methods=["GET"])
 @parking_bp.arguments(QuerySchema, location="query")
 @parking_bp.response(200, ParkingResponseSchema)
+@cache.cached(1, query_string=True)
 def get_parking(args):
     """
     Retrieve a paginated list of parkings based on search query, latitude/longitude, or all parkings.

@@ -43,7 +43,7 @@ class Config:
 
     #### JWT
     JWT_SECRET_KEY = os.environ["secret_key"]
-    JWT_ACCESS_TOKEN_EXPIRES = 60 * 60 * 30  # in sec now 30 min
+    JWT_ACCESS_TOKEN_EXPIRES = 60 * 60 * 24  # in 1 day
     JWT_REFRESH_TOKEN_EXPIRES = 60 * 60 * 24 * 7  # in 7 days
 
     #### Mail

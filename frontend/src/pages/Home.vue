@@ -3,11 +3,16 @@
         <NavBar />
 
         <div class=" container-xxl ">
+
+            <div v-if="sessionExpired" class="alert alert-warning rounded-4 text-center fw-bold my-3">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                Your session has expired, Please login again.
+            </div>
+
             <!-- layout -->
             <div class="row p-2 rounded-4 m-1">
                 <div class=" col-lg-9 p-0">
                     <div class="p-2">
-
                         <!-- upper div -->
                         <div class="row">
                             <div class=" col-lg-4">
@@ -84,6 +89,8 @@ import NavBar from '../components/NavBar.vue';
 import Perks from '../components/Perks.vue';
 import SideParkView from '../components/SideParkView.vue';
 import Footer from '../components/Footer.vue';
+import {mapGetters} from 'vuex';
+
 
 export default {
     name: "Home",
@@ -95,6 +102,9 @@ export default {
         SideParkView,
         Footer,
     }, 
+    computed: {
+        ...mapGetters(["sessionExpired"]),
+    }
 }
 </script>
 <style></style>

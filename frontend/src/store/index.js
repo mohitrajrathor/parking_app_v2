@@ -17,7 +17,8 @@ const store = createStore({
     choosenPos: {
       lat: null,
       long: null
-    }
+    },
+    sessionExpired: false,
   },
   mutations: {
     setRole(state, role) {
@@ -47,6 +48,9 @@ const store = createStore({
 
     choosePos(state, coords) {
       state.choosenPos = coords;
+    },
+    setSessionExpired(state, value) {
+      state.sessionExpired = value
     }
 
   },
@@ -55,11 +59,17 @@ const store = createStore({
       commit("setAccessToken", token);
       commit("setRefreshToken", refreshToken);
       commit("setRole", role);
+      commit("setSessionExpired", false);
     },
     setToken({ commit }, token) {
       commit("setAccessToken", token);
     },
-    logout({ commit }) {
+    logout({ commit }, { sessionExpired = false } = {}) {
+      if (sessionExpired) {
+        commit("setSessionExpired", true);
+      } else {
+        commit("setSessionExpired", false);
+      }
       commit("clearAuthData");
     },
 
@@ -104,6 +114,7 @@ const store = createStore({
     isAuthenticated: (state) => !!state.token,
     getPosition: (state) => state.position,
     getChoosenPos: (state) => state.choosenPos,
+    sessionExpired: (state) => state.sessionExpired,
   },
 
   modules: {
