@@ -37,6 +37,8 @@ services:
       - mail_server=mailhog
       - mail_port=1025
       - secret_key=${secret_key}
+      - VITE_BASE_URL=http://localhost:1234
+
 
   celery_beat:
     build: .
@@ -54,6 +56,8 @@ services:
       - mail_server=mailhog
       - mail_port=1025
       - secret_key=${secret_key}
+      - VITE_BASE_URL=http://localhost:1234
+
 
   redis:
     image: redis:7-alpine

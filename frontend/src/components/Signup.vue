@@ -422,7 +422,7 @@ const handleSubmit = async () => {
         if (!response.ok) {
             const data = await response.json();
             notify({
-                message: data.message,
+                message: data.message || "Unable to signup!",
                 title: 'Warning',
                 icon: 'https://cdn-icons-png.flaticon.com/512/1680/1680012.png',
                 duration: 5000

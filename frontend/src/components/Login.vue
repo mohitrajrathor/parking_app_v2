@@ -86,7 +86,7 @@ export default {
                 if (!response.ok) {
                     const data = await response.json();
                     this.notify({
-                        message: data.message,
+                        message: data.message || "Unable to Login!",
                         title: 'Warning',
                         icon: 'https://cdn-icons-png.flaticon.com/512/1680/1680012.png',
                         duration: 5000
