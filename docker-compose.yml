@@ -17,8 +17,6 @@ services:
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
       - mail_server=mailhog
       - mail_port=1025
-      # - mail_username=${mail_username}
-      # - mail_password=${mail_password}
       - secret_key=${secret_key}
       - CACHE_REDIS_HOST=redis
       - VITE_BASE_URL=http://localhost:1234
@@ -38,8 +36,6 @@ services:
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
       - mail_server=mailhog
       - mail_port=1025
-      - mail_username=${mail_username}
-      - mail_password=${mail_password}
       - secret_key=${secret_key}
 
   celery_beat:
@@ -57,8 +53,6 @@ services:
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
       - mail_server=mailhog
       - mail_port=1025
-      - mail_username=${mail_username}
-      - mail_password=${mail_password}
       - secret_key=${secret_key}
 
   redis:

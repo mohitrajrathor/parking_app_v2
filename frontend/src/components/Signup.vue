@@ -401,7 +401,8 @@ const handleSubmit = async () => {
     errorTag.value = '';
 
     try {
-        const response = await fetch(`http://127.0.0.1:1234/api_v1/auth/signup`, {
+        const baseUrl = import.meta.env.VITE_BASE_URL;
+        const response = await fetch(`${baseUrl}/api_v1/auth/signup`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

@@ -38,6 +38,15 @@ Parkly is a responsive multi-user web app for managing 4-wheeler parking lots. I
 ---
 
 ## Setup Instructions
++ ### Create .env file and copy paste the following for development.
+    ```env
+    secret_key=dsvrwsg8v4654vr6rs5gdsvc5746dnivegkl3905u480ei
+    mail_server=localhost
+    mail_port=1025
+
+    # frontend
+    VITE_BASE_URL=http://localhost:1234
+    ```
 
 + ### Option 1: Bash (Linux/WSL only)
 

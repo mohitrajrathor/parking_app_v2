@@ -1,0 +1,49 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Vue.js: dependencies
+frontend/node_modules/
+
+
+# Build artifacts
+*.log
+*.tmp
+*.bak
+dist/
+build/
+*.egg-info/
+
+# Docker and Compose files (optional)
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# OS / Editor / IDE
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Git
+.git/
+.gitignore
+
+# Test / coverage
+.pytest_cache/
+.coverage
+.tox/
+htmlcov/
+
+# Environment/config files
+.env
+.env.*

@@ -3,8 +3,15 @@
         <!-- Location Card -->
         <div class="my-3 bg-white text-dark rounded-4 shadow-sm p-4">
             <p class="mb-2 text-muted">Your Location</p>
-            <address class="mb-3 fs-5 text-dark small">{{ address }}</address>
-            <button class="btn btn-primary w-100 rounded-pill">Explore More</button>
+            <div class="mb-3">
+                <div v-if="addressLoading" class="d-flex justify-content-center align-items-center" style="height: 2.5em;">
+                    <div class="spinner-border text-primary" role="status" style="width: 1.5em; height: 1.5em;">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <address v-else class="fs-5 text-dark small mb-0">{{ address }}</address>
+            </div>
+            <button class="btn btn-primary w-100 rounded-pill mt-2">Explore More</button>
         </div>
 
         <!-- Parking Info Card -->
@@ -69,9 +76,10 @@ export default {
     name: "SideParkView",
     data() {
         return {
-            address: "ABC, Dummy City, State, Country, 00000",
+            address: "Unable to load address at the moment",
             inDist: 15,
             inTime: 20,
+            addressLoading: false,
         }
     },
     computed: {
@@ -87,15 +95,15 @@ export default {
         async getAddressFromCoordinates(lat, long) {
             // Use backend proxy to avoid CORS
             try {
-                const response = await fetch(`http://localhost:1234/api_v1/analytics/reverse_geocode?lat=${lat}&lon=${long}`);
+                this.addressLoading = true;
+                const baseUrl = import.meta.env.VITE_BASE_URL;
+                const response = await fetch(`${baseUrl}/api_v1/analytics/reverse_geocode?lat=${lat}&lon=${long}`);
                 const data = await response.json();
-                if (data && data.address) {
-                    this.address = data.address;
-                } else {
-                    this.address = "Unknown address";
-                }
+                this.address = data.address;
             } catch (err) {
-                this.address = "Unknown address";
+                console.error(err)
+            } finally {
+                this.addressLoading = false;
             }
         }
     },
@@ -119,18 +127,5 @@ export default {
 }
 </script>
 <style scoped>
-#sideParkView .card, #sideParkView .bg-white {
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-}
-.rounded-4 {
-    border-radius: 1.25rem !important;
-}
-.rounded-top-4 {
-    border-top-left-radius: 1.25rem !important;
-    border-top-right-radius: 1.25rem !important;
-}
-.form-control:focus {
-    box-shadow: none;
-    border-color: #0d6efd;
-}
+
 </style>
