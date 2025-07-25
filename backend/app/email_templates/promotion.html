@@ -63,7 +63,6 @@
 <body>
   <div class="container">
     <div class="header">
-      <img src="https://i.imgur.com/kG7Yx6v.png" alt="Parkly Logo">
       <div class="title">🎉 New Parking Lot Available!</div>
     </div>
 
@@ -77,12 +76,12 @@
       <div class="lot-card">
         <strong>{{ lot.prime_location_name }}</strong><br>
         📍 {{ lot.address }}, {{ lot.pin_code }}<br>
-        💰 Price: ₹{{ lot.price }} / hour<br>
+        💰 Booking Price: ₹{{ lot.price }}<br>
         🚗 Total Spots: {{ lot.number_of_spots }}
       </div>
 
       <div style="text-align: center;">
-        <a class="cta-button" href="https://parkly.com/dashboard">Book Now</a>
+        <a class="cta-button" href="http://localhost:1234/user/dashboard">Book Now</a>
       </div>
 
       Thanks for using <strong>Parkly.com</strong> 🙌<br>

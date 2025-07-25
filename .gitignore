@@ -128,7 +128,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
+
 .venv
 env/
 venv/
@@ -176,6 +176,5 @@ cython_debug/
 
 
 instance/
-.env
 dump.rdb
 .qodo
