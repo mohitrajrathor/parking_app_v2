@@ -47,7 +47,7 @@ Parkly is a responsive multi-user web app for managing 4-wheeler parking lots. I
     ```
 
     add following to frontend/ dir.
-    ```bash
+    ```env
     # frontend
     VITE_BASE_URL=http://localhost:1234
     ```
