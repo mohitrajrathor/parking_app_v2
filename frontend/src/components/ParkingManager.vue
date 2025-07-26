@@ -84,7 +84,7 @@ export default {
     },
     async fetchReservationsPage(newPage) {
       this.isReservationLoading = true;
-      await this.fetchReservations({ page: newPage, query: rquery });
+      await this.fetchReservations({ page: newPage, query: this.rquery });
       this.isReservationLoading = false;
     }
   },

@@ -30,7 +30,7 @@
     <td>{{ reservation.user.name }}</td>
     <td>
       <router-link
-        :to="`/profile?user_id=${reservation.user.id}`"
+        :to="`/admin/user-profile?user_id=${reservation.user.id}`"
         class="btn btn-sm btn-primary"
       >
         View

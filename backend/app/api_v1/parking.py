@@ -368,10 +368,10 @@ def delete_parking(args):
             db.session.delete(parking)
             db.session.commit()
             return {"message": f"parking with id - {id} deleted successfully!"}, 200
-        else:
-            raise APIError(
-                "parking's some slots are occupied, unable to delete!", status_code=404
-            )
+
+        return {
+            "message": "Unable to delete, Some slots of this parking is Booked"
+        }, 409
 
     except APIError as e:
         current_app.logger.error(e.message)

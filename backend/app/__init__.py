@@ -69,11 +69,6 @@ def create_app():
             app.logger.error(f"Error: {str(e)}")
             raise e
 
-    @app.errorhandler(404)
-    @cache.cached(24 * 60 * 60)
-    def not_found(error):
-        return render_template("index.html")
-
     @app.errorhandler(500)
     @cache.cached(24 * 60 * 60)
     def internal_error(error):

@@ -152,11 +152,14 @@ export default {
 				if (confirm("Are you sure deleting this parking?")) {
 					const response = await api.delete(`/api_v1/parking?id=${this.parking.id}`);
 
+					const data = await response.data;
+					
+					this.notify({
+						message: data?.message || "Parking deleted successfully!",
+					});
+
 					this.$store.dispatch("parking/fetchParkings");
 
-					this.notify({
-						message: "Parking Deleted successfully!"
-					});
 				}
 			} catch (err) {
 				const data = await err.response.data;

@@ -29,6 +29,19 @@ fi
 echo "File check complete."
 echo "Starting application..."
 
+
+if [ -d ".venv" ]; then
+    echo "Activating virtual enviroment..."
+    source .venv/bin/activate
+    echo "[venv] Virtual environment activated."
+else
+    echo "virtual enviroment not found creating..."
+    python3 -m venv .venv
+    source .venv/bin/activate
+    python -m pip install -r backend/requirements.txt
+fi
+
+
 # Trap function to stop all background processes
 stop_all() {
     echo "Stopping all processes..."
