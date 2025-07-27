@@ -1,18 +1,18 @@
 
-# 🚗 Parkly: Parking Facility Management App
+# Parkly: Parking Facility Management App
 
 *Modern Application Development - II Project*  
 **Author:** Mohit Raj Rathor
 
 ---
 
-## 📝 Overview
+## Overview
 
 Parkly is a modern, responsive web app for managing 4-wheeler parking lots. It supports real-time slot booking, user management, payments, reviews, and admin dashboards. Designed for both end-users and administrators to simplify parking operations.
 
 ---
 
-## 📸 Demo Screenshots
+## Demo Screenshots
 
 <div align="center">
 
@@ -29,7 +29,7 @@ Parkly is a modern, responsive web app for managing 4-wheeler parking lots. It s
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Backend:** Flask, Flask-SQLAlchemy (SQLite), Celery, Redis
 - **Frontend:** Vue.js, Bootstrap
@@ -38,7 +38,7 @@ Parkly is a modern, responsive web app for managing 4-wheeler parking lots. It s
 
 ---
 
-## 🚀 Features
+## Features
 
 - User registration with email confirmation
 - Admin dashboard for user and parking management
@@ -53,7 +53,7 @@ Parkly is a modern, responsive web app for managing 4-wheeler parking lots. It s
 
 ---
 
-## 🗄️ Database
+## Database
 
 Uses **SQLite** (via **Flask-SQLAlchemy**). Schema supports users, parking slots, bookings, payments, reviews, and admin operations. Relationships are normalized for efficient queries and data integrity.
 
@@ -63,7 +63,7 @@ Uses **SQLite** (via **Flask-SQLAlchemy**). Schema supports users, parking slots
 
 ---
 
-## ⚡ Quickstart
+## Quickstart
 
 ### 1. Create .env files
 
@@ -103,18 +103,18 @@ docker compose up
 
 ---
 
-## 📚 API Documentation
+## API Documentation
 
 Interactive OpenAPI docs available at `/api/docs` when the backend is running.
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Pull requests and issues are welcome! Please open an issue to discuss your ideas or report bugs.
 
 ---
 
-## 📬 Contact
+## Contact
 
-For questions, contact [Mohit Raj Rathor](mailto:mohitrajrathor@gmail.com).
+For questions, contact [mohitrajrathor@gmail.com](mailto:mohitrajrathor@gmail.com).
