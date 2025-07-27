@@ -12,6 +12,33 @@ Parkly is a responsive multi-user web app for managing 4-wheeler parking lots. I
 
 ---
 
+## Demo Screenshots
+
+<div align="center">
+
+<img src="media/Home-demo.png" alt="Home Page Demo" width="500" style="border-radius: 10px; box-shadow: 0 2px 8px #ccc; margin-bottom: 16px;"/>
+
+<br/>
+
+<table>
+    <tr>
+        <td align="center" style="padding: 12px;">
+            <img src="media/Home-demo.png" alt="Home Page Demo" width="300" style="border-radius: 8px; box-shadow: 0 1px 6px #bbb;"/><br/>
+            <b>Home Page</b>
+        </td>
+        <td align="center" style="padding: 12px;">
+            <img src="media/User-demo.png" alt="User Dashboard Demo" width="300" style="border-radius: 8px; box-shadow: 0 1px 6px #bbb;"/><br/>
+            <b>User Dashboard</b>
+        </td>
+    </tr>
+</table>
+
+</div>
+
+---
+
+
+
 ## Tech Stack
 
 * **Backend:** Flask, Flask-SQLAlchemy (SQLite), Celery, Redis
@@ -33,6 +60,19 @@ Parkly is a responsive multi-user web app for managing 4-wheeler parking lots. I
 * Frontend and backend data validation
 * Map integration to show parking location
 * Caching and background jobs with Redis
+
+
+---
+
+## Database Details
+
+The application uses **SQLite** as the primary database, managed via **Flask-SQLAlchemy**. The schema is designed to support users, parking slots, bookings, payments, reviews, and admin operations. Relationships are normalized for efficient queries and data integrity.
+
+### Entity-Relationship (ER) Diagram
+
+Below is the ER diagram representing the database schema:
+
+![Database ER Diagram](media/ER_Diagram.png)
 
 
 ---
