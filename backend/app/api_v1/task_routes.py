@@ -18,6 +18,17 @@ task_bp = Blueprint(
 
 
 @task_bp.route("/send_daily_remainders")
+@task_bp.doc(
+    summary="Send daily reminders",
+    description="Triggers the daily reminders background task. Requires admin role.",
+    tags=["Task", "Admin"],
+    security=[{"BearerAuth": []}],
+    responses={
+        200: {"description": "Task triggered successfully."},
+        401: {"description": "Unauthorized."},
+        500: {"description": "Internal Server Error."},
+    },
+)
 @role_required("admin")
 def send_daily_remainders():
     """
@@ -45,6 +56,17 @@ def send_daily_remainders():
 
 
 @task_bp.route("/send_monthly_report")
+@task_bp.doc(
+    summary="Send monthly report",
+    description="Trigger the asynchronous sending of a monthly report email to the authenticated user. Requires user role.",
+    tags=["Task", "User"],
+    security=[{"BearerAuth": []}],
+    responses={
+        200: {"description": "Monthly report task triggered."},
+        401: {"description": "Unauthorized."},
+        500: {"description": "Internal Server Error."},
+    },
+)
 @role_required("user")
 def send_monthly_report():
     """
@@ -73,6 +95,17 @@ def send_monthly_report():
 
 
 @task_bp.route("/send_all_data_report")
+@task_bp.doc(
+    summary="Send all data report",
+    description="Initiate sending a user's all-time data report via email. Requires user role.",
+    tags=["Task", "User"],
+    security=[{"BearerAuth": []}],
+    responses={
+        200: {"description": "All data report task triggered."},
+        401: {"description": "Unauthorized."},
+        500: {"description": "Internal Server Error."},
+    },
+)
 @role_required("user")
 def send_all_data():
     """

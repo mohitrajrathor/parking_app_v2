@@ -22,6 +22,16 @@ parking_bp = Blueprint(
 
 
 @parking_bp.route("/by_id", methods=["GET"])
+@parking_bp.doc(
+    summary="Get parking by ID",
+    description="Retrieve parking details by ID, including slots and reviews.",
+    tags=["Parking"],
+    responses={
+        200: {"description": "Parking details returned."},
+        404: {"description": "Parking not found."},
+        500: {"description": "Internal Server Error."},
+    },
+)
 @parking_bp.arguments(IdSchema, location="query")
 @parking_bp.response(200, ParkingWithSlothSchema)
 def get_parking_id(args):
@@ -53,6 +63,15 @@ def get_parking_id(args):
 
 
 @parking_bp.route("", methods=["GET"])
+@parking_bp.doc(
+    summary="Get all parkings",
+    description="Retrieve a paginated list of parkings based on search query, latitude/longitude, or all parkings.",
+    tags=["Parking"],
+    responses={
+        200: {"description": "Paginated parking list returned."},
+        500: {"description": "Internal Server Error."},
+    },
+)
 @parking_bp.arguments(QuerySchema, location="query")
 @parking_bp.response(200, ParkingResponseSchema)
 @cache.cached(1, query_string=True)
@@ -161,6 +180,18 @@ def get_parking(args):
 
 
 @parking_bp.route("", methods=["POST"])
+@parking_bp.doc(
+    summary="Create parking lot",
+    description="Create a new parking lot with the provided details. Only accessible to admin users.",
+    tags=["Parking", "Admin"],
+    security=[{"BearerAuth": []}],
+    responses={
+        201: {"description": "Parking created successfully."},
+        400: {"description": "Invalid input."},
+        401: {"description": "Unauthorized."},
+        500: {"description": "Internal Server Error."},
+    },
+)
 @parking_bp.arguments(ParkingSchema, location="json")
 @role_required("admin")
 def create_parking(args):
@@ -241,6 +272,19 @@ def create_parking(args):
 
 
 @parking_bp.route("", methods=["PUT"])
+@parking_bp.doc(
+    summary="Update parking lot",
+    description="Update an existing parking entry. Only accessible to admin users.",
+    tags=["Parking", "Admin"],
+    security=[{"BearerAuth": []}],
+    responses={
+        200: {"description": "Parking updated successfully."},
+        400: {"description": "Invalid input."},
+        401: {"description": "Unauthorized."},
+        404: {"description": "Parking not found."},
+        500: {"description": "Internal Server Error."},
+    },
+)
 @parking_bp.arguments(ParkingSchema, location="json")
 @role_required("admin")
 def update_parking(args):
@@ -342,6 +386,19 @@ def update_parking(args):
 
 
 @parking_bp.route("", methods=["DELETE"])
+@parking_bp.doc(
+    summary="Delete parking lot",
+    description="Deletes a parking entry by its ID if none of its slots are occupied. Only accessible to admin users.",
+    tags=["Parking", "Admin"],
+    security=[{"BearerAuth": []}],
+    responses={
+        200: {"description": "Parking deleted successfully."},
+        401: {"description": "Unauthorized."},
+        404: {"description": "Parking not found."},
+        409: {"description": "Some slots are booked."},
+        500: {"description": "Internal Server Error."},
+    },
+)
 @parking_bp.arguments(IdSchema, location="query")
 @role_required("admin")
 def delete_parking(args):
@@ -383,6 +440,16 @@ def delete_parking(args):
 
 
 @parking_bp.route("/slot")
+@parking_bp.doc(
+    summary="Get parking slot(s)",
+    description="Retrieve parking slot information based on query parameters. Supports filtering by slot ID, serial ID, parking ID, and occupancy status.",
+    tags=["Parking", "Slot"],
+    responses={
+        200: {"description": "Slot(s) information returned."},
+        404: {"description": "Slot not found or invalid query."},
+        500: {"description": "Internal Server Error."},
+    },
+)
 @parking_bp.arguments(SlotQuerySchema, location="query")
 def get_slot(args: dict):
     """
@@ -458,6 +525,18 @@ def get_slot(args: dict):
 
 
 @parking_bp.route("/slot", methods=["DELETE"])
+@parking_bp.doc(
+    summary="Delete parking slot",
+    description="Deletes a parking slot by serial ID if it is free. Only accessible to admin users.",
+    tags=["Parking", "Slot", "Admin"],
+    security=[{"BearerAuth": []}],
+    responses={
+        200: {"description": "Slot deleted successfully."},
+        401: {"description": "Unauthorized."},
+        404: {"description": "Slot not found."},
+        500: {"description": "Internal Server Error."},
+    },
+)
 @parking_bp.arguments(SlotQuerySchema, location="query")
 @role_required("admin")
 def delete_slot(args):

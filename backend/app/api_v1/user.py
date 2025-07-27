@@ -18,6 +18,18 @@ user_bp = Blueprint(
 
 
 @user_bp.route("/by_id", methods=["GET"])
+@user_bp.doc(
+    summary="Get user by ID",
+    description="Retrieve a user's details by their ID. Requires admin or user role.",
+    tags=["User"],
+    security=[{"BearerAuth": []}],
+    responses={
+        200: {"description": "User details returned."},
+        401: {"description": "Unauthorized."},
+        404: {"description": "User not found."},
+        500: {"description": "Internal Server Error."},
+    },
+)
 @user_bp.arguments(IdSchema, location="query")
 @role_required("admin", "user")
 def get_user_by_id(args):
@@ -47,6 +59,17 @@ def get_user_by_id(args):
 
 
 @user_bp.route("", methods=["GET"])
+@user_bp.doc(
+    summary="Get users",
+    description="Retrieve a paginated list of users, optionally filtered by a search query. Requires admin role.",
+    tags=["User", "Admin"],
+    security=[{"BearerAuth": []}],
+    responses={
+        200: {"description": "Paginated user list returned."},
+        401: {"description": "Unauthorized."},
+        500: {"description": "Internal Server Error."},
+    },
+)
 @user_bp.arguments(QuerySchema, location="query")
 @role_required("admin")
 def get_users(args):
@@ -89,6 +112,18 @@ def get_users(args):
 
 
 @user_bp.route("/me", methods=["GET"])
+@user_bp.doc(
+    summary="Get current user",
+    description="Retrieve the current authenticated user's details using the JWT token. Requires user role.",
+    tags=["User"],
+    security=[{"BearerAuth": []}],
+    responses={
+        200: {"description": "Current user details returned."},
+        401: {"description": "Unauthorized."},
+        404: {"description": "User not found."},
+        500: {"description": "Internal Server Error."},
+    },
+)
 @role_required("user")
 def get_current_user():
     """

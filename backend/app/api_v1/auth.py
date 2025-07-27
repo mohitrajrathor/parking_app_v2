@@ -24,12 +24,26 @@ from dotenv import load_dotenv
 load_dotenv()
 
 auth_bp = Blueprint(
-    "auth", __name__, url_prefix="/auth", description="Authorization apis."
+    "auth",
+    __name__,
+    url_prefix="/auth",
+    description="Authorization APIs for user and admin authentication, registration, email confirmation, and session management. Includes endpoints for login, signup, email verification, and token-based authentication.",
 )
 
 
 ##### routes #####
 @auth_bp.route("/test")
+@auth_bp.doc(
+    summary="Test authentication route",
+    description="Test route for the auth blueprint. Returns a simple string to verify the authentication routes are working.",
+    tags=["Auth", "Test"],
+    responses={
+        200: {
+            "description": "Test route is working.",
+            "content": {"text/plain": {"example": "testing -> auth test route"}},
+        }
+    },
+)
 def auth_test():
     """
     Test route for the auth blueprint.
@@ -40,6 +54,17 @@ def auth_test():
 
 
 @auth_bp.route("/admin-login", methods=["POST"])
+@auth_bp.doc(
+    summary="Admin login",
+    description="Handles admin login by validating credentials and returning JWT access and refresh tokens upon successful authentication.",
+    tags=["Auth", "Admin"],
+    responses={
+        200: {"description": "Admin login successful, returns tokens."},
+        401: {"description": "Invalid credentials."},
+        404: {"description": "Admin not found."},
+        500: {"description": "Internal Server Error."},
+    },
+)
 @auth_bp.arguments(AdminLoginSchema, location="json")
 @auth_bp.response(200, TokenSchema)
 def admin_login(args):
@@ -91,6 +116,17 @@ def admin_login(args):
 
 
 @auth_bp.route("/login", methods=["POST"])
+@auth_bp.doc(
+    summary="User login",
+    description="Authenticate a user with email and password. Returns access and refresh tokens on successful login.",
+    tags=["Auth", "User"],
+    responses={
+        200: {"description": "User login successful, returns tokens."},
+        401: {"description": "Invalid credentials."},
+        404: {"description": "User not found."},
+        500: {"description": "Internal Server Error."},
+    },
+)
 @auth_bp.arguments(UserLoginSchema, location="json")
 @auth_bp.response(200, TokenSchema)
 def user_login(args):
@@ -131,6 +167,16 @@ def user_login(args):
 
 
 @auth_bp.route("/signup", methods=["POST"])
+@auth_bp.doc(
+    summary="User signup",
+    description="Handle user signup by creating a new user account, sending an email confirmation, and returning authentication tokens.",
+    tags=["Auth", "User"],
+    responses={
+        200: {"description": "Signup successful, returns tokens."},
+        401: {"description": "User already exists."},
+        500: {"description": "Internal Server Error."},
+    },
+)
 @auth_bp.arguments(UserSignupSchema, location="json")
 @auth_bp.response(200, TokenSchema)
 def signup(args):
@@ -195,6 +241,17 @@ def signup(args):
 
 
 @auth_bp.route("/send-confirm-mail", methods=["POST"])
+@auth_bp.doc(
+    summary="Send confirmation email",
+    description="Send a confirmation email to the authenticated user for email verification.",
+    tags=["Auth", "User", "Email"],
+    responses={
+        200: {"description": "Confirmation mail sent."},
+        404: {"description": "Bad token or user not found."},
+        500: {"description": "Internal Server Error."},
+    },
+    security=[{"BearerAuth": []}],
+)
 @role_required("user")
 def send_confirm_mail():
     """
@@ -240,6 +297,17 @@ def send_confirm_mail():
 
 
 @auth_bp.route("/confirm-mail")
+@auth_bp.doc(
+    summary="Confirm user email",
+    description="Endpoint to confirm a user's email address using a token. Marks the email as confirmed and returns tokens for login.",
+    tags=["Auth", "User", "Email"],
+    responses={
+        200: {"description": "Email confirmed, returns tokens."},
+        400: {"description": "Invalid token payload."},
+        404: {"description": "Invalid token or user not found."},
+        500: {"description": "Internal Server Error."},
+    },
+)
 def confirm_mail():
     """
     Endpoint to confirm a user's email address using a token.

@@ -18,7 +18,7 @@ analytics_bp = Blueprint(
     "analytics",
     __name__,
     url_prefix="/analytics",
-    description="analytics related routes",
+    description="Analytics related routes for parking, revenue, user demographics, and dashboard statistics.",
 )
 
 
@@ -207,44 +207,61 @@ def get_user_age_distribution():
 
 
 @analytics_bp.route("/quick_stats", methods=["GET"])
+@analytics_bp.doc(
+    summary="Get quick admin dashboard statistics",
+    description="Retrieve quick statistics for the admin dashboard, including total parkings, total slots, occupied slots, and total users.",
+    tags=["Dashboard", "Admin", "Quick Stats"],
+    responses={
+        200: {
+            "description": "Quick statistics for dashboard.",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "total_parkings": 10,
+                        "total_slots": 200,
+                        "occupied_slots": 50,
+                        "total_users": 100,
+                    }
+                }
+            },
+        },
+        500: {"description": "Internal Server Error."},
+    },
+)
 @role_required("admin")
 def quick_stats():
     """
     Retrieve quick statistics for the admin dashboard, including total parkings, total slots, occupied slots, and total users.
-
-    Returns:
-        dict: A dictionary containing counts for parkings, slots, occupied slots, and users.
-
-    Raises:
-        APIError: If a custom API error occurs.
-        500 error: For any other unexpected exceptions.
     """
     try:
-        # get total number of parking lots
         return {
             "total_parkings": Parking.query.count(),
             "total_slots": Slot.query.count(),
             "occupied_slots": Slot.query.filter_by(is_occupied=True).count(),
             "total_users": User.query.count(),
         }
-
     except APIError as e:
         current_app.logger.error(e.message)
         return abort(e.status_code, message=str(e), additional_data=e.extra)
-
     except Exception as e:
-        current_app.logger.error(f"Error getting quick stats: {e}")
-        abort(500, message="Internal server error")
+        current_app.logger.error(e)
+        return abort(500, message="Internal Server Error.")
 
 
 @analytics_bp.route("/databoard_analytics")
+@analytics_bp.doc(
+    summary="Get admin dashboard analytics",
+    description="Returns aggregated dashboard analytics data for admins, including average rating, active bookings, total reservations, total revenue, total reviews, booking revenue, top parkings, daily revenue for the last 30 days, total slots, and booked slots.",
+    tags=["Dashboard", "Admin", "Analytics"],
+    responses={
+        200: {"description": "Aggregated dashboard analytics data."},
+        500: {"description": "Internal Server Error."},
+    },
+)
 @role_required("admin")
 def dashboard_analytics():
     """
     Returns aggregated dashboard analytics data for admins, including average rating, active bookings, total reservations, total revenue, total reviews, booking revenue, top parkings, daily revenue for the last 30 days, total slots, and booked slots.
-
-    Returns:
-        Response: JSON object containing dashboard analytics metrics.
     """
     try:
         return jsonify(
@@ -275,6 +292,24 @@ def dashboard_analytics():
 
 
 @analytics_bp.route("/parking_analytics")
+@analytics_bp.doc(
+    summary="Get daily parking reservation analytics for the last 30 days",
+    description="Returns daily reservation counts for the last 30 days as a JSON object.",
+    tags=["Analytics", "Parking", "Reservations"],
+    responses={
+        200: {
+            "description": "Daily reservation counts for the last 30 days.",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "daily_reservations": {"2025-07-01": 5, "2025-07-02": 7}
+                    }
+                }
+            },
+        },
+        500: {"description": "Internal Server Error."},
+    },
+)
 def parking_analytics():
     """
     Handles the /parking_analytics route and returns daily parking reservation analytics for the last 30 days as JSON.
@@ -295,6 +330,26 @@ def parking_analytics():
 
 
 @analytics_bp.route("/user_analytics")
+@analytics_bp.doc(
+    summary="Get user analytics (age, growth, profession)",
+    description="Returns user analytics including age distribution, monthly user growth, and profession distribution.",
+    tags=["Analytics", "User"],
+    responses={
+        200: {
+            "description": "User analytics data.",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "age_dist": {"18-24": 10, "25-34": 20},
+                        "monthly_user_growth": {"2025-07": 5, "2025-06": 3},
+                        "profession_dist": {"Engineer": 15, "Doctor": 5},
+                    }
+                }
+            },
+        },
+        500: {"description": "Internal Server Error."},
+    },
+)
 @role_required("user", "admin")
 def user_analytics():
     """
@@ -323,7 +378,24 @@ def user_analytics():
 
 
 @analytics_bp.route("/reverse_geocode", methods=["GET"])
-@cache.cached(timeout=60, query_string=True)
+@analytics_bp.doc(
+    summary="Reverse geocode latitude and longitude to address",
+    description="Proxies a request to the Nominatim OSM API to resolve latitude and longitude to a human-readable address. Caches results for 24 hours.",
+    tags=["Analytics", "Geocoding"],
+    responses={
+        200: {
+            "description": "Resolved address for given coordinates.",
+            "content": {
+                "application/json": {
+                    "example": {"address": "Some Street, Some City, Country"}
+                }
+            },
+        },
+        400: {"description": "Missing lat or lon query parameter."},
+        500: {"description": "Internal Server Error."},
+    },
+)
+@cache.cached(timeout=(60 * 60 * 24), query_string=True)
 def reverse_geocode():
     """
     Handles GET requests to proxy reverse geocoding using the Nominatim OSM API.

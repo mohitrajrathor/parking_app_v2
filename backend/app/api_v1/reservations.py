@@ -35,6 +35,18 @@ class ReservationSchema(Schema):
 
 
 @reserve_bp.route("/by_id", methods=["GET"])
+@reserve_bp.doc(
+    summary="Get reservation by ID",
+    description="Retrieve reservation details by reservation ID. Requires user or admin role.",
+    tags=["Reservation"],
+    security=[{"BearerAuth": []}],
+    responses={
+        200: {"description": "Reservation details returned."},
+        404: {"description": "Reservation not found."},
+        401: {"description": "Unauthorized."},
+        500: {"description": "Internal Server Error."},
+    },
+)
 @reserve_bp.arguments(IdSchema, location="query")
 @role_required("user", "admin")
 def get_by_id(args):
@@ -62,6 +74,17 @@ def get_by_id(args):
 
 
 @reserve_bp.route("", methods=["GET"])
+@reserve_bp.doc(
+    summary="Get reservations",
+    description="Retrieve a paginated list of reservations filtered by parking name. Requires user or admin role.",
+    tags=["Reservation"],
+    security=[{"BearerAuth": []}],
+    responses={
+        200: {"description": "Paginated reservation list returned."},
+        401: {"description": "Unauthorized."},
+        500: {"description": "Internal Server Error."},
+    },
+)
 @reserve_bp.arguments(QuerySchema, location="query")
 @role_required("user", "admin")
 def get(args):
@@ -108,6 +131,19 @@ def get(args):
 
 
 @reserve_bp.route("", methods=["POST"])
+@reserve_bp.doc(
+    summary="Book parking slot",
+    description="Reserve a parking slot for a user. Requires user role.",
+    tags=["Reservation", "Booking"],
+    security=[{"BearerAuth": []}],
+    responses={
+        200: {"description": "Slot booked successfully."},
+        401: {"description": "Unauthorized."},
+        404: {"description": "Parking or slot not found."},
+        409: {"description": "No slot is free."},
+        500: {"description": "Internal Server Error."},
+    },
+)
 @reserve_bp.arguments(ReservationSchema)
 @role_required("user")
 def book_slot(args):
@@ -177,6 +213,20 @@ def book_slot(args):
 
 
 @reserve_bp.route("", methods=["PUT"])
+@reserve_bp.doc(
+    summary="Leave parking slot",
+    description="Process for a user to leave a reserved parking slot. Requires user role.",
+    tags=["Reservation", "Leave"],
+    security=[{"BearerAuth": []}],
+    responses={
+        200: {"description": "Slot left and payment processed."},
+        400: {"description": "Leave time before start time."},
+        401: {"description": "Unauthorized."},
+        404: {"description": "Reservation or parking not found."},
+        409: {"description": "Review required or slot conflict."},
+        500: {"description": "Internal Server Error."},
+    },
+)
 @reserve_bp.arguments(ReservationSchema)
 @role_required("user")
 def leave_slot(args):

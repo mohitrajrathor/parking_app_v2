@@ -13,6 +13,12 @@ test_bp = Blueprint("test", __name__, url_prefix="/test")
 
 ###### routes ######
 @test_bp.route("/")
+@test_bp.doc(
+    summary="Test root route",
+    description="Handles the root route for the test blueprint and returns a confirmation message indicating the test route is operational.",
+    tags=["Test"],
+    responses={200: {"description": "Test route is working."}},
+)
 def test():
     """
     Handles the root route for the test blueprint and returns a confirmation message indicating the test route is operational.
@@ -21,6 +27,12 @@ def test():
 
 
 @test_bp.route("/test-email")
+@test_bp.doc(
+    summary="Send test email",
+    description="Sends a test email to the local SMTP server using the configured mail extension.",
+    tags=["Test", "Email"],
+    responses={200: {"description": "Test email sent."}},
+)
 def test_email():
     """
     Sends a test email to the local SMTP server using the configured mail extension.
@@ -47,6 +59,16 @@ def test_email():
 
 
 @test_bp.route("/jwt_test")
+@test_bp.doc(
+    summary="JWT authentication test",
+    description="Endpoint to test JWT authentication. Requires JWT token.",
+    tags=["Test", "JWT"],
+    security=[{"BearerAuth": []}],
+    responses={
+        200: {"description": "JWT authentication is working."},
+        401: {"description": "Unauthorized."},
+    },
+)
 @jwt_required()
 def jwt_test():
     """
@@ -58,6 +80,12 @@ def jwt_test():
 
 
 @test_bp.route("/start-task")
+@test_bp.doc(
+    summary="Start Celery test task",
+    description="Starts the Celery test task asynchronously and returns the task ID.",
+    tags=["Test", "Celery"],
+    responses={200: {"description": "Celery test task started."}},
+)
 def start_task():
     """
     Starts the Celery test task asynchronously and returns the task ID.
@@ -72,6 +100,12 @@ def start_task():
 
 
 @test_bp.route("/result/<task_id>")
+@test_bp.doc(
+    summary="Get Celery test task result",
+    description="Retrieve the status and result of a Celery test task by task ID.",
+    tags=["Test", "Celery"],
+    responses={200: {"description": "Celery test task result returned."}},
+)
 def get_result(task_id):
     """
     Retrieve the status and result of a Celery test task by task ID.
@@ -100,6 +134,12 @@ def get_result(task_id):
 
 
 @test_bp.route("/demo-task")
+@test_bp.doc(
+    summary="Start Celery demo task",
+    description="Starts the demo Celery task asynchronously and returns the task ID.",
+    tags=["Test", "Celery"],
+    responses={200: {"description": "Celery demo task started."}},
+)
 def start_demo():
     """
     Starts the demo Celery task asynchronously and returns the task ID.
@@ -114,6 +154,12 @@ def start_demo():
 
 
 @test_bp.route("/result/demo/<task_id>")
+@test_bp.doc(
+    summary="Get Celery demo task result",
+    description="Retrieve the status and result of the demo Celery task by task ID.",
+    tags=["Test", "Celery"],
+    responses={200: {"description": "Celery demo task result returned."}},
+)
 def get_demo_result(task_id):
     """
     Retrieve the status and result of the demo Celery task by task ID.
