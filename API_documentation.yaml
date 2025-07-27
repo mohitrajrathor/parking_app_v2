@@ -1,0 +1,491 @@
+openapi: 3.0.3
+info:
+  title: API Documentation
+  version: 1.0.0
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: Error code
+        status:
+          type: string
+          description: Error name
+        message:
+          type: string
+          description: Error message
+        errors:
+          type: object
+          description: Errors
+          additionalProperties: {}
+
+    PaginationMetadata:
+      type: object
+      properties:
+        total:
+          type: integer
+        total_pages:
+          type: integer
+        first_page:
+          type: integer
+        last_page:
+          type: integer
+        page:
+          type: integer
+        previous_page:
+          type: integer
+        next_page:
+          type: integer
+
+    AdminLogin:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required:
+        - password
+        - username
+
+    Token:
+      type: object
+      properties:
+        role:
+          type: string
+        token:
+          type: string
+        refresh_token:
+          type: string
+        message:
+          type: string
+      required:
+        - refresh_token
+        - role
+        - token
+
+    UserLogin:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      required:
+        - email
+        - password
+
+    UserSignup:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+        name:
+          type: string
+        dob:
+          type: string
+        profession:
+          type: string
+        address:
+          type: string
+        pincode:
+          type: string
+        phone:
+          type: string
+      required:
+        - address
+        - dob
+        - email
+        - name
+        - password
+        - phone
+        - pincode
+        - profession
+
+    Slot:
+      type: object
+      properties:
+        id:
+          type: integer
+        parking_id:
+          type: integer
+        serial_id:
+          type: string
+        is_occupied:
+          type: boolean
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+
+    Review:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        parking_id:
+          type: integer
+        feedback:
+          type: string
+        rating:
+          type: integer
+        create_at:
+          type: string
+        user:
+          $ref: '#/components/schemas/User'
+
+    ParkingWithSloth:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        address:
+          type: string
+        pincode:
+          type: string
+        phone:
+          type: string
+        lat:
+          type: number
+        long:
+          type: number
+        hourly_fee:
+          type: number
+        booking_fee:
+          type: number
+        slots_num:
+          type: number
+        create_time:
+          type: string
+        slots:
+          type: array
+          items:
+            $ref: '#/components/schemas/Slot'
+        booked:
+          type: integer
+        reviews_count:
+          type: integer
+        reviews:
+          type: array
+          items:
+            $ref: '#/components/schemas/Review'
+      required:
+        - address
+        - booking_fee
+        - hourly_fee
+        - lat
+        - long
+        - name
+        - phone
+        - pincode
+        - slots_num
+
+    ParkingResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        address:
+          type: string
+        pincode:
+          type: string
+        phone:
+          type: string
+        lat:
+          type: number
+        long:
+          type: number
+        hourly_fee:
+          type: number
+        booking_fee:
+          type: number
+        slots_num:
+          type: number
+        create_time:
+          type: string
+        parkings:
+          type: array
+          items:
+            $ref: '#/components/schemas/ParkingWithSloth'
+        total:
+          type: integer
+        page:
+          type: integer
+        pages:
+          type: integer
+        has_next:
+          type: boolean
+        has_prev:
+          type: boolean
+      required:
+        - address
+        - booking_fee
+        - hourly_fee
+        - lat
+        - long
+        - name
+        - phone
+        - pincode
+        - slots_num
+
+    Parking:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        address:
+          type: string
+        pincode:
+          type: string
+        phone:
+          type: string
+        lat:
+          type: number
+        long:
+          type: number
+        hourly_fee:
+          type: number
+        booking_fee:
+          type: number
+        slots_num:
+          type: number
+        create_time:
+          type: string
+      required:
+        - address
+        - booking_fee
+        - hourly_fee
+        - lat
+        - long
+        - name
+        - phone
+        - pincode
+        - slots_num
+
+    Reservation:
+      type: object
+      properties:
+        parking_id:
+          type: integer
+        reservation_id:
+          type: integer
+        leave_time:
+          type: string
+          format: date-time
+        feedback:
+          type: string
+        rating:
+          type: integer
+
+  responses:
+    DEFAULT_ERROR:
+      description: Default error response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UNPROCESSABLE_ENTITY:
+      description: Unprocessable Entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+paths:
+  /api/v1/user/login:
+    post:
+      tags:
+        - Auth
+      summary: User Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+        '422':
+          $ref: '#/components/responses/UNPROCESSABLE_ENTITY'
+        default:
+          $ref: '#/components/responses/DEFAULT_ERROR'
+
+  /api/v1/user/signup:
+    post:
+      tags:
+        - Auth
+      summary: User Signup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserSignup'
+      responses:
+        '200':
+          description: Signup successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+        '422':
+          $ref: '#/components/responses/UNPROCESSABLE_ENTITY'
+        default:
+          $ref: '#/components/responses/DEFAULT_ERROR'
+
+  /api/v1/parkings:
+    get:
+      tags:
+        - Parking
+      summary: Get all parking data
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: pincode
+          in: query
+          schema:
+            type: string
+        - name: name
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Parking data response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParkingResponse'
+        '422':
+          $ref: '#/components/responses/UNPROCESSABLE_ENTITY'
+        default:
+          $ref: '#/components/responses/DEFAULT_ERROR'
+
+  /api/v1/parking/{id}:
+    get:
+      tags:
+        - Parking
+      summary: Get parking data by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Parking data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParkingWithSloth'
+        '422':
+          $ref: '#/components/responses/UNPROCESSABLE_ENTITY'
+        default:
+          $ref: '#/components/responses/DEFAULT_ERROR'
+
+  /api/v1/reservation:
+    post:
+      tags:
+        - Reservation
+      summary: Reserve a parking slot
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Reservation'
+      responses:
+        '200':
+          description: Reservation created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reservation'
+        '422':
+          $ref: '#/components/responses/UNPROCESSABLE_ENTITY'
+        default:
+          $ref: '#/components/responses/DEFAULT_ERROR'
+
+    get:
+      tags:
+        - Reservation
+      summary: Get user reservations
+      responses:
+        '200':
+          description: List of reservations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reservation'
+        '422':
+          $ref: '#/components/responses/UNPROCESSABLE_ENTITY'
+        default:
+          $ref: '#/components/responses/DEFAULT_ERROR'
+
+  /api/v1/reservation/{id}:
+    put:
+      tags:
+        - Reservation
+      summary: Update reservation (leave)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Reservation'
+      responses:
+        '200':
+          description: Reservation updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reservation'
+        '422':
+          $ref: '#/components/responses/UNPROCESSABLE_ENTITY'
+        default:
+          $ref: '#/components/responses/DEFAULT_ERROR'
