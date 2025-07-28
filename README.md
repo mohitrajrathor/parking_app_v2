@@ -105,7 +105,7 @@ docker compose up
 
 ## API Documentation
 
-Interactive OpenAPI docs available at `/api/docs` when the backend is running.
+Interactive OpenAPI docs available at `/docs/swagger` when the backend is running.
 
 ---
 
